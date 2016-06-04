@@ -37,7 +37,6 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	/*-----------------------*/
 	/*Atributos bï¿½sicos*/
 	private long idCliente;
-	private Vector<CuentaImp> cuentas;
 	private String observaciones;
 	private String contraseña;
 
@@ -58,7 +57,6 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		u.escribirUltimaId(idCliente,"idclientes.dat");
 		
 		/*-------------------------------------------*/
-		this.cuentas=new Vector<CuentaImp>(0,1);
 		this.observaciones=" ";
 		this.contraseña=" ";
 	}
@@ -72,7 +70,6 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		contadorclientes=idCliente;
 		u.escribirUltimaId(idCliente,"idclientes.dat");
 		/*-------------------------------------------*/
-		this.cuentas=new Vector<CuentaImp>(0,1);
 		this.observaciones=" ";
 		this.contraseña=" ";
 	}
@@ -90,7 +87,6 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		contadorclientes=idCliente;
 		u.escribirUltimaId(idCliente,"idclientes.dat");
 		/*-------------------------------------------*/
-		this.cuentas=new Vector<CuentaImp>(0,1);
 		this.observaciones=observaciones;
 		this.contraseña=contraseña;
 	}
@@ -99,7 +95,6 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	public ClienteImp(ClienteImp c){
 		super(c.getNombre(),c.getApellido(),c.getFNacimiento(),c.getDni(),c.getGenero());
 		this.idCliente=c.idCliente;
-		this.cuentas=c.cuentas;
 		this.observaciones=c.observaciones;
 		this.contraseña=c.contraseña;
 	}
@@ -117,10 +112,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	public String getObservaciones(){
 		return this.observaciones;
 	}
-	
-	public Vector<CuentaImp> getCuentas(){
-		return this.cuentas;
-	}
+
 	@Override
 	public String getContraseña(){
 		return this.contraseña;
@@ -162,10 +154,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	public void setContraseña(String contraseña){
 		this.contraseña=contraseña;
 	}
-	public void setCuentas(Vector<CuentaImp> cuentas){
-		this.cuentas=cuentas;
-	}
-	
+
 	/*METODOS MODIFICADORES REDEFINIDOS*/
 	@Override
 	public void setNombre(String nombre){
@@ -190,49 +179,8 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	/*Metodos aï¿½adidos*/
 
 	
-	//addCuenta
-	/*
-	 * Breve comentario:
-	 * 	-Este metodo aÃ±adira una CuentaImp al vector cuentas
-	 * Cabecera:
-	 * 	void addCuenta(CuentaImp c)
-	 * Precondiciones:
-	 * 	Nada
-	 * Entradas:
-	 * 	Una CuentaImp
-	 * Salidas:
-	 * 	Nada
-	 * Postcondiciones:	
-	 * 	Nada
-	 * 
-	 * */
-	public void addCuenta(CuentaImp c){
-		this.cuentas.add(c);
-	}
-	
-	//deleteCuenta
-	/*
-	 * Breve comentario:
-	 * 	-Este metodo eliminara una CuentaImp del vector cuentas
-	 * Cabecera:
-	 * 	void deleteCuenta(long numCuenta)
-	 * Precondiciones:
-	 * 	Nada, si el numCuenta no existe no eliminara nada
-	 * Entradas:
-	 * 	Un long id
-	 * Salidas:
-	 * 	Nada
-	 * Postcondiciones:	
-	 * 	Nada
-	 * 
-	 * */
-	public void deleteCuenta(long numCuenta){
-		for(int i=0;i<this.cuentas.size();i++){	
-			if(this.cuentas.elementAt(i).getNumCuenta()==numCuenta){
-				this.cuentas.removeElementAt(i);
-			}
-		}
-	}
+
+
 
 	
 	
@@ -257,7 +205,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	 * 		El prestigio retornara asociado al nombre -> Funcion
 	 * */
 	
-	public String getPrestigio(){
+	/*public String getPrestigio(){
 		String prestigio=null;
 		double totalCuenta=0;
 			for(int i=0;i<this.cuentas.size();i++){
@@ -277,7 +225,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 			}
 		
 		return prestigio;
-	}
+	}*/
 
 	
 	/*ClientetoCadena
@@ -296,11 +244,8 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	 */
 	public String clientetoCadena(){
 		
-		String cuentas="";
-		for(int i=0;i<getCuentas().size();i++){
-			cuentas=cuentas.concat(getCuentas().elementAt(i).cuentatoCadena());
-		}
-		return getIdCliente()+", "+getNombre()+", "+getApellido()+", "+cuentas;
+		
+		return getIdCliente()+", "+getNombre()+", "+getApellido()+", "+getDni()+", "+getGenero()+", "+ getObservaciones();
 	}
 
 	/*-------FIN METODOS AÃ‘ADIDOS---------*/
@@ -310,11 +255,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 
 	@Override
 	public String toString() {
-		String cuenta="";
-		for(int i=0;i<cuentas.size();i++){
-			cuenta=cuenta.concat(cuentas.elementAt(i).toString())+"\n";
-		}
-		return "Nombre cliente: "+getNombre()+", IdCliente: " + idCliente + "\ncuentas:" + cuenta + "\n observaciones: " + observaciones + "\n\n--------------------------------";
+		return "Nombre cliente: "+getNombre()+", IdCliente: " + idCliente + "\n observaciones: " + observaciones + "\n\n--------------------------------";
 	}
 	@Override
 	public int hashCode(){
@@ -344,8 +285,6 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		ClienteImp copia=null;
 		
 		copia = (ClienteImp) super.clone();
-		//TENEMOS QUE UTILIZAR EL CLONE DE VECTOR PORQUE SI NO HACE UNA REFERENCIA.
-		copia.setCuentas((Vector<CuentaImp>) this.getCuentas().clone());
 		copia.setContraseña(this.getContraseña());
 		copia.setObservaciones(this.getObservaciones());
 		copia.idCliente=this.idCliente;

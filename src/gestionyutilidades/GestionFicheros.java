@@ -72,138 +72,7 @@ public class GestionFicheros  {
 		}
 		
 	}
-	
-	/*
-	 * Obtener cuenta.
-	 * 
-	 * 	Breve comentario:
-	 * 		Este metodo retornara una cuenta , dadas una id de cliente 
-	 * 		y una id de cuenta
-	 * 	Cabecera:
-	 * 		CuentaImp obtenerCuenta(long idCliente,long idCuenta)
-	 * 	Precondiciones:
-	 * 		Nada, si no encuentra ninguna cuenta con esas id retornara null.
-	 * 			
-	 * 	Entradas:
-	 * 		dos long con las ids de cliente y cuenta
-	 * 	Salidas:
-	 * 		Un objeto CuentaImp
-	 * 	Postcondiciones:
-	 * 		El objeto CuentaImp retornara asociado al nombre, funcion
-	 * 
-	 * 
-	 * */
-	public CuentaImp obtenerCuenta(long idCliente,long idCuenta){
-		CuentaImp cuenta=null;
-		
-		File fmae=null;
-		File fmov=null;
-		
-		FileInputStream fismae=null;
-		FileInputStream fismov=null;
-		
-		ObjectInputStream oismae=null;
-		ObjectInputStream oismov=null;
-		boolean encontrado=false;
-		ClienteImp aux=null;
-		CuentaImp auxc=null;
-		try{
-			//fichero maestro
-			fmae= new File("ClientesMaestro.dat");
-			//fichero movimiento
-			fmov=new File("ClientesMovimiento.dat");
-			fismae=new FileInputStream(fmae);
-			oismae=new ObjectInputStream(fismae);
 
-				
-			
-			/*Si el fichero de movimiento no existe, no necesitamos mirar en el.
-			 * Solo tendremos que buscar en el maestro,
-			 * */
-			if(!fmov.exists()){
-			aux=(ClienteImp)oismae.readObject();
-				while(aux!=null && encontrado==false){
-					if(aux.getIdCliente()==idCliente){
-						
-						for(int i=0;i<aux.getCuentas().size();i++){
-							
-							if(aux.getCuentas().elementAt(i).getNumCuenta()==idCuenta){
-								cuenta=aux.getCuentas().elementAt(i);
-								encontrado=true;
-							}
-						}
-					}
-					aux=(ClienteImp)oismae.readObject();
-				}
-			}
-			/*Si el fichero de movimientos si existe tenemos que mirar en los dos
-			 * ficheros ,primero en el de movimiento y luego si en el de movimiento
-			 *  no lo encuentra mirara en el maestro.
-			 *  Si no el objeto quedara null;
-			 * */
-			else{
-				
-				fismov=new FileInputStream(fmov);
-				oismov=new ObjectInputStream(fismov);
-				
-				auxc=(CuentaImp)oismov.readObject();
-				/*Recorro el fichero entero porque puede haber mas de un movimiento
-				 * entonces me interesa mirar todos los clientes ingresados 
-				 * */
-				while(auxc!=null){
-					if(auxc.getNumCuenta()==idCuenta){
-								cuenta=auxc;
-								encontrado=true;
-					}	
-					auxc=(CuentaImp)oismov.readObject();
-				}
-				/*Si no se a encontrado el cliente en el de movimientos
-				 * 	miraremos en el maestro
-				 * */
-				
-				if(!encontrado){
-					aux=(ClienteImp)oismae.readObject();
-					while(aux!=null && !encontrado){
-						if(aux.getIdCliente()==idCliente){
-							
-							for(int i=0;i<aux.getCuentas().size();i++){
-								
-								if(aux.getCuentas().elementAt(i).getNumCuenta()==idCuenta){
-									cuenta=aux.getCuentas().elementAt(i);
-									encontrado=true;
-								}
-							}
-							
-						}	
-						aux=(ClienteImp)oismae.readObject();
-					}
-				}
-			}
-		}catch(EOFException eof){
-		}catch(IOException ioe){
-			System.out.println(ioe);
-		} catch (ClassNotFoundException e) {
-			System.out.println(e);
-		}finally{
-			try{
-				if(oismae!=null){
-					oismae.close();	
-					fismae.close();
-				}
-				
-				if(oismov!=null){
-					oismov.close();
-					fismov.close();
-				}
-				
-				
-			}catch(IOException ioe){
-				System.out.println(ioe);
-			}
-		}
-		
-		return cuenta;
-	}
 	
 	
 	/*Escribir Fichero ClienteMaestro
@@ -230,23 +99,8 @@ public class GestionFicheros  {
 			f=new File("ClientesMaestro.dat");
 			fos=new FileOutputStream(f,true);
 			oos=new MiObjectOutputStream(fos);
-			
-			/*for(int i=0;i<cliente.getCuentas().size() && valida; i++){
-				
-				for(int j=0;j<cliente.getCuentas().elementAt(i).getTarjetas().size() && valida;j++){
-					
-					//si la llamada a validar Tarjeta es falso, no se podra registrar ese cliente.
-					if(!u.validarTarjetaRegistrada
-						(cliente.getCuentas().elementAt(i).
-								getTarjetas().elementAt(j).getNumtarjeta())){
-						
-						valida=false;
-					}
-				}
-			}
-			
-			if(valida)*/
-				oos.writeObject(cliente);
+
+			oos.writeObject(cliente);
 			
 		}catch(IOException ioe){
 			System.out.println(ioe);
@@ -266,7 +120,7 @@ public class GestionFicheros  {
 	
 	/*Escribir Fichero ClienteMaestro
 	 * 	Breve comentario:
-	 * 		El metodo escribirá en el fichero ("ClientesMovimiento.dat") un objeto Cuenta que recibirá por parametros 
+	 * 		El metodo escribirá en el fichero ("ClientesMovimiento.dat") un objeto Cliente que recibirá por parametros 
 	 * 	Cabecera:
 	 * 		void escribirCliente(ClienteImp cliente)
 	 * 	Precondiciones:
@@ -278,7 +132,7 @@ public class GestionFicheros  {
 	 * 	Postcondiciones:
 	 * 		Escribirá el objeto en el fichero.
 	 * */
-	public void escribirMovimiento(CuentaImp c){
+	public void escribirMovimiento(ClienteImp c){
 		
 		File f=null;
 		FileOutputStream fos=null;
@@ -327,10 +181,10 @@ public class GestionFicheros  {
 			fis=new FileInputStream(f);
 			ois=new ObjectInputStream(fis);
 			
-			CuentaImp cliente=(CuentaImp)ois.readObject();
+			ClienteImp cliente=(ClienteImp)ois.readObject();
 			while(cliente!=null){
 			System.out.println(cliente.toString());
-			cliente=(CuentaImp)ois.readObject();
+			cliente=(ClienteImp)ois.readObject();
 			
 			}
 		
@@ -434,7 +288,7 @@ public class GestionFicheros  {
  * 
  * */
 
-	public void actualizaClientes() {
+	/*public void actualizaClientes() {
 		
 		File fmaestro = new File("ClientesMaestro.dat");
 		File fmovimiento = new File("ClientesMovimiento.dat");
@@ -539,7 +393,7 @@ public class GestionFicheros  {
 
 		}
 
-	}
+	}*/
 	
 
 	/*

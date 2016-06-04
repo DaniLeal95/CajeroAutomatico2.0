@@ -172,7 +172,7 @@ public class Utilidades {
 		return valida;
 	}*/
 	
-	public boolean validarTarjetaRegistrada(long numtarjeta){
+	/*public boolean validarTarjetaRegistrada(long numtarjeta){
 		boolean valida=true;
 		//GestionFicheros gf=new GestionFicheros();
 		File fmae= new File("ClientesMaestro.dat");
@@ -261,7 +261,7 @@ public class Utilidades {
 					
 				}
 				
-			}*/
+			}
 			
 			
 		}catch(EOFException eof){
@@ -278,7 +278,7 @@ public class Utilidades {
 				/*if(oismov!=null){
 					oismov.close();
 					fismov.close();
-				}*/
+				}
 				if(oismae!=null){
 					oismae.close();
 					fismae.close();
@@ -289,7 +289,7 @@ public class Utilidades {
 		}
 		
 		return valida;
-	}
+	}*/
 	
 
 }

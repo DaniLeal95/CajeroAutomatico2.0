@@ -33,8 +33,9 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	private char tipo;
 	private long numtarjeta;
 	private String pin;
+	private long idCuenta;
 	//compartidas
-	public static long contadortarjeta=0;
+	private static long contadortarjeta=0;
 	
 	//constructores
 	public TarjetaImp(){
@@ -49,10 +50,11 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 		u.escribirUltimaId(numtarjeta,"idtarjeta.dat");
 		tipo=' ';
 		pin="0000";
+		idCuenta=1;
 	}
 	
 	
-	public TarjetaImp(char tipo,String pin) {
+	public TarjetaImp(char tipo,String pin, long idCuenta) {
 		this();
 		Utilidades u=new Utilidades();
 		if(Character.toUpperCase(tipo)=='C' || Character.toUpperCase(tipo)=='D'){
@@ -63,7 +65,8 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 			this.pin=pin;
 		}
 		
-		//fin comprobacion del pin
+		//falta metodo comprobar cuenta
+		this.idCuenta=idCuenta;
 		
 	}
 	/*Constructor de copia*/
@@ -71,6 +74,7 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 		this.tipo=tp.getTipo();
 		this.numtarjeta=tp.numtarjeta;
 		this.pin=tp.pin;
+		this.idCuenta=tp.idCuenta;
 	}
 	/**------------------------------------------------------**/
 	/*Consultores*/
@@ -89,6 +93,10 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	
 	public long getNumTarjetas(){
 		return contadortarjeta;
+	}
+	@Override
+	public long getidCuenta(){
+		return this.idCuenta;
 	}
 
 	
@@ -110,6 +118,12 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 			throw new TarjetaExcepcion("El pin introducido es incorrecto");
 		else
 			this.pin=pin;
+	}
+	
+	@Override
+	public void setidCuenta(long idCuenta){
+		//falta metodo de comprobar cuenta
+		this.idCuenta=idCuenta;
 	}
 	
 	/*

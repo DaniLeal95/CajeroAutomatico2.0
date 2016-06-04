@@ -4,7 +4,7 @@ import datos.TarjetaImp;
 
 public class TestTarjeta {
 	public static void main(String args[]){
-		TarjetaImp t0=new TarjetaImp();
+		/*TarjetaImp t0=new TarjetaImp();
 		TarjetaImp t1=new TarjetaImp('C',"1234");
 		TarjetaImp t2=new TarjetaImp(t1);
 		TarjetaImp tnovalidaporpasarlongitud=new TarjetaImp('d',"7777777");
@@ -37,7 +37,7 @@ public class TestTarjeta {
 		//System.out.println((tnovalidapornoserdigitos=t1.clone()).toString());
 		
 			
-		
+		*/
 	}
 		
 }

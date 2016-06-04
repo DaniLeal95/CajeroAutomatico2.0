@@ -12,7 +12,7 @@ public class TestClienteImp {
 
 	public static void main(String[] args) {
 		GestionFicheros gf=new GestionFicheros();
-		
+		/*
 			TarjetaImp t1=new TarjetaImp('D',"1234");
 			TarjetaImp t2=new TarjetaImp('C',"1234");
 			TarjetaImp t3=new TarjetaImp('C',"1234");
@@ -85,7 +85,7 @@ public class TestClienteImp {
 	
 		
 	
-		
+	*/	
 	}
 
 }

@@ -14,7 +14,7 @@ import gestionyutilidades.GestionFicheros;
 public class MainCrearFicherosConCabecera {
 
 	public static void main(String[] args) {
-		File f = null;
+	/*	File f = null;
 		File fmov = null;
 		FileOutputStream fos = null;
 		FileOutputStream fosmov=null;
@@ -35,7 +35,7 @@ public class MainCrearFicherosConCabecera {
 			oosmov= new ObjectOutputStream(fosmov);
 			/* *
 			 * Meto Dos cientes: uno usuario y otro Administrador. 
-			 * */
+			 * 
 			TarjetaImp t1=new TarjetaImp('D',"1111");
 			TarjetaImp t3=new TarjetaImp('C',"1234");
 			CuentaImp c2=new CuentaImp(900);
@@ -59,7 +59,7 @@ public class MainCrearFicherosConCabecera {
 			System.out.println(clAdministrador.toString());
 			/*
 			 * Y ahora una cuenta en movimiento
-			 * */
+			 * 
 			CuentaImp c1=gf.obtenerCuenta(1, 1);
 			gf.movimientocon1cuenta(c1, 700);
 			
@@ -86,7 +86,7 @@ public class MainCrearFicherosConCabecera {
 					System.out.println(e);
 				}
 			}
-
+*/
 		}
 
 }

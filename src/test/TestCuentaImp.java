@@ -8,7 +8,7 @@ import datos.TarjetaImp;
 public class TestCuentaImp {
 
 	public static void main(String[] args) {
-		CuentaImp c1=new CuentaImp(500);
+	/*	CuentaImp c1=new CuentaImp(500);
 		CuentaImp c2=new CuentaImp(900);
 		CuentaImp c4=null;
 		
@@ -61,6 +61,6 @@ public class TestCuentaImp {
 		
 		//Cuentatocadena
 		System.out.println(c1.cuentatoCadena());
-	}
+	*/}
 
 }

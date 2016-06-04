@@ -43,8 +43,7 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	//ATRIBUTOS
 	private long numCuenta;
 	private double saldo;
-	private Vector<TarjetaImp> tarjetas;
-	
+	private long idCliente;
 
 	
 	//PropiedadesCompartidas
@@ -55,53 +54,56 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	public CuentaImp(){
 		Utilidades u=new Utilidades();
 		saldo=0;
-		
+		idCliente = 1;
 		if(contadorCuentas!=0){numCuenta=contadorCuentas+1; } 
 		else{ 
 			numCuenta=u.cogerUltimaId("idcuenta.dat")+1;
 		}
 		contadorCuentas=numCuenta;
 		u.escribirUltimaId(numCuenta,"idcuenta.dat");
-		tarjetas=new Vector<TarjetaImp>(0,1);
 		
 	}
 	
-	public CuentaImp(long saldo){
+	public CuentaImp(long saldo,long idCliente){
 		this();
+		//aqui falta metodo comprobar cliente.
 		this.saldo=saldo;
-		tarjetas=new Vector<TarjetaImp>(0,1);
+		this.idCliente=idCliente;
 	}
 	
-	public CuentaImp(long saldo,Vector<TarjetaImp> tarjetas){
-		this();
-		this.saldo=saldo;
-		this.tarjetas=tarjetas;
-	}
+
 	//Constructor de copia
 	public CuentaImp(CuentaImp c){
 		this.numCuenta=c.numCuenta;
 		this.saldo=c.saldo;
-		this.tarjetas=c.tarjetas;
+		this.idCliente=c.idCliente;
 	}
 	
 	//Consultores
 
+	@Override
 	public long getNumCuenta(){
 		return(this.numCuenta);
 	}
+	@Override
 	public double getSaldo(){
 		return(this.saldo);
 	}
-	public Vector<TarjetaImp> getTarjetas(){
-		return (this.tarjetas);
+	@Override
+	public long getidCliente(){
+		return(this.idCliente);
 	}
-	//modificadores
 	
+	//modificadores
+	@Override
 	public void setSaldo(double saldo){
 		this.saldo=saldo; 
-		
 	}
-	
+	@Override
+	public void setidCliente(long idCliente){
+		//faltametodocomprobarCliente
+		this.idCliente=idCliente;
+	}
 	
 	
 	
@@ -110,77 +112,9 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	 * ------------------------
 	 * */
 	
-	/*
-	 * setTarjeta
-	 * 	Breve Comentario:
-	 * -----------------
-	 * 		Este metodo recibe por parametros una TarjetaImp y si no esta registrada en otra cuenta
-	 * 			lo aniade al vector de tarjetas
-	 * 
-	 * 	Cabecera:
-	 * ----------
-	 * 		void setTarjeta(TarjetaImp t)
-	 * 		
-	 * Precondiciones:
-	 * --------------
-	 * 		Nada, si la tarjeta ya esta registrada con otra tarjeta o en esa misma, no la insertara
-	 * 
-	 * Entradas:
-	 * ----------
-	 * 		Una tarjetaImp
-	 * 
-	 * Salidas:
-	 * ---------
-	 * 		Nada
-	 * 
-	 * Postcondiciones:
-	 * ----------------
-	 * 		Nada
-	 * 
-	 * */
+
 	
-	public void añadirTarjeta(TarjetaImp t){
-		Utilidades u=new Utilidades();
-		
-		//boolean valida=u.validarTarjetaRegistrada(t.getNumtarjeta());
-		//if(valida){
-			this.tarjetas.add(t);
-		/*}
-		else{
-			System.out.println("ERROR:Tarjeta No AÃ±adida");
-		}*/
-	}
-	
-	
-	//eliminartarjeta
-	/*
-	 * Breve comentario:
-	 * 	-Este metodo eliminara una Tarjeta del vector tarjetas
-	 * Cabecera:
-	 * 	void eliminarTarjeta(long numtarjeta)
-	 * Precondiciones:
-	 * 	Nada, si el numtarjeta no existe no eliminara nada
-	 * Entradas:
-	 * 	Un long id
-	 * Salidas:
-	 * 	Nada
-	 * Postcondiciones:	
-	 * 	Nada
-	 * 
-	 * */
-	/*	RESGUARDO
-	 * 
-	 * public void eliminarTarjeta(long numtarjeta){
-	 * 	System.out.println("eliminarTarjeta esta construccion");
-	 * }
-	 * */
-	public void eliminarTarjeta(TarjetaImp tarjeta){
-		for(int i=0;i<this.tarjetas.size();i++){	
-			if(this.tarjetas.elementAt(i).getNumtarjeta()==tarjeta.getNumtarjeta()){
-				this.tarjetas.removeElementAt(i);
-			}
-		}
-	}
+
 	
 		/*CuentatoCadena
 		 * Breve comentario: 
@@ -197,12 +131,9 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 		 * 		 el String retornara asociado  al nombre -> Funcion
 		 */
 		public String cuentatoCadena(){
-			String tarjetas="";
-			for(int i=0;i<getTarjetas().size();i++){
-				tarjetas=tarjetas.concat(getTarjetas().elementAt(i).tarjetatoCadena());
-			}
 			
-			return getNumCuenta()+", "+getSaldo()+", "+tarjetas;
+			
+			return getNumCuenta()+", "+getSaldo()+", "+getidCliente();
 		}
 	
 	
@@ -220,7 +151,7 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	 *Equals
 	 *	
 	 *	Criterio de igualdad: 
-	 *			dos Cuentas son iguales si tienen el mismo numCuenta y el mismo saldo.
+	 *			dos Cuentas son iguales si tienen el mismo numCuenta , el mismo saldo y el mismo idCliente.
 	 * */
 	@Override
 	public boolean equals(Object o) {
@@ -229,7 +160,7 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 		if(o!=null && o instanceof CuentaImp)
 			{
 				CuentaImp c=(CuentaImp)o;
-				if(this.numCuenta==c.numCuenta && this.saldo==c.saldo)
+				if(this.numCuenta==c.numCuenta && this.saldo==c.saldo && this.idCliente==c.idCliente)
 					{
 						iguales=true;
 				}//fin if
@@ -278,11 +209,8 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 
 	@Override
 	public String toString() {
-		String tarjeta="";
-		for(int i=0;i<tarjetas.size();i++){
-			tarjeta=tarjeta.concat("\n\t\t"+tarjetas.elementAt(i).toString());
-		}
-		return "\n\tNumCuenta: " + numCuenta + ", saldo: " + saldo + "euros, \n\t\ttarjetas: " + tarjeta + "";
+		
+		return "\n\tNumCuenta: " + numCuenta + ", saldo: " + saldo + "euros, IdCliente: " + idCliente + "";
 	}
 	
 	

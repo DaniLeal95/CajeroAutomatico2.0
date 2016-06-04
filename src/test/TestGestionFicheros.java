@@ -24,7 +24,7 @@ public class TestGestionFicheros {
 		//System.out.println(obtenida.toString());
 		
 		//escribir cliente
-		TarjetaImp t1=new TarjetaImp('D',"1111");
+		/*TarjetaImp t1=new TarjetaImp('D',"1111");
 		TarjetaImp t3=new TarjetaImp('C',"1234");
 		CuentaImp c2=new CuentaImp(900);
 		
@@ -72,7 +72,7 @@ public class TestGestionFicheros {
 		//System.out.println(c.toString());
 		
 		
-		
+		*/
 		
 		
 	}
