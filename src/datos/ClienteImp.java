@@ -1,9 +1,15 @@
 package datos;
 
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
+import gestionyutilidades.GestionFicheros;
 import gestionyutilidades.Utilidades;
 
 
@@ -187,8 +193,8 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	/*getPrestigio
 	 * 
 	 * Breve comentario:
-	 * 		-Este metodo hará la media de todos los saldos de sus cuentas
-	 * 		y retornara un prestigio segun la media:
+	 * 		-Este metodo recoge el total de todo el saldo de sus cuentas
+	 * 		y retornara un prestigio segun el total:
 	 * 				-Media mayor 20.000€ -> Buena
 	 * 				-Media entre 0€ y 19.999€ -> Normal
 	 * 				-Media menor a 0€ -> Mala
@@ -200,32 +206,105 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	 * 	Entradas:
 	 * 		Nada
 	 * 	Salidas:
-	 * 		Un  Prestigio (String)
+	 * 		Una cadena  Prestigio 
 	 * 	Postcondiciones:
 	 * 		El prestigio retornara asociado al nombre -> Funcion
 	 * */
-	
+	//Resguardo
 	/*public String getPrestigio(){
 		String prestigio=null;
 		double totalCuenta=0;
-			for(int i=0;i<this.cuentas.size();i++){
-				totalCuenta=totalCuenta+this.cuentas.elementAt(i).getSaldo();
-			}
-			double media=totalCuenta/this.cuentas.size();
-			
-			
-			if(media<0.0){
-				prestigio="Mala";
-			}
-			else if(media>=20000.0){
-				prestigio="Buena";
-			}
-			else if(media>0.0 && media<20000.0){
-				prestigio="Normal";
-			}
-		
+	
 		return prestigio;
 	}*/
+	public String getPrestigio(String ficheromaestro,String ficheromovimiento){
+		String prestigio=null;
+		double dineroTotal=0;
+		GestionFicheros gf=new GestionFicheros();
+		
+		File fmae=new File(ficheromaestro);
+		File fmov=new File(ficheromovimiento);
+		
+		FileInputStream fismae=null;
+		FileInputStream fismov=null;
+		
+		ObjectInputStream oismae=null;
+		ObjectInputStream oismov=null;
+		
+		
+		try{
+			//si el fichero de movimiento no existe solo tenenmos que mirar en el fichero maestro
+			if(!fmov.exists()){	
+				fismae=new FileInputStream(fmae);
+				oismae= new ObjectInputStream(fismae);
+				
+				
+				for(int i=0;i<gf.contarRegistros(ficheromaestro);i++){
+					CuentaImp aux=(CuentaImp)oismae.readObject();
+					if(aux.getidCliente()== this.idCliente){
+						dineroTotal=dineroTotal+aux.getSaldo();
+					}
+				}
+			}
+			else{
+				//Si el fichero de movimiento existe primero miraremos en el de movimiento
+				fismov=new FileInputStream(fmov);
+				oismov=new ObjectInputStream(fismov);
+				
+				
+				for(int i=0;i<gf.contarRegistros("CuentasMovimiento.dat");i++){
+					CuentaImp aux=(CuentaImp) oismov.readObject();
+					if(aux.getidCliente()== this.idCliente){
+					}
+				}
+					//Ahora leemos del fichero maestro
+					fismae= new FileInputStream(fmae);
+					oismae=new ObjectInputStream(fismae);
+					
+					
+					for(int i=0;i<gf.contarRegistros(ficheromaestro);i++){
+						
+						CuentaImp aux=(CuentaImp) oismae.readObject();
+						if(aux.getidCliente()== this.idCliente){
+							dineroTotal=dineroTotal+aux.getSaldo();
+						}
+					}
+					
+				
+			}
+		}catch(EOFException eofe){
+			
+		}catch (ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch (IOException ioe) {
+			System.out.println(ioe);
+		}
+		//cerramos ficheros.
+		finally{
+			try{
+				if(oismov!=null){
+					oismov.close();
+					fismov.close();
+				}
+				if(oismae!=null){
+					oismae.close();
+					fismae.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+		}
+		
+		if(dineroTotal >= 20000)
+			prestigio="Buena";
+		else 
+			if(dineroTotal > 0 && dineroTotal<20000)
+				prestigio="Normal";
+			else
+				prestigio="Mala";
+			
+		return prestigio;
+		}
 
 	
 	/*ClientetoCadena
@@ -255,7 +334,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 
 	@Override
 	public String toString() {
-		return "Nombre cliente: "+getNombre()+", IdCliente: " + idCliente + "\n observaciones: " + observaciones + "\n\n--------------------------------";
+		return "Nombre cliente: "+getNombre()+", IdCliente: " + idCliente + "\n observaciones: " + observaciones;
 	}
 	@Override
 	public int hashCode(){

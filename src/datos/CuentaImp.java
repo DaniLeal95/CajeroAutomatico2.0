@@ -1,23 +1,28 @@
 package datos;
 
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Vector;
 
+import gestionyutilidades.GestionFicheros;
 import gestionyutilidades.Utilidades;
 
 
 /*
  *Restricciones :
  **************
- * 	Ninguna
- *
+ *	El idCliente debe existir en los ficheros maestros.
  * Funcionalidades:
  * ***************
  * 	
  * 	Aniadidas:
  *	********
- *		void añadirTarjeta(TarjetaImp t)
  *		String cuentatoCadena()
+ *		boolean validarnumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
  *		
  *
  *	Heredadadas:
@@ -66,9 +71,9 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	
 	public CuentaImp(long saldo,long idCliente){
 		this();
-		//aqui falta metodo comprobar cliente.
 		this.saldo=saldo;
-		this.idCliente=idCliente;
+		if(validaridCliente(idCliente, "ClientesMaestro.dat", "ClientesMovimiento.dat"))
+			this.idCliente=idCliente;
 	}
 	
 
@@ -101,8 +106,8 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	}
 	@Override
 	public void setidCliente(long idCliente){
-		//faltametodocomprobarCliente
-		this.idCliente=idCliente;
+		if(validaridCliente(idCliente, "ClientesMaestro.dat", "ClientesMovimiento.dat"))
+			this.idCliente=idCliente;
 	}
 	
 	
@@ -112,7 +117,112 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	 * ------------------------
 	 * */
 	
-
+	/*
+	 * Breve comentario:
+	 * 	El metodo valida el idCliente, consultando los ficheros de Clientes que le pasamos por parametros 
+	 * 	simulando como seria un Foreign Key en una base de datos.
+	 * 	y retorna un boolean , true en caso de que sea posible utilizar ese idCliente y false cuando no
+	 * Cabecera:
+	 *  boolean validaridCliente(long idCliente, String ficheromaestro,String ficheromovimiento){
+	 * Precondiciones:
+	 * 	Almenos el fichero maestro debe existir, de no se asi saltara una excepcion
+	 * 	
+	 * Entradas:
+	 * 		long idCliente, y dos cadenas con los nombres de los ficheros
+	 * Salidas:
+	 * 		boolean
+	 * Postcondiciones:
+	 * 		boolean retornara asociado al nombre, Funcion.
+	 * 
+	 * */
+	//RESGUARDO
+	//	public boolean validaridCliente(long idCliente, String ficheromaestro,String ficheromovimiento){
+	//		boolean valida=false;
+	//		return valida;
+	//	}
+	
+	public boolean validaridCliente(long idCliente, String ficheromaestro,String ficheromovimiento){
+		boolean valida=false;
+		GestionFicheros gf=new GestionFicheros();
+		
+		File fmae=new File(ficheromaestro);
+		File fmov=new File(ficheromovimiento);
+		
+		FileInputStream fismae=null;
+		FileInputStream fismov=null;
+		
+		ObjectInputStream oismae=null;
+		ObjectInputStream oismov=null;
+		
+		
+		try{
+			//si el fichero de movimiento no existe solo tenenmos que mirar en el fichero maestro
+			if(!fmov.exists()){	
+				fismae=new FileInputStream(fmae);
+				oismae= new ObjectInputStream(fismae);
+				
+				ClienteImp aux=(ClienteImp)oismae.readObject();
+				while(aux!=null && !valida){
+					if(aux.getIdCliente()== idCliente){
+						valida=true;
+					}
+					aux=(ClienteImp)oismae.readObject();
+				}
+			}
+			else{
+				//Si el fichero de movimiento existe primero miraremos en el de movimiento
+				fismov=new FileInputStream(fmov);
+				oismov=new ObjectInputStream(fismov);
+				
+				
+				for(int i=0;i<gf.contarRegistros(ficheromovimiento) && !valida;i++){
+					Cliente aux=(ClienteImp) oismov.readObject();
+					if(aux.getIdCliente()== idCliente){
+						valida=true;
+					}
+				}
+				//si no se a encontrado en el fichero de movimiento , lo miraremos en el maestro
+				if(!valida){
+					fismae= new FileInputStream(fmae);
+					oismae=new ObjectInputStream(fismae);
+					ClienteImp aux=(ClienteImp) oismae.readObject();
+					
+					while(aux!=null && !valida){
+						if(aux.getIdCliente()== idCliente){
+							valida=true;
+						}
+						aux=(ClienteImp) oismae.readObject();
+					}
+					
+				}
+				
+			}
+		}catch(EOFException eofe){
+			
+		}catch (ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch (IOException ioe) {
+			System.out.println(ioe);
+		}
+		//cerramos ficheros.
+		finally{
+			try{
+				if(oismov!=null){
+					oismov.close();
+					fismov.close();
+				}
+				if(oismae!=null){
+					oismae.close();
+					fismae.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+		}
+		
+		
+		return valida;
+	}
 	
 
 	

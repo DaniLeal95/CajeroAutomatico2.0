@@ -9,63 +9,54 @@ import java.util.GregorianCalendar;
 import datos.ClienteImp;
 import datos.CuentaImp;
 import datos.TarjetaImp;
-import gestionyutilidades.GestionFicheros;
 
 public class MainCrearFicherosConCabecera {
 
 	public static void main(String[] args) {
-	/*	File f = null;
-		File fmov = null;
-		FileOutputStream fos = null;
-		FileOutputStream fosmov=null;
-		ObjectOutputStream oos = null;
-		ObjectOutputStream oosmov=null;
+		File fclientes = null;
+		File fcuentas = null;
+		File ftarjetas = null;
 		
-		GestionFicheros gf=new GestionFicheros();
+		FileOutputStream fosclientes = null;
+		FileOutputStream foscuentas=null;
+		FileOutputStream fostarjetas=null;
+		
+		ObjectOutputStream oosclientes = null;
+		ObjectOutputStream ooscuentas=null;
+		ObjectOutputStream oostarjetas= null;
+		
 		
 
 		try {
 			
-			// Abrir fichero para escribir
-			f = new File("ClientesMaestro.dat");
-			fos = new FileOutputStream(f);
-			oos = new ObjectOutputStream(fos);
-			fmov=new File("ClientesMovimiento.dat");
-			fosmov= new FileOutputStream(fmov);
-			oosmov= new ObjectOutputStream(fosmov);
-			/* *
-			 * Meto Dos cientes: uno usuario y otro Administrador. 
-			 * 
-			TarjetaImp t1=new TarjetaImp('D',"1111");
-			TarjetaImp t3=new TarjetaImp('C',"1234");
-			CuentaImp c2=new CuentaImp(900);
+			// Abrir fichero clientes para escribir
+			fclientes = new File("ClientesMaestro.dat");
+			fosclientes = new FileOutputStream(fclientes);
+			oosclientes = new ObjectOutputStream(fosclientes);
 			
-			c2.añadirTarjeta(t1);
-			c2.añadirTarjeta(t3);
+			//Abrimos ficheros para cuentas
+			fcuentas = new File("CuentasMaestro.dat");
+			foscuentas = new FileOutputStream(fcuentas);
+			ooscuentas = new ObjectOutputStream(foscuentas);
 			
-			GregorianCalendar fnacimiento=new GregorianCalendar(1995, 12, 10);
-			GregorianCalendar fActual=new GregorianCalendar();
+			//Abrimos fichero para tarjetas
+			ftarjetas=new File("TarjetasMaestro.dat");
+			fostarjetas= new FileOutputStream(ftarjetas);
+			oostarjetas= new ObjectOutputStream(fostarjetas);
 			
+			//Insertamos un cliente
+			ClienteImp cliente=new ClienteImp("Dani", "Leal", new GregorianCalendar(1995,10,12),"53284930W",'H', "YO, PORQUE SI","123456");
+			oosclientes.writeObject(cliente);
+			System.out.println(cliente.toString());
 			
-			ClienteImp clAdministrador= new ClienteImp("ADMIN","ADMIN",fActual,"00000000A",'H',"ADMINISTRADOR DEL SISTEMA", "111111");
-			ClienteImp cl1 = new ClienteImp("Daniel", "Leal Reyes",fnacimiento,"53284930W",'H',"Este tio es el amo","123456");
-			
-			
-			
-			
-			
-			cl1.addCuenta(c2);
-			System.out.println(cl1.toString());
-			System.out.println(clAdministrador.toString());
-			/*
-			 * Y ahora una cuenta en movimiento
-			 * 
-			CuentaImp c1=gf.obtenerCuenta(1, 1);
-			gf.movimientocon1cuenta(c1, 700);
-			
-			oos.writeObject(clAdministrador);
-			oos.writeObject(cl1);
-			oosmov.writeObject(c1);
+			//Insertamos una Cuenta
+			CuentaImp cuenta=new CuentaImp(1000,1);
+			ooscuentas.writeObject(cuenta);
+			System.out.println(cuenta.toString());
+			//Insertamos una tarjeta
+			TarjetaImp tarjeta=new TarjetaImp('D', "1234", 1);
+			oostarjetas.writeObject(tarjeta);
+			System.out.println(tarjeta.toString());
 			
 		} catch (IOException ioe) {
 			System.out.println(ioe);
@@ -73,20 +64,24 @@ public class MainCrearFicherosConCabecera {
 		finally {
 				try {
 					// Cerrar fichero
-					if(oos!=null){
-						oos.close();
-						fos.close();
+					if(oosclientes!=null){
+						oosclientes.close();
+						fosclientes.close();
 					}
-					if(oosmov!=null){
-						oosmov.close();
-						fosmov.close();
+					if(ooscuentas!=null){
+						ooscuentas.close();
+						foscuentas.close();
+					}
+					if(oostarjetas!=null){
+						oostarjetas.close();
+						fostarjetas.close();
 					}
 				} catch (IOException e) {
 
 					System.out.println(e);
 				}
 			}
-*/
+
 		}
 
 }
