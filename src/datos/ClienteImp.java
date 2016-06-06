@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
@@ -44,7 +45,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	/*Atributos bï¿½sicos*/
 	private long idCliente;
 	private String observaciones;
-	private String contraseña;
+	private String contrasena;
 
 	
 	/*Atributos Compartidos*/
@@ -64,7 +65,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		
 		/*-------------------------------------------*/
 		this.observaciones=" ";
-		this.contraseña=" ";
+		this.contrasena=" ";
 	}
 	
 	public ClienteImp(String nombre,String apellido,GregorianCalendar fnacimiento,String dni,char genero){
@@ -77,10 +78,10 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		u.escribirUltimaId(idCliente,"idclientes.dat");
 		/*-------------------------------------------*/
 		this.observaciones=" ";
-		this.contraseña=" ";
+		this.contrasena=" ";
 	}
 	
-	public ClienteImp(String nombre,String apellido,GregorianCalendar fnacimiento,String dni,char genero,String observaciones,String contraseña){
+	public ClienteImp(String nombre,String apellido,GregorianCalendar fnacimiento,String dni,char genero,String observaciones,String contrasena){
 		super(nombre,apellido,fnacimiento,dni,genero);
 		Utilidades u=new Utilidades();
 		/*Estas 4 lineas son para obtener el idCliente*/
@@ -94,7 +95,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		u.escribirUltimaId(idCliente,"idclientes.dat");
 		/*-------------------------------------------*/
 		this.observaciones=observaciones;
-		this.contraseña=contraseña;
+		this.contrasena=contrasena;
 	}
 	
 	//constructor de copia
@@ -102,7 +103,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		super(c.getNombre(),c.getApellido(),c.getFNacimiento(),c.getDni(),c.getGenero());
 		this.idCliente=c.idCliente;
 		this.observaciones=c.observaciones;
-		this.contraseña=c.contraseña;
+		this.contrasena=c.contrasena;
 	}
 	
 	/*----------------*/
@@ -120,8 +121,8 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	}
 
 	@Override
-	public String getContraseña(){
-		return this.contraseña;
+	public String getContrasena(){
+		return this.contrasena;
 	}
 
 	/*METODOS CONSULTORES REDEFINIDOS*/
@@ -139,7 +140,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		return(super.getDni());
 	}
 	@Override
-	public GregorianCalendar getFNacimiento(){
+	public Calendar getFNacimiento(){
 		return (super.getFNacimiento());
 	}
 	@Override
@@ -157,8 +158,8 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		this.observaciones=observaciones;
 	}
 	@Override
-	public void setContraseña(String contraseña){
-		this.contraseña=contraseña;
+	public void setContrasena(String contrasena){
+		this.contrasena=contrasena;
 	}
 
 	/*METODOS MODIFICADORES REDEFINIDOS*/
@@ -338,7 +339,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	}
 	@Override
 	public int hashCode(){
-		return (int)(idCliente+1/2*Integer.parseInt(contraseña));
+		return (int)(idCliente+1/2*Integer.parseInt(contrasena));
 	}
 	
 	/*
@@ -364,7 +365,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		ClienteImp copia=null;
 		
 		copia = (ClienteImp) super.clone();
-		copia.setContraseña(this.getContraseña());
+		copia.setContrasena(this.getContrasena());
 		copia.setObservaciones(this.getObservaciones());
 		copia.idCliente=this.idCliente;
 		

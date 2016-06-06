@@ -18,9 +18,9 @@ public interface Cliente {
  * 				contadorCliente - entero largo
  * */
 	long getIdCliente();
-	String getContraseña();
+	String getContrasena();
 	String getObservaciones();
 
 	void setObservaciones(String observaciones);
-	void setContraseña(String contraseña);
+	void setContrasena(String contrasena);
 }

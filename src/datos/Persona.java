@@ -1,5 +1,6 @@
 package datos;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 /*
 * Propiedades:
@@ -19,7 +20,7 @@ public interface Persona {
 
 	String getApellido();
 
-	GregorianCalendar getFNacimiento();
+	Calendar getFNacimiento();
 
 	char getGenero();
 

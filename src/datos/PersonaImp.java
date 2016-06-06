@@ -1,6 +1,7 @@
 package datos;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /*
@@ -41,7 +42,7 @@ public class PersonaImp implements Serializable, Persona,Cloneable, Comparable<P
 	private char genero;
 	private String telefono;
 	private String direccion;
-	private GregorianCalendar fNacimiento;
+	private Calendar fNacimiento;
 
 	//constructores ordinarios
 	public PersonaImp(){
@@ -54,7 +55,7 @@ public class PersonaImp implements Serializable, Persona,Cloneable, Comparable<P
 		this.fNacimiento=new GregorianCalendar();
 	}
 	
-	public PersonaImp(String nombre, String apellido, GregorianCalendar fNacimiento, String dni, char genero){
+	public PersonaImp(String nombre, String apellido, Calendar fNacimiento, String dni, char genero){
 		this();
 		GregorianCalendar fActual=new GregorianCalendar();
 		if(fNacimiento.compareTo(fActual)<0){
@@ -120,7 +121,7 @@ public class PersonaImp implements Serializable, Persona,Cloneable, Comparable<P
 	}
 	
 	@Override
-	public GregorianCalendar getFNacimiento(){
+	public Calendar getFNacimiento(){
 		return this.fNacimiento;
 	}
 	

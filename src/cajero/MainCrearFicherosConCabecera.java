@@ -28,7 +28,7 @@ public class MainCrearFicherosConCabecera {
 		
 
 		try {
-			
+			//FICHEROS MAESTROS
 			// Abrir fichero clientes para escribir
 			fclientes = new File("ClientesMaestro.dat");
 			fosclientes = new FileOutputStream(fclientes);
@@ -45,9 +45,10 @@ public class MainCrearFicherosConCabecera {
 			oostarjetas= new ObjectOutputStream(fostarjetas);
 			
 			//Insertamos un cliente
+			ClienteImp admin=new ClienteImp("Admin", "Admin", new GregorianCalendar(),"11111111W",'H', "ADMIN","111111");
 			ClienteImp cliente=new ClienteImp("Dani", "Leal", new GregorianCalendar(1995,10,12),"53284930W",'H', "YO, PORQUE SI","123456");
+			oosclientes.writeObject(admin);
 			oosclientes.writeObject(cliente);
-			System.out.println(cliente.toString());
 			
 			//Insertamos una Cuenta
 			CuentaImp cuenta=new CuentaImp(1000,1);
@@ -57,6 +58,8 @@ public class MainCrearFicherosConCabecera {
 			TarjetaImp tarjeta=new TarjetaImp('D', "1234", 1);
 			oostarjetas.writeObject(tarjeta);
 			System.out.println(tarjeta.toString());
+			
+			
 			
 		} catch (IOException ioe) {
 			System.out.println(ioe);

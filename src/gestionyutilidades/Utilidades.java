@@ -104,46 +104,7 @@ public class Utilidades {
 		
 		return id;
 	}
-	
-	/*
-	 * validarPin
-	 * 	
-	 * Breve comentario:
-	 * 		El metodo validara el pin de la tarjeta
-	 * 			si el pin es correcto retornara true y false si no es correcto
-	 * cabecera:
-	 * 		boolean validarPin()
-	 * Precondiciones:
-	 * 		nada
-	 * Entradas:
-	 * 		nada
-	 * Salida:
-	 * 		boolean (validacion)
-	 * Postcondiciones:
-	 * 		el boolean retornara asociado al nombre -> Funcion
-	 * 	
-	 * */
-	public boolean validarPin(String pin) {
-		// Comprobacion del pin
-		boolean valido = true;
-		if (pin.length() == 4) {
 
-			for (int i = 0; i < pin.length() && valido; i++) {
-				
-				if (!Character.isDigit(pin.charAt(i))) {
-					valido = false;
-				}
-				
-			}
-		}
-		else{
-			valido=false;
-		}
-		return valido;
-	}
-	
-	
-	
 	/*
 	 * validar Tarjeta Registrada
 	 * 

@@ -67,7 +67,7 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 		if(Character.toUpperCase(tipo)=='C' || Character.toUpperCase(tipo)=='D'){
 			this.tipo=tipo;
 		}
-		if(u.validarPin(pin)){
+		if(validarPin(pin)){
 			this.pin=pin;
 		}
 		if(validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat")){
@@ -121,7 +121,7 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	@Override
 	public void setPin(String pin) throws TarjetaExcepcion {
 		Utilidades u=new Utilidades();
-		if(!u.validarPin(pin))
+		if(!validarPin(pin))
 			throw new TarjetaExcepcion("El pin introducido es incorrecto");
 		else
 			this.pin=pin;
@@ -247,7 +247,42 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 		return valida;
 	}
 	
-	
+	/*
+	 * validarPin
+	 * 	
+	 * Breve comentario:
+	 * 		El metodo validara el pin de la tarjeta
+	 * 			si el pin es correcto retornara true y false si no es correcto
+	 * cabecera:
+	 * 		boolean validarPin()
+	 * Precondiciones:
+	 * 		nada
+	 * Entradas:
+	 * 		nada
+	 * Salida:
+	 * 		boolean (validacion)
+	 * Postcondiciones:
+	 * 		el boolean retornara asociado al nombre -> Funcion
+	 * 	
+	 * */
+	public boolean validarPin(String pin) {
+		// Comprobacion del pin
+		boolean valido = true;
+		if (pin.length() == 4) {
+
+			for (int i = 0; i < pin.length() && valido; i++) {
+				
+				if (!Character.isDigit(pin.charAt(i))) {
+					valido = false;
+				}
+				
+			}
+		}
+		else{
+			valido=false;
+		}
+		return valido;
+	}
 	
 	/*
 	 *  comentario: 
@@ -342,7 +377,7 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 		if(tipo=='C')tip="Credito";	//esto simplemente es estetico, 
 					//para que en vez que en el toString muestre un char nos muestre una cadena
 		
-		return "Numtarjeta: " + (numtarjeta) +", tipo: " + tip +", Pin: "+this.pin;
+		return "Numtarjeta: " + (numtarjeta) +", tipo: " + tip +", Pin: "+this.pin+", NumCuenta: "+this.numCuenta;
 	}
 
 	

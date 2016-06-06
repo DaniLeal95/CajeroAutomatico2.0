@@ -17,7 +17,23 @@ public class TestGestionFicheros {
 		
 		//mostrarFicheroMaestro
 		
-		//gf.mostrarFicheromaestro();
+		gf.mostrarClientes("ClientesMaestro.dat");
+		
+		ClienteImp c=new ClienteImp("ClienteNuevo","PEPOTE",new GregorianCalendar(2002,2,18),"11111111F",'M',"PRUEBA","123456");
+		System.out.println("AÃ‘ADO UN CLIENTE A MOVIMIENTOS");
+		gf.escribirMovimiento("ClientesMovimiento.dat", c);
+		
+		System.out.println("MUESTRO CLIENTES");
+		gf.mostrarClientes("ClientesMovimiento.dat");
+		
+		
+		//System.out.println("ACTUALIZO");
+		//ordenacionExternaMezcla("ClientesMaestro.dat");
+		
+		gf.actualizaClientes("ClientesMaestro.dat", "ClientesMovimiento.dat");
+		
+		System.out.println("MUESTRO CLIENTES MAESTRO");
+		gf.mostrarClientes("ClientesMaestro.dat");
 		
 		//ObtenerCuenta
 		//CuentaImp obtenida=gf.obtenerCuenta(2, 1);
@@ -28,8 +44,6 @@ public class TestGestionFicheros {
 		TarjetaImp t3=new TarjetaImp('C',"1234");
 		CuentaImp c2=new CuentaImp(900);
 		
-		c2.añadirTarjeta(t1);
-		c2.añadirTarjeta(t3);
 		GregorianCalendar fnacimiento=new GregorianCalendar(1995, 12, 10);
 		ClienteImp cl1 = new ClienteImp("EAESA", "Leal Reyes",fnacimiento,"53284930W",'H',"Este tio es el amo","123456");
 		
