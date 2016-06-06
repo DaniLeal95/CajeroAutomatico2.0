@@ -6,13 +6,13 @@ import cajero.TarjetaExcepcion;
 import datos.ClienteImp;
 import datos.CuentaImp;
 import datos.TarjetaImp;
-import gestionyutilidades.GestionFicheros;
+import gestionyutilidades.GestionFicherosClientes;
 import gestionyutilidades.Utilidades;
 
 public class TestGestionFicheros {
 
 	public static void main(String[] args) {
-		GestionFicheros gf=new GestionFicheros();
+		GestionFicherosClientes gf=new GestionFicherosClientes();
 		Utilidades u=new Utilidades();
 		
 		//mostrarFicheroMaestro

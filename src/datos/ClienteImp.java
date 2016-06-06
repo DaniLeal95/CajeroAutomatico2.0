@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
-import gestionyutilidades.GestionFicheros;
+import gestionyutilidades.GestionFicherosClientes;
 import gestionyutilidades.Utilidades;
 
 
@@ -221,7 +221,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	public String getPrestigio(String ficheromaestro,String ficheromovimiento){
 		String prestigio=null;
 		double dineroTotal=0;
-		GestionFicheros gf=new GestionFicheros();
+		GestionFicherosClientes gf=new GestionFicherosClientes();
 		
 		File fmae=new File(ficheromaestro);
 		File fmov=new File(ficheromovimiento);

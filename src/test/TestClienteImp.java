@@ -6,12 +6,12 @@ import datos.ClienteImp;
 import datos.CuentaImp;
 import datos.PersonaNoValida;
 import datos.TarjetaImp;
-import gestionyutilidades.GestionFicheros;
+import gestionyutilidades.GestionFicherosClientes;
 
 public class TestClienteImp {
 
 	public static void main(String[] args) {
-		GestionFicheros gf=new GestionFicheros();
+		GestionFicherosClientes gf=new GestionFicherosClientes();
 		/*
 			TarjetaImp t1=new TarjetaImp('D',"1234");
 			TarjetaImp t2=new TarjetaImp('C',"1234");

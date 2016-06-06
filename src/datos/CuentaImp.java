@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Vector;
 
-import gestionyutilidades.GestionFicheros;
+import gestionyutilidades.GestionFicherosClientes;
 import gestionyutilidades.Utilidades;
 
 
@@ -143,7 +143,7 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	
 	public boolean validaridCliente(long idCliente, String ficheromaestro,String ficheromovimiento){
 		boolean valida=false;
-		GestionFicheros gf=new GestionFicheros();
+		GestionFicherosClientes gf=new GestionFicherosClientes();
 		
 		File fmae=new File(ficheromaestro);
 		File fmov=new File(ficheromovimiento);

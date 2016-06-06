@@ -14,7 +14,7 @@ import cajero.MiObjectOutputStream;
 import datos.ClienteImp;
 import datos.CuentaImp;
 
-public class GestionFicheros  {
+public class GestionFicherosTarjetas  {
 
 
 
@@ -619,7 +619,7 @@ public class GestionFicheros  {
 	public  void ordenacionExternaMezcla(String fichero) {
 		int secuencia = 1;
 		int registros = 0;
-		GestionFicheros gf=new GestionFicheros();
+		GestionFicherosTarjetas gf=new GestionFicherosTarjetas();
 		
 		String fAux1 = ("ClientesAux1.dat");
 		String fAux2 = ("ClientesAux2.dat");
