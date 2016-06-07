@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import cajero.MiObjectOutputStream;
+import datos.ClienteImp;
 import datos.TarjetaImp;
 
 public class GestionFicherosTarjetas  {
@@ -33,6 +34,7 @@ public class GestionFicherosTarjetas  {
 	 * 		Nada
 	 * */
 	public void mostrarTarjetas(String nombreFichero){
+		Utilidades u=new Utilidades();
 		File fmaestro=null;
 		FileInputStream fismaestro=null;
 		ObjectInputStream oismaestro=null;
@@ -42,7 +44,7 @@ public class GestionFicherosTarjetas  {
 			fismaestro=new FileInputStream(fmaestro);
 			oismaestro=new ObjectInputStream(fismaestro);
 			
-				for(int i=0;i<contarRegistros(nombreFichero);i++){
+				for(int i=0;i<u.contarRegistros(nombreFichero);i++){
 					TarjetaImp tarjeta=(TarjetaImp)oismaestro.readObject();
 					System.out.println(tarjeta.toString());
 				}
@@ -123,65 +125,116 @@ public class GestionFicherosTarjetas  {
 		
 	}
 
+/*
+ *	ObtenerTarjeta
+ *	Breve Comentario: 
+ *		El metodo retornara una TarjetaImp actualizada, segun un numTarjeta indicado en los parametros.
+ *	Cabecera:
+ *		TarjetaImp obtenerTarjeta(long numTarjeta,String nombreFicheroMaestro,String nombreFicheroMovimiento)
+ *	Precondiciones:
+ *	Almenos el fichero Maestro Debera EstarCreado. Si no saltara una excepcion de fichero no encontrado	
+ *  ,si el numTarjeta no corresponde a ninguna tarjeta, retornara null.
+ *	Entradas:
+ *		un enterolargo, y dos cadenas
+ *	Salidas:
+ *		una TarjetaImp
+ *	Postcondiciones:
+ *		TarjetaImp retornara asociada al nombre -> FUNCION.
+ * *
+ */
+ //Resguardo	
+//	public TarjetaImp obtenerTarjeta(long numTarjeta){
+//		TarjetaImp tarjeta=null;
+//		System.out.println("En Construccion.");
+//		return tarjeta;
+//	}
 	
-	/*contarRegistros
-	 * 
-	 * Breve comentario:
-	 * 		El metodo lee todo el fichero y retorna el numero de registros que hayan en el fichero cuyo nombre 
-	 *  		se le  pasa por parametros
-	 * 	Cabecera:
-	 * 		int contarRegistros(String nombreFichero)
-	 * 	Precondiciones:
-	 * 		El fichero debera existir, en el caso de que no este creado saltara una excepcion(FILENOTFOUNDEXCEPTION)
-	 * 	Entradas:
-	 * 		el nombre del fichero(String)
-	 * 	Salida:
-	 * 		un entero numregistros
-	 * 	Postcondiciones:
-	 * 		el numregistros retornara asociado al nombre -> Funcion.
-	 * 
-	 * */
-	
-	public int contarRegistros(String nombreFichero){
-		int registro=0;
-		File f=null;
-		FileInputStream fis=null;
-		ObjectInputStream ois=null;
-		try{
-			f=new File(nombreFichero);
-			fis=new FileInputStream(f);
-			ois=new ObjectInputStream(fis);
-			
-			Object c=ois.readObject();
+	public TarjetaImp obtenerTarjeta(long numTarjeta,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+		TarjetaImp tarjeta=null;
+		Utilidades u=new Utilidades();
+		boolean encontrado=false;
 		
-			while(c!=null){
-				registro++;
-				c=ois.readObject();
+		File fmaestro=new File(nombreFicheroMaestro);
+		File fmovimiento=new File(nombreFicheroMovimiento);
+		
+		FileInputStream fismaestro=null;
+		FileInputStream fismovimiento=null;
+		
+		ObjectInputStream oismaestro=null;
+		ObjectInputStream oismovimiento=null;
+		
+		try{
+			//Si no hay fichero de movimientos solo mira en el maestro
+			if (!fmovimiento.exists()) {
+				fismaestro = new FileInputStream(fmaestro);
+				oismaestro = new ObjectInputStream(fismaestro);
+				// mientras haya registros y no se haya encontrado
+				for (int i = 0; i < u.contarRegistros(nombreFicheroMaestro) && !encontrado; i++) {
+					TarjetaImp aux = (TarjetaImp) oismaestro.readObject();
+					// Si lo encuentra deja de buscar en el fichero maestro
+					// y asignale la tarjeta encontrada.
+					if (aux.getNumtarjeta() == numTarjeta) {
+						tarjeta = aux;
+						encontrado = true;
+					}
+				}
 			}
-		}catch(EOFException eof){
-			System.out.println("");
-		}catch(FileNotFoundException fnfe){
-			System.out.println("El fichero "+nombreFichero+" no existe");
+			else{
+				//Si existe fichero de movimientos miraremos primero en el.
+				fismovimiento = new FileInputStream(fmovimiento);
+				oismovimiento = new ObjectInputStream(fismovimiento);
+				for (int i = 0; i < u.contarRegistros(nombreFicheroMaestro) && !encontrado; i++) {
+					TarjetaImp aux = (TarjetaImp) oismovimiento.readObject();
+					// Si lo encuentra deja de buscar en el fichero maestro
+					// y asignale la tarjeta encontrada.
+					if (aux.getNumtarjeta() == numTarjeta) {
+						tarjeta = aux;
+						encontrado = true;
+					}
+				}
+				
+				//Si en el fichero de movimientos no existe ninguna modificacion suya
+				//Tendremos que mirar en el maestro
+				if(!encontrado){
+					fismaestro = new FileInputStream(fmaestro);
+					oismaestro = new ObjectInputStream(fismaestro);
+					// mientras haya registros y no se haya encontrado
+					for (int i = 0; i < u.contarRegistros(nombreFicheroMaestro) && !encontrado; i++) {
+						TarjetaImp aux = (TarjetaImp) oismaestro.readObject();
+						// Si lo encuentra deja de buscar en el fichero maestro
+						// y asignale la tarjeta encontrada.
+						if (aux.getNumtarjeta() == numTarjeta) {
+							tarjeta = aux;
+							encontrado = true;
+						}
+					}
+				}
+			}
+			
+			
+			
+		}catch(ClassNotFoundException cnfe){
+			System.out.println(cnfe);
 		}catch(IOException ioe){
 			System.out.println(ioe);
-		} catch (ClassNotFoundException e) {
-			System.out.println(e);
 		}finally{
-			
-				try{
-					if(ois!=null){
-						ois.close();
-						fis.close();
-					}
-				}catch(IOException ioe){
-					System.out.println(ioe);
+			try{
+				if(oismaestro!=null){
+					oismaestro.close();
+					fismaestro.close();
 				}
-			
+				if(oismovimiento!=null){
+					oismovimiento.close();
+					fismovimiento.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
 		}
-	
-		return registro;
+		
+		
+		return tarjeta;
 	}
-
 
 /*
  * actualiza Tarjetas
@@ -201,12 +254,12 @@ public class GestionFicherosTarjetas  {
  * */
 
 	public void actualizaTarjetas(String nombreFicheroMaestro,String nombreFicheroMovimiento) {
-		
+		Utilidades u=new Utilidades();
 		ordenacionExternaMezcla(nombreFicheroMaestro);
 		ordenacionExternaMezcla(nombreFicheroMovimiento);
 		File fmaestro = new File(nombreFicheroMaestro);
 		File fmovimiento = new File(nombreFicheroMovimiento);
-		File fmaestronuevo = new File("ClientesMaestroNuevo.dat");
+		File fmaestronuevo = new File("TarjetasMaestroNuevo.dat");
 		// Para leer maestro
 		FileInputStream fism = null;
 		ObjectInputStream oism = null;
@@ -222,8 +275,8 @@ public class GestionFicherosTarjetas  {
 		int numregistrosmovimiento;
 
 		if (fmaestro.exists() && fmovimiento.exists()) {
-			numregistrosmaestro = this.contarRegistros("ClientesMaestro.dat");
-			numregistrosmovimiento = this.contarRegistros("ClientesMovimiento.dat");
+			numregistrosmaestro = u.contarRegistros(nombreFicheroMaestro);
+			numregistrosmovimiento = u.contarRegistros(nombreFicheroMovimiento);
 			try {
 
 				// Abrimos para leer el archivo maestro
@@ -374,42 +427,57 @@ public class GestionFicherosTarjetas  {
 	public  void ordenacionExternaMezcla(String fichero) {
 		int secuencia = 1;
 		int registros = 0;
-		GestionFicherosTarjetas gf=new GestionFicherosTarjetas();
+		Utilidades u=new Utilidades();
 		
 		String fAux1 = ("TarjetasAux1.dat");
 		String fAux2 = ("TarjetasAux2.dat");
 		
 		File ficheroAux1 = new File(fAux1);
 		File ficheroAux2 = new File(fAux2);
+		File f=new File(fichero);
 		
-		registros = gf.contarRegistros(fichero);		
-		while(secuencia <= registros) {
+		registros = u.contarRegistros(fichero);		
+		while(secuencia < registros) {
+			//partimos.
 			partirFichero(fichero, fAux1, fAux2, secuencia);
-			mezclarFichero(fichero, fAux1, fAux2, secuencia);			
+			//vaciarmaestro.
+			f.delete();
+			f=new File(fichero);
+			//mezclamos
+			mezclarFichero(fichero, fAux1, fAux2, secuencia);
+			//vaciarauxiliares
+			ficheroAux1.delete();
+			ficheroAux2.delete();
+			ficheroAux1=new File(fAux1);
+			ficheroAux2=new File(fAux2);
+			
 			secuencia = secuencia*2;
 		}
 		ficheroAux1.delete();
-		ficheroAux2.delete();//ESTE NO SE BORRA
+		ficheroAux2.delete();
 	}
 	
 	/* partirFichero
 	 * 
-	 * Cabecera: void partirFichero(String fichero, String fAux1, String fAux2, int secuencia)
+	 * Cabecera: void partirFichero(String nombrefichero, String nombrefAux1, String nombrefAux2, int secuencia)
 	 * Comentario: Dado un fichero y una secuencia, se partirá en dos ficheros
 	 * Precondición: Nada
 	 * Entrada: Tres cadenas (representando los ficheros) y un entero (secuencia)
 	 * Salida: Los dos ficheros auxiliares (fAux1 y fAux2) se repartirán los datos del fichero original
 	 * Postcondición: Los dos ficheros auxiliares tendrán el contenido del fichero original distribuido entre ellos
 	 */
-	public  void partirFichero(String fichero, String fAux1, String fAux2, int secuencia) {
+	public  void partirFichero(String nombrefichero, String nombrefAux1, String nombrefAux2, int secuencia) {
+		File fichero=new File(nombrefichero);
 		FileInputStream ficheroFIS = null;
 		ObjectInputStream ficheroOIS = null;
 		
+		File fAux1=new File(nombrefAux1);
 		FileOutputStream fAux1FOS = null;
 		ObjectOutputStream fAux1OOS = null;
 		
+		File fAux2=new File(nombrefAux2);
 		FileOutputStream fAux2FOS = null;
-		MiObjectOutputStream fAux2OOS = null;
+		ObjectOutputStream fAux2OOS = null;
 		
 		TarjetaImp registro = null;
 		
@@ -420,8 +488,8 @@ public class GestionFicherosTarjetas  {
 			fAux1FOS = new FileOutputStream(fAux1);
 			fAux1OOS = new ObjectOutputStream(fAux1FOS);
 			
-			fAux2FOS = new FileOutputStream(fAux2,true);
-			fAux2OOS = new MiObjectOutputStream(fAux2FOS);
+			fAux2FOS = new FileOutputStream(fAux2);
+			fAux2OOS = new ObjectOutputStream(fAux2FOS);
 			
 			registro = (TarjetaImp) ficheroOIS.readObject();
 			
@@ -435,6 +503,8 @@ public class GestionFicherosTarjetas  {
 					registro = (TarjetaImp) ficheroOIS.readObject();
 				}
 			}
+		} catch(EOFException eof){
+			
 		} catch (IOException e) {
 			registro = null;
 		} catch (ClassNotFoundException e) {
@@ -456,6 +526,7 @@ public class GestionFicherosTarjetas  {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
 		}
 	}
 	
@@ -468,9 +539,9 @@ public class GestionFicherosTarjetas  {
 	 * Salida: Un fichero que contendrá toda la información de los auxiliares
 	 * Postcondición: Los dos ficheros auxiliares tendrán el contenido del fichero original distribuido entre ellos
 	 */	
-	public static void mezclarFichero(String fichero, String fAux1, String fAux2, int secuencia) {
+	public  void mezclarFichero(String fichero, String fAux1, String fAux2, int secuencia) {
 		FileOutputStream ficheroFOS = null;
-		MiObjectOutputStream ficheroOOS = null;
+		ObjectOutputStream ficheroOOS = null;
 		
 		FileInputStream fAux1FIS = null;
 		ObjectInputStream fAux1OIS = null;
@@ -486,7 +557,7 @@ public class GestionFicherosTarjetas  {
 		
 		try {
 			ficheroFOS = new FileOutputStream(fichero,true);
-			ficheroOOS = new MiObjectOutputStream(ficheroFOS);
+			ficheroOOS = new ObjectOutputStream(ficheroFOS);
 			
 			fAux1FIS = new FileInputStream(fAux1);
 			fAux1OIS = new ObjectInputStream(fAux1FIS);
@@ -563,8 +634,10 @@ public class GestionFicherosTarjetas  {
 					}					
 				}
 			}
+		} catch(EOFException eof){
+			
 		} catch (IOException e) {
-			//e.printStackTrace();
+			System.out.println(e);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} finally {

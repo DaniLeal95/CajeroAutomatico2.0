@@ -347,7 +347,7 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 		if(this.numtarjeta<t.numtarjeta)
 			compara = -1;
 		else
-			if(this.tipo>t.tipo)
+			if(this.numtarjeta>t.numtarjeta)
 				compara = 1;
 		return compara;
 	}

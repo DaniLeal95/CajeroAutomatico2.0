@@ -548,26 +548,4 @@ public class GestionFicherosClientes  {
 		}
 	}
 	
-	public void vaciarFichero(String nombrefichero){
-		File f=new File(nombrefichero);
-		FileOutputStream fos=null;
-		ObjectOutputStream oos=null;
-		try{
-			fos=new FileOutputStream(f);
-			oos=new ObjectOutputStream(fos);
-			oos.writeObject(null);
-			
-		}catch(IOException ioe){
-			System.out.println(ioe);
-		}finally{
-			try{
-				if(oos!=null){
-					oos.close();
-					fos.close();
-				}
-			}catch(IOException ioe){
-				System.out.println(ioe);
-			}
-		}
-	}
 }
