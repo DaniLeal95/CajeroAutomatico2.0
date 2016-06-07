@@ -8,7 +8,6 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 import cajero.TarjetaExcepcion;
-import gestionyutilidades.GestionFicherosClientes;
 import gestionyutilidades.Utilidades;
 
 public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,Cloneable {
@@ -63,7 +62,6 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	
 	public TarjetaImp(char tipo,String pin, long numCuenta) {
 		this();
-		Utilidades u=new Utilidades();
 		if(Character.toUpperCase(tipo)=='C' || Character.toUpperCase(tipo)=='D'){
 			this.tipo=tipo;
 		}
@@ -120,7 +118,6 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	}
 	@Override
 	public void setPin(String pin) throws TarjetaExcepcion {
-		Utilidades u=new Utilidades();
 		if(!validarPin(pin))
 			throw new TarjetaExcepcion("El pin introducido es incorrecto");
 		else
@@ -166,7 +163,7 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	
 	public boolean validarnumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
 		boolean valida=false;
-		GestionFicherosClientes gf=new GestionFicherosClientes();
+		Utilidades u=new Utilidades();
 		
 		File fmae=new File(ficheromaestro);
 		File fmov=new File(ficheromovimiento);
@@ -198,7 +195,7 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 				oismov=new ObjectInputStream(fismov);
 				
 				
-				for(int i=0;i<gf.contarRegistros("CuentasMovimiento.dat") && !valida;i++){
+				for(int i=0;i<u.contarRegistros("CuentasMovimiento.dat") && !valida;i++){
 					CuentaImp aux=(CuentaImp) oismov.readObject();
 					if(aux.getNumCuenta()== numCuenta){
 						valida=true;

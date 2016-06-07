@@ -8,9 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Vector;
 
-import gestionyutilidades.GestionFicherosClientes;
 import gestionyutilidades.Utilidades;
 
 
@@ -221,7 +219,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	public String getPrestigio(String ficheromaestro,String ficheromovimiento){
 		String prestigio=null;
 		double dineroTotal=0;
-		GestionFicherosClientes gf=new GestionFicherosClientes();
+		Utilidades u=new Utilidades();
 		
 		File fmae=new File(ficheromaestro);
 		File fmov=new File(ficheromovimiento);
@@ -240,7 +238,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 				oismae= new ObjectInputStream(fismae);
 				
 				
-				for(int i=0;i<gf.contarRegistros(ficheromaestro);i++){
+				for(int i=0;i<u.contarRegistros(ficheromaestro);i++){
 					CuentaImp aux=(CuentaImp)oismae.readObject();
 					if(aux.getidCliente()== this.idCliente){
 						dineroTotal=dineroTotal+aux.getSaldo();
@@ -253,7 +251,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 				oismov=new ObjectInputStream(fismov);
 				
 				
-				for(int i=0;i<gf.contarRegistros("CuentasMovimiento.dat");i++){
+				for(int i=0;i<u.contarRegistros("CuentasMovimiento.dat");i++){
 					CuentaImp aux=(CuentaImp) oismov.readObject();
 					if(aux.getidCliente()== this.idCliente){
 					}
@@ -263,7 +261,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 					oismae=new ObjectInputStream(fismae);
 					
 					
-					for(int i=0;i<gf.contarRegistros(ficheromaestro);i++){
+					for(int i=0;i<u.contarRegistros(ficheromaestro);i++){
 						
 						CuentaImp aux=(CuentaImp) oismae.readObject();
 						if(aux.getidCliente()== this.idCliente){

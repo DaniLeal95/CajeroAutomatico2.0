@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
 import cajero.MiObjectOutputStream;
 import datos.ClienteImp;
@@ -38,13 +37,14 @@ public class GestionFicherosClientes  {
 		File fmaestro=null;
 		FileInputStream fismaestro=null;
 		ObjectInputStream oismaestro=null;
+		Utilidades u=new Utilidades();
 		
 		try{
 			fmaestro=new File(nombreFichero);
 			fismaestro=new FileInputStream(fmaestro);
 			oismaestro=new ObjectInputStream(fismaestro);
 			
-				for(int i=0;i<contarRegistros(nombreFichero);i++){
+				for(int i=0;i<u.contarRegistros(nombreFichero);i++){
 					ClienteImp cliente=(ClienteImp)oismaestro.readObject();
 					System.out.println(cliente.toString());
 				}
@@ -74,65 +74,21 @@ public class GestionFicherosClientes  {
 	}
 
 	
-	
-//	/*Escribir Fichero ClienteMaestro
-//	 * 	Breve comentario:
-//	 * 		El metodo escribirá en el fichero Cliente un objeto clienteImp que recibirá por parametros 
-//	 * 	Cabecera:
-//	 * 		void escribirCliente(ClienteImp cliente)
-//	 * 	Precondiciones:
-//	 * 		Nada
-//	 * 	Entradas:
-//	 * 		un objeto ClienteImp
-//	 * 	Salidas:
-//	 * 		Nada 
-//	 * 	Postcondiciones:
-//	 * 		Escribirá el objeto en el fichero.
-//	 * */
-//	public void escribirCliente(ClienteImp cliente){
-//		boolean valida=true;
-//		Utilidades u= new Utilidades();
-//		File f=null;
-//		FileOutputStream fos=null;
-//		MiObjectOutputStream oos=null;
-//		try{
-//			f=new File("ClientesMaestro.dat");
-//			fos=new FileOutputStream(f,true);
-//			oos=new MiObjectOutputStream(fos);
-//
-//			oos.writeObject(cliente);
-//			
-//		}catch(IOException ioe){
-//			System.out.println(ioe);
-//		}finally{
-//			
-//				try{
-//					if(oos!=null){
-//					oos.close();
-//					fos.close();
-//					}
-//				}catch(IOException ioe){
-//					System.out.println(ioe);
-//				}
-//			
-//		}
-//	}
-	
-	/*Escribir Fichero 
+	/*EscribirClienteMovimiento
 	 * 	Breve comentario:
-	 * 		El metodo escribirá en el fichero ("ClientesMovimiento.dat") un objeto Cliente que recibirá por parametros 
+	 * 		El metodo escribirá en el fichero un objeto Cliente que recibirá por parametros 
 	 * 	Cabecera:
-	 * 		void escribirCliente(ClienteImp cliente)
+	 * 		void escribirClienteMovimiento(ClienteImp cliente)
 	 * 	Precondiciones:
 	 * 		Nada
 	 * 	Entradas:
-	 * 		un objeto CuentaImp
+	 * 		un objeto ClienteImp y String nombreFichero
 	 * 	Salidas:
 	 * 		Nada 
 	 * 	Postcondiciones:
 	 * 		Escribirá el objeto en el fichero.
 	 * */
-	public void escribirMovimiento(String nombreFichero,ClienteImp c){
+	public void escribirClienteMovimiento(String nombreFichero,ClienteImp c){
 		
 		File f=null;
 		FileOutputStream fos=null;
@@ -168,119 +124,9 @@ public class GestionFicherosClientes  {
 		}
 		
 	}
-//	/*
-//	 * Mostrar fichero movimientos
-//	 * 	Breve Comentario:
-//	 * 		Este metodo mostrara por pantalla todos los movimientos que tenemos registrados en el fichero de movimientos
-//	 * 		
-//	 * 	Cabecera:
-//	 * 		 void mostrarFicheromovimiento()
-//	 * 	Precondiciones:
-//	 * 		el fichero debera estar creado, de no estarlo saltara una excepcion de fichero no encontrado
-//	 * 	Entradas:
-//	 * 		Nada
-//	 * 	Salidas:
-//	 * 		Nada
-//	 * 	Postcondiciones:
-//	 * 		Nada
-//	 * */
-//	public void mostrarFicheromovimiento(){
-//		File f=null;
-//		FileInputStream fis=null;
-//		ObjectInputStream ois=null;
-//		try{
-//			f=new File("ClientesMovimiento.dat");
-//			fis=new FileInputStream(f);
-//			ois=new ObjectInputStream(fis);
-//			
-//			ClienteImp cliente=(ClienteImp)ois.readObject();
-//			while(cliente!=null){
-//			System.out.println(cliente.toString());
-//			cliente=(ClienteImp)ois.readObject();
-//			
-//			}
-//		
-//		}catch(FileNotFoundException fnfe){
-//			System.out.println("Fichero no encontrado");
-//		}catch(EOFException eof){
-//			System.out.println("");
-//		}	catch (IOException ioe) {
-//			System.out.println(ioe);
-//		} catch (ClassNotFoundException cnfe) {
-//			System.out.println(cnfe);
-//		}finally{
-//			try{
-//				if(ois!=null){
-//				ois.close();
-//				fis.close();
-//				}
-//			}catch(IOException ioe){
-//				System.out.println(ioe);
-//			}
-//		}
-//		
-//	}
-//	
-	
-	/*contarRegistros
-	 * 
-	 * Breve comentario:
-	 * 		El metodo lee todo el fichero y retorna el numero de registros que hayan en el fichero cuyo nombre 
-	 *  		se le  pasa por parametros
-	 * 	Cabecera:
-	 * 		int contarRegistros(String nombreFichero)
-	 * 	Precondiciones:
-	 * 		El fichero debera existir, en el caso de que no este creado saltara una excepcion(FILENOTFOUNDEXCEPTION)
-	 * 	Entradas:
-	 * 		el nombre del fichero(String)
-	 * 	Salida:
-	 * 		un entero numregistros
-	 * 	Postcondiciones:
-	 * 		el numregistros retornara asociado al nombre -> Funcion.
-	 * 
-	 * */
-	
-	public int contarRegistros(String nombreFichero){
-		int registro=0;
-		File f=null;
-		FileInputStream fis=null;
-		ObjectInputStream ois=null;
-		try{
-			f=new File(nombreFichero);
-			fis=new FileInputStream(f);
-			ois=new ObjectInputStream(fis);
-			
-			Object c=ois.readObject();
-		
-			while(c!=null){
-				registro++;
-				c=ois.readObject();
-			}
-		}catch(EOFException eof){
-			System.out.println("");
-		}catch(FileNotFoundException fnfe){
-			System.out.println("El fichero "+nombreFichero+" no existe");
-		}catch(IOException ioe){
-			System.out.println(ioe);
-		} catch (ClassNotFoundException e) {
-			System.out.println(e);
-		}finally{
-			
-				try{
-					if(ois!=null){
-						ois.close();
-						fis.close();
-					}
-				}catch(IOException ioe){
-					System.out.println(ioe);
-				}
-			
-		}
-	
-		return registro;
-	}
 
-
+	
+	
 /*
  * actualiza Clientes
  * 	Breve comentario: 
@@ -301,7 +147,7 @@ public class GestionFicherosClientes  {
  * */
 
 	public void actualizaClientes(String nombreFicheroMaestro,String nombreFicheroMovimiento) {
-		
+		Utilidades u=new Utilidades();
 		ordenacionExternaMezcla(nombreFicheroMaestro);
 		ordenacionExternaMezcla(nombreFicheroMovimiento);
 		File fmaestro = new File(nombreFicheroMaestro);
@@ -322,8 +168,8 @@ public class GestionFicherosClientes  {
 		int numregistrosmovimiento;
 
 		if (fmaestro.exists() && fmovimiento.exists()) {
-			numregistrosmaestro = this.contarRegistros("ClientesMaestro.dat");
-			numregistrosmovimiento = this.contarRegistros("ClientesMovimiento.dat");
+			numregistrosmaestro = u.contarRegistros("ClientesMaestro.dat");
+			numregistrosmovimiento = u.contarRegistros("ClientesMovimiento.dat");
 			try {
 
 				// Abrimos para leer el archivo maestro
@@ -455,156 +301,6 @@ public class GestionFicherosClientes  {
 
 	}
 	
-
-	
-	
-	
-	
-	/*
-	 * Movimientos con 1 cuenta
-	 * 	Breve comentario:
-	 * 		Este metodo recibe una cuentaImp y  modifica el saldo de dicha cuenta, insertando en el fichero de movimientos la cuenta modificada.
-	 * 	Cabecera:
-	 * 		 void movimientocon1cuenta(CuentaImp c, int saldo)
-	 * 	Precondiciones:
-	 * 		nada
-	 * 	Entradas:
-	 * 		Un objeto CuentaImp a modificar y un double saldo.
-	 * 	Salidas: 
-	 * 		Escribira en el fichero
-	 * 
-	 * 
-	 * */
-	public void movimientocon1cuenta(CuentaImp c, double saldo,String nombreFicheroMaestro,String nombreFicheroMovimiento){
-		
-		File fmaestro=new File(nombreFicheroMaestro);
-		File fmovimiento=new File(nombreFicheroMovimiento);
-		//PARA LEER
-		FileInputStream fismae=null;
-		FileInputStream fismov=null;
-		ObjectInputStream oismov=null;
-		ObjectInputStream oismae=null;
-		//PARA ESCRIBIR
-		FileOutputStream fos=null;
-		MiObjectOutputStream moos=null; //Declaro los dos porque en el primer caso if si no hay archivo de movimiento lo tengo que crear con cabecera.
-		ObjectOutputStream oos=null;
-		
-		boolean encontrado=false;//este indicador lo utilizo por si encuentra la cuenta en cuestion deje de buscar, solo sirve
-								 //para el fichero maestro.
-		
-		//CUENTA AUXILIAR
-		CuentaImp aux=null;
-		
-		if(!fmovimiento.exists()){
-			
-			try{
-				fismae=new FileInputStream(fmaestro);		//Si el archivo de movimientos no existe, solo tenemos que mirar en el maestro
-				oismae=new ObjectInputStream(fismae);
-				
-				fos=new FileOutputStream(fmovimiento);
-				oos=new ObjectOutputStream(fos);
-				
-				aux=(CuentaImp)oismae.readObject();
-				
-				while(aux!=null && encontrado==false){
-					if(aux.getNumCuenta()==c.getNumCuenta()){
-						c.setSaldo(aux.getSaldo()+saldo);
-						oos.writeObject(c);
-						encontrado=true;
-					}
-					aux=(CuentaImp)oismae.readObject();
-				}
-			}catch(EOFException eofe){
-				System.out.println();
-			}catch(IOException ioe){
-				System.out.println(ioe);
-			} catch (ClassNotFoundException e) {
-				System.out.println(e);
-			}finally{
-				try{
-					oismae.close();
-					fismae.close();
-					oos.close();
-					fos.close();
-				}catch(IOException ioe){
-					System.out.println(ioe);
-				}
-			}
-			
-		}//Fin if
-		else{
-			//ahora primero miramos en el de movimientos
-			try{
-				
-				fismov=new FileInputStream(fmovimiento);
-				oismov=new ObjectInputStream(fismov);
-				
-				fos=new FileOutputStream(fmovimiento,true);
-				moos= new MiObjectOutputStream(fos);
-				
-				
-				int numregistros=contarRegistros("ClientesMovimiento.dat");
-																//Contamos los registros y leemos el archivo de movimientos 
-				for(int i=0;i<numregistros;i++){
-					aux=(CuentaImp)oismov.readObject();
-					if(c.getNumCuenta()==aux.getNumCuenta()){
-						encontrado=true;				
-					}
-				}													//si hemos encontrado alguna cuenta con ese numero de cuenta , le asignamos	el valor del ultimo movimiento
-				if(aux!=null)c.setSaldo(aux.getSaldo()+saldo);		// mas el saldo que el usuario nos pasa por parametros.
-			
-				if (!encontrado) {
-
-					fismae = new FileInputStream(fmaestro); // Si en el archivo de
-															// movimientos no se encuentra esa cuenta, 
-															// tenemos que mirar
-															// en el maestro
-					oismae = new ObjectInputStream(fismae);
-
-				
-
-					aux = (CuentaImp) oismae.readObject();
-					while (aux != null && encontrado == false) {
-						if (aux.getNumCuenta() == c.getNumCuenta()) {
-							c.setSaldo(aux.getSaldo() + saldo);
-							
-							encontrado = true;
-						}
-						aux = (CuentaImp) oismae.readObject();
-					}
-
-				}
-				if(encontrado)moos.writeObject(c);//Y aqui escribimos en el fichero de movimiento, la cuenta con el saldo modificado, si la hemos encotrado!
-				
-			}catch(EOFException eofe){
-				System.out.println();
-			}catch(ClassNotFoundException cnfe){
-				System.out.println(cnfe);
-			}catch(IOException ioe){
-				System.out.println(ioe);
-			}finally{
-				try{
-					if(oismae!=null){
-						oismae.close();
-						fismae.close();
-					}
-					if(oismov!=null){
-						oismov.close();
-						fismov.close();
-					}
-					if(moos!=null){
-						moos.close();
-						fos.close();
-					}
-				}catch(IOException ioe){
-					System.out.println(ioe);
-				}
-			}
-			
-			
-		}
-	}
-	
 	/*ORDENACION*/
 	
 	/* ordenacionExternaMezcla
@@ -619,22 +315,34 @@ public class GestionFicherosClientes  {
 	public  void ordenacionExternaMezcla(String fichero) {
 		int secuencia = 1;
 		int registros = 0;
-		GestionFicherosClientes gf=new GestionFicherosClientes();
+		Utilidades u=new Utilidades();
 		
 		String fAux1 = ("ClientesAux1.dat");
 		String fAux2 = ("ClientesAux2.dat");
 		
 		File ficheroAux1 = new File(fAux1);
 		File ficheroAux2 = new File(fAux2);
+		File f=new File(fichero);
 		
-		registros = gf.contarRegistros(fichero);		
-		while(secuencia <= registros) {
+		registros = u.contarRegistros(fichero);		
+		while(secuencia < registros) {
+			//partimos.
 			partirFichero(fichero, fAux1, fAux2, secuencia);
-			mezclarFichero(fichero, fAux1, fAux2, secuencia);			
+			//vaciarmaestro.
+			f.delete();
+			f=new File(fichero);
+			//mezclamos
+			mezclarFichero(fichero, fAux1, fAux2, secuencia);
+			//vaciarauxiliares
+			ficheroAux1.delete();
+			ficheroAux2.delete();
+			ficheroAux1=new File(fAux1);
+			ficheroAux2=new File(fAux2);
+			
 			secuencia = secuencia*2;
 		}
 		ficheroAux1.delete();
-		ficheroAux2.delete();//ESTE NO SE BORRA
+		ficheroAux2.delete();
 	}
 	
 	/* partirFichero
@@ -646,15 +354,18 @@ public class GestionFicherosClientes  {
 	 * Salida: Los dos ficheros auxiliares (fAux1 y fAux2) se repartirán los datos del fichero original
 	 * Postcondición: Los dos ficheros auxiliares tendrán el contenido del fichero original distribuido entre ellos
 	 */
-	public  void partirFichero(String fichero, String fAux1, String fAux2, int secuencia) {
+	public  void partirFichero(String nombrefichero, String nombrefAux1, String nombrefAux2, int secuencia) {
+		File fichero=new File(nombrefichero);
 		FileInputStream ficheroFIS = null;
 		ObjectInputStream ficheroOIS = null;
 		
+		File fAux1=new File(nombrefAux1);
 		FileOutputStream fAux1FOS = null;
 		ObjectOutputStream fAux1OOS = null;
 		
+		File fAux2=new File(nombrefAux2);
 		FileOutputStream fAux2FOS = null;
-		MiObjectOutputStream fAux2OOS = null;
+		ObjectOutputStream fAux2OOS = null;
 		
 		ClienteImp registro = null;
 		
@@ -665,8 +376,8 @@ public class GestionFicherosClientes  {
 			fAux1FOS = new FileOutputStream(fAux1);
 			fAux1OOS = new ObjectOutputStream(fAux1FOS);
 			
-			fAux2FOS = new FileOutputStream(fAux2,true);
-			fAux2OOS = new MiObjectOutputStream(fAux2FOS);
+			fAux2FOS = new FileOutputStream(fAux2);
+			fAux2OOS = new ObjectOutputStream(fAux2FOS);
 			
 			registro = (ClienteImp) ficheroOIS.readObject();
 			
@@ -680,6 +391,8 @@ public class GestionFicherosClientes  {
 					registro = (ClienteImp) ficheroOIS.readObject();
 				}
 			}
+		} catch(EOFException eof){
+			
 		} catch (IOException e) {
 			registro = null;
 		} catch (ClassNotFoundException e) {
@@ -701,6 +414,7 @@ public class GestionFicherosClientes  {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
 		}
 	}
 	
@@ -713,9 +427,9 @@ public class GestionFicherosClientes  {
 	 * Salida: Un fichero que contendrá toda la información de los auxiliares
 	 * Postcondición: Los dos ficheros auxiliares tendrán el contenido del fichero original distribuido entre ellos
 	 */	
-	public static void mezclarFichero(String fichero, String fAux1, String fAux2, int secuencia) {
+	public  void mezclarFichero(String fichero, String fAux1, String fAux2, int secuencia) {
 		FileOutputStream ficheroFOS = null;
-		MiObjectOutputStream ficheroOOS = null;
+		ObjectOutputStream ficheroOOS = null;
 		
 		FileInputStream fAux1FIS = null;
 		ObjectInputStream fAux1OIS = null;
@@ -731,7 +445,7 @@ public class GestionFicherosClientes  {
 		
 		try {
 			ficheroFOS = new FileOutputStream(fichero,true);
-			ficheroOOS = new MiObjectOutputStream(ficheroFOS);
+			ficheroOOS = new ObjectOutputStream(ficheroFOS);
 			
 			fAux1FIS = new FileInputStream(fAux1);
 			fAux1OIS = new ObjectInputStream(fAux1FIS);
@@ -808,8 +522,10 @@ public class GestionFicherosClientes  {
 					}					
 				}
 			}
+		} catch(EOFException eof){
+			
 		} catch (IOException e) {
-			//e.printStackTrace();
+			System.out.println(e);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} finally {
@@ -828,6 +544,29 @@ public class GestionFicherosClientes  {
 				}		
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void vaciarFichero(String nombrefichero){
+		File f=new File(nombrefichero);
+		FileOutputStream fos=null;
+		ObjectOutputStream oos=null;
+		try{
+			fos=new FileOutputStream(f);
+			oos=new ObjectOutputStream(fos);
+			oos.writeObject(null);
+			
+		}catch(IOException ioe){
+			System.out.println(ioe);
+		}finally{
+			try{
+				if(oos!=null){
+					oos.close();
+					fos.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
 			}
 		}
 	}

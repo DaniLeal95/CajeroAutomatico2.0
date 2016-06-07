@@ -6,9 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.Vector;
 
-import gestionyutilidades.GestionFicherosClientes;
 import gestionyutilidades.Utilidades;
 
 
@@ -143,7 +141,7 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	
 	public boolean validaridCliente(long idCliente, String ficheromaestro,String ficheromovimiento){
 		boolean valida=false;
-		GestionFicherosClientes gf=new GestionFicherosClientes();
+		Utilidades u=new Utilidades();
 		
 		File fmae=new File(ficheromaestro);
 		File fmov=new File(ficheromovimiento);
@@ -175,7 +173,7 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 				oismov=new ObjectInputStream(fismov);
 				
 				
-				for(int i=0;i<gf.contarRegistros(ficheromovimiento) && !valida;i++){
+				for(int i=0;i<u.contarRegistros(ficheromovimiento) && !valida;i++){
 					Cliente aux=(ClienteImp) oismov.readObject();
 					if(aux.getIdCliente()== idCliente){
 						valida=true;
