@@ -13,6 +13,8 @@ public class TestGestionFicherosCuentas {
 		CuentaImp c2=new CuentaImp(-500,2);
 		//CuentaImp c3=new CuentaImp(50,2);
 		CuentaImp c4=new CuentaImp(c2);
+		CuentaImp c5=new CuentaImp(70000,-1);
+		CuentaImp c6=new CuentaImp(70000,1);
 		c4.setSaldo(1000);
 		//MostrarCuentas
 		System.out.println("MUESTRO EL ARCHIVO MAESTRO");
@@ -24,7 +26,8 @@ public class TestGestionFicherosCuentas {
 		//gfc.escribirMovimiento("CuentasMovimiento.dat", c3);
 		//gfc.escribirMovimiento("CuentasMovimiento.dat", c);
 		gfc.escribirMovimiento("CuentasMovimiento.dat", c4);
-		
+		gfc.escribirMovimiento("CuentasMovimiento.dat", c5);
+		gfc.escribirMovimiento("CuentasMovimiento.dat", c6);
 		
 		//MostrarCuentas
 		System.out.println("MOSTRAMOS EL ARCHIVO MOVIMIENTO");

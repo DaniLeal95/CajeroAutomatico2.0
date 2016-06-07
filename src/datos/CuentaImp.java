@@ -14,6 +14,7 @@ import gestionyutilidades.Utilidades;
  *Restricciones :
  **************
  *	El idCliente debe existir en los ficheros maestros.
+ * o ser -1 , que significa que la cuenta ya no es valida.
  * Funcionalidades:
  * ***************
  * 	
@@ -70,7 +71,7 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	public CuentaImp(long saldo,long idCliente){
 		this();
 		this.saldo=saldo;
-		if(validaridCliente(idCliente, "ClientesMaestro.dat", "ClientesMovimiento.dat"))
+		if(validaridCliente(idCliente, "ClientesMaestro.dat", "ClientesMovimiento.dat")||idCliente==-1)
 			this.idCliente=idCliente;
 	}
 	
@@ -104,7 +105,7 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 	}
 	@Override
 	public void setidCliente(long idCliente){
-		if(validaridCliente(idCliente, "ClientesMaestro.dat", "ClientesMovimiento.dat"))
+		if(validaridCliente(idCliente, "ClientesMaestro.dat", "ClientesMovimiento.dat") || idCliente==-1)
 			this.idCliente=idCliente;
 	}
 	

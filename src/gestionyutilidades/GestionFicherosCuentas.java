@@ -266,32 +266,40 @@ public class GestionFicherosCuentas  {
 					}
 				}
 				//Se ha acabado el fichero maestro pero no el de movimientos
-				
+				boolean valido=true;
 				while (cuentamovaux != null) {
+				
 					CuentaImp cuentamovaux2=(CuentaImp) oismo.readObject();
 					//alta
-							while(cuentamovaux.compareTo(cuentamovaux2)==0){
+							while(cuentamovaux.compareTo(cuentamovaux2)==0 && valido){
 							
 							if(!(cuentamovaux.getidCliente()==-1) && !(cuentamovaux2.getidCliente()==-1)){
+								
 								cuentamovaux.setSaldo(cuentamovaux.getSaldo()+cuentamovaux2.getSaldo());
 								cuentamovaux.setidCliente(cuentamovaux2.getidCliente());
 							}
-//						
-							cuentamovaux2=(CuentaImp) oismo.readObject();
-							if(cuentamovaux2==null){
-								oos.writeObject(cuentamovaux);
+							else{
+								valido=false;
 							}
+							try{
+							cuentamovaux2=(CuentaImp) oismo.readObject();
+							//Si la siguiente linea es fin de fichero, escribeme la cuenta
+							}catch(EOFException eof){
+								if(valido)oos.writeObject(cuentamovaux);
+								valido=false;
+							}
+							
 						}
-						if(!(cuentamovaux.getidCliente()==-1))
-							oos.writeObject(cuentamovaux);
 						
+							
 						cuentamovaux = cuentamovaux2;
+						if(cuentamovaux.getidCliente()!=-1)
+							oos.writeObject(cuentamovaux);
 				}
 					
 				
 			
 			}catch(EOFException eofe){
-
 			} catch (IOException ioe) {
 				System.out.println(ioe);
 			} catch (ClassNotFoundException e) {
