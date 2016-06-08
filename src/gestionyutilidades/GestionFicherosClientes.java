@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import cajero.MiObjectOutputStream;
 import datos.ClienteImp;
 import datos.CuentaImp;
+import datos.TarjetaImp;
 
 public class GestionFicherosClientes  {
 
@@ -25,7 +26,7 @@ public class GestionFicherosClientes  {
 	 * 	Cabecera:
 	 * 		void mostrarClientes(String nombreFichero)
 	 * 	Precondiciones:
-	 * 		el fichero debera estar creado, de no estarlo saltara una excepcion de fichero no encontrado
+	 * 		el fichero debera estar creado, de no estarlo no mostrara nada
 	 * 	Entradas:
 	 * 		El nombre del fichero
 	 * 	Salidas:
@@ -45,14 +46,15 @@ public class GestionFicherosClientes  {
 			oismaestro=new ObjectInputStream(fismaestro);
 			
 				for(int i=0;i<u.contarRegistros(nombreFichero);i++){
+					
 					ClienteImp cliente=(ClienteImp)oismaestro.readObject();
-					System.out.println(cliente.toString());
+					if(cliente.getIdCliente()!=1)
+						System.out.println(cliente.toString());
 				}
 			
 				
 			
 		}catch(FileNotFoundException fnfe){
-			System.out.println("Fichero no encontrado");
 		}catch(EOFException eof){
 		
 		}	catch (IOException ioe) {
@@ -100,7 +102,12 @@ public class GestionFicherosClientes  {
 			if(f.exists()){
 				fos=new FileOutputStream(f,true);
 				moos=new MiObjectOutputStream(fos);
-				moos.writeObject(c);
+				if(this.comprobarMovimiento(c.getIdCliente(), nombreFichero)){
+					moos.writeObject(c);
+				}else{
+					System.out.println("Ese cliente ya ha echo una modificacion");
+					System.out.println("Tiene que esperar a la proxima actualizacion");
+				}
 			}else{
 				fos=new FileOutputStream(f,true);
 				oos=new ObjectOutputStream(fos);
@@ -124,7 +131,185 @@ public class GestionFicherosClientes  {
 		}
 		
 	}
-
+	
+	/*
+	 * ComprobarMovimientos
+	 * 
+	 * BreveComentario:
+	 * 	El metodo leera el fichero movimiento que recibe por parametros,
+	 * 	 y comprobara que la idCliente introducido no este en dicho fichero
+	 * 	si no esta retornará True, de no estarlo retornara false.
+	 * Cabecera:
+	 * 	 boolean comprobarMovimiento(long idCliente,String nombreFicheroMovimiento)
+	 * Precondiciones:
+	 * 	Nada
+	 * Entradas:
+	 * 	un long (idcliente) y una cadena(nombreFicheroMovimiento)
+	 * Salidas:
+	 * 	boolean
+	 * Postcondiciones:
+	 * 	boolean retornara asociado al nombre-> Funcion 
+	 * 
+	 * */
+	//RESGUARDO
+//	public boolean comprobarMovimiento(long idCliente,String nombreFicheroMovimiento){
+//		boolean posible=true;
+//		System.out.println("En RESGUARDO");
+//		return posible;
+//	}
+	public boolean comprobarMovimiento(long idCliente,String nombreFicheroMovimiento){
+		boolean posible=true;
+		File f=new File(nombreFicheroMovimiento);
+		FileInputStream fis=null;
+		ObjectInputStream ois=null;
+		Utilidades u=new Utilidades();
+		try{
+			fis=new FileInputStream(f);
+			ois=new ObjectInputStream(fis);
+			
+			if(f.exists()){
+				for(int i=0;i<u.contarRegistros(nombreFicheroMovimiento) && posible;i++){
+					ClienteImp c=(ClienteImp)ois.readObject();
+					if(c.getIdCliente()==idCliente){
+						posible=false;
+					}
+				}
+			}
+		}catch(ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch(IOException ioe){
+			System.out.println(ioe);
+		}finally{
+			try{
+				if(ois!=null){
+					ois.close();
+					fis.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+			
+		}
+			
+		
+		return posible;
+	}
+	
+	/*
+	 *	ObtenerCliente
+	 *	Breve Comentario: 
+	 *		El metodo buscara en los ficheros recibidos por parametros,
+	 *		y retornara un ClienteImp actualizado, segun un idCliente recibido en los parametros.
+	 *	Cabecera:
+	 *		 ClienteImp obtenerCliente(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento)
+	 *	
+	 *	Precondiciones:
+	 *		Almenos el fichero Maestro Debera Estar Creado. Si no saltara una excepcion de fichero no encontrado	
+	*  		,si el idCliente no corresponde a ningun cliente o ese Cliente Esta dado de baja, retornara null.
+	*  
+	 *	Entradas:
+	 *		un enterolargo, y dos cadenas
+	 *	
+	 *	Salidas:
+	 *		una CuentaImp
+	 *
+	 *	Postcondiciones:
+	 *		CuentaImp retornara asociada al nombre -> FUNCION.
+	 * *
+	 */
+	 //Resguardo	
+//		public TarjetaImp obtenerTarjeta(long numTarjeta){
+//			TarjetaImp tarjeta=null;
+//			System.out.println("En Construccion.");
+//			return tarjeta;
+//		}
+		
+		public ClienteImp obtenerCliente(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+			ClienteImp cliente=null;
+			Utilidades u=new Utilidades();
+			boolean encontrado=false;
+			
+			File fmaestro=new File(nombreFicheroMaestro);
+			File fmovimiento=new File(nombreFicheroMovimiento);
+			
+			FileInputStream fismaestro=null;
+			FileInputStream fismovimiento=null;
+			
+			ObjectInputStream oismaestro=null;
+			ObjectInputStream oismovimiento=null;
+			
+			try{
+				//Si no hay fichero de movimientos solo mira en el maestro
+				if (!fmovimiento.exists()) {
+					fismaestro = new FileInputStream(fmaestro);
+					oismaestro = new ObjectInputStream(fismaestro);
+					// mientras haya registros y no se haya encontrado
+					for (int i = 0; i < u.contarRegistros(nombreFicheroMaestro) && !encontrado; i++) {
+						ClienteImp aux = (ClienteImp) oismaestro.readObject();
+						// Si lo encuentra deja de buscar en el fichero maestro
+						// y asignale la tarjeta encontrada.
+						if (aux.getIdCliente() == idCliente) {
+							cliente = aux;
+							encontrado = true;
+						}
+					}
+				}
+				else{
+					//Si existe fichero de movimientos miraremos primero en el.
+					fismovimiento = new FileInputStream(fmovimiento);
+					oismovimiento = new ObjectInputStream(fismovimiento);
+					for (int i = 0; i < u.contarRegistros(nombreFicheroMaestro) && !encontrado; i++) {
+						ClienteImp aux = (ClienteImp) oismovimiento.readObject();
+						// Si lo encuentra deja de buscar en el fichero maestro
+						// y asignale la tarjeta encontrada.
+						if (aux.getIdCliente() == idCliente) {
+							cliente = aux;
+							encontrado = true;
+						}
+					}
+					
+					//Si en el fichero de movimientos no existe ninguna modificacion suya
+					//Tendremos que mirar en el maestro
+					if(!encontrado){
+						fismaestro = new FileInputStream(fmaestro);
+						oismaestro = new ObjectInputStream(fismaestro);
+						// mientras haya registros y no se haya encontrado
+						for (int i = 0; i < u.contarRegistros(nombreFicheroMaestro) && !encontrado; i++) {
+							ClienteImp aux = (ClienteImp) oismaestro.readObject();
+							// Si lo encuentra deja de buscar en el fichero maestro
+							// y asignale la tarjeta encontrada.
+							if (aux.getIdCliente() == idCliente) {
+								cliente = aux;
+								encontrado = true;
+							}
+						}
+					}
+				}
+				
+				
+				
+			}catch(ClassNotFoundException cnfe){
+				System.out.println(cnfe);
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}finally{
+				try{
+					if(oismaestro!=null){
+						oismaestro.close();
+						fismaestro.close();
+					}
+					if(oismovimiento!=null){
+						oismovimiento.close();
+						fismovimiento.close();
+					}
+				}catch(IOException ioe){
+					System.out.println(ioe);
+				}
+			}
+			
+			
+			return cliente;
+		}
 	
 	
 /*
@@ -147,159 +332,270 @@ public class GestionFicherosClientes  {
  * */
 
 	public void actualizaClientes(String nombreFicheroMaestro,String nombreFicheroMovimiento) {
-		Utilidades u=new Utilidades();
-		ordenacionExternaMezcla(nombreFicheroMaestro);
-		ordenacionExternaMezcla(nombreFicheroMovimiento);
-		File fmaestro = new File(nombreFicheroMaestro);
-		File fmovimiento = new File(nombreFicheroMovimiento);
-		File fmaestronuevo = new File("ClientesMaestroNuevo.dat");
-		// Para leer maestro
-		FileInputStream fism = null;
-		ObjectInputStream oism = null;
-		// Para leer movimientos
-		FileInputStream fismo = null;
-		ObjectInputStream oismo = null;
+			Utilidades u=new Utilidades();
+			ordenacionExternaMezcla(nombreFicheroMaestro);
+			ordenacionExternaMezcla(nombreFicheroMovimiento);
+			File fmaestro = new File(nombreFicheroMaestro);
+			File fmovimiento = new File(nombreFicheroMovimiento);
+			File fmaestronuevo = new File("ClientesMaestroNuevo.dat");
+			// Para leer maestro
+			FileInputStream fism = null;
+			ObjectInputStream oism = null;
+			// Para leer movimientos
+			FileInputStream fismo = null;
+			ObjectInputStream oismo = null;
 
-		// Para escribir
-		FileOutputStream fos = null;
-		ObjectOutputStream oos = null;
-		
-		int numregistrosmaestro;
-		int numregistrosmovimiento;
+			// Para escribir
+			FileOutputStream fos = null;
+			ObjectOutputStream oos = null;
+			
+			int numregistrosmaestro;
+			int numregistrosmovimiento;
 
-		if (fmaestro.exists() && fmovimiento.exists()) {
-			numregistrosmaestro = u.contarRegistros("ClientesMaestro.dat");
-			numregistrosmovimiento = u.contarRegistros("ClientesMovimiento.dat");
-			try {
+			if (fmaestro.exists() && fmovimiento.exists()) {
+				numregistrosmaestro = u.contarRegistros(nombreFicheroMaestro);
+				numregistrosmovimiento = u.contarRegistros(nombreFicheroMovimiento);
+				try {
 
-				// Abrimos para leer el archivo maestro
-				fism = new FileInputStream(fmaestro);
-				oism = new ObjectInputStream(fism);
-				// Abrimos para leer el archivo movimiento
-				fismo = new FileInputStream(fmovimiento);
-				oismo = new ObjectInputStream(fismo);
-				// Abrimos para escribir en el nuevo archivo maestro
-				fos = new FileOutputStream(fmaestronuevo);
-				oos = new ObjectOutputStream(fos);
-				
-					//Como en el fichero de movimientos solo puede haber un movimiento
-					//, cada vez que encontremos un cliente con su misma id, la escribiremos
-				
-				ClienteImp clienteaux = (ClienteImp) oism.readObject();
-				ClienteImp clientemovaux = (ClienteImp) oismo.readObject();
-				for (int i = 0; i < numregistrosmaestro && i < numregistrosmovimiento; i++) {
+					// Abrimos para leer el archivo maestro
+					fism = new FileInputStream(fmaestro);
+					oism = new ObjectInputStream(fism);
+					// Abrimos para leer el archivo movimiento
+					fismo = new FileInputStream(fmovimiento);
+					oismo = new ObjectInputStream(fismo);
+					// Abrimos para escribir en el nuevo archivo maestro
+					fos = new FileOutputStream(fmaestronuevo);
+					oos = new ObjectOutputStream(fos);
+					
+						//Como en el fichero de movimientos solo puede haber un movimiento
+						//, cada vez que encontremos un cliente con su misma id, la escribiremos
+					
+					ClienteImp clienteaux = (ClienteImp) oism.readObject();
+					ClienteImp clientemovaux = (ClienteImp) oismo.readObject();
+					for (int i = 0; i < numregistrosmaestro && i < numregistrosmovimiento; i++) {
+							
 						
-					
-					
-					if (clienteaux.compareTo(clientemovaux) == 0) {
-						// Si el cliente contiene un asterisco en el nombre
-						// quiere
-						// decir que ya no esta activa.
-						// BAJA Y MODIFICACION
-						if (!clientemovaux.getNombre().contains("*")) {
+						
+						if (clienteaux.compareTo(clientemovaux) == 0) {
+							// Si el cliente contiene un asterisco en el nombre
+							// quiere
+							// decir que ya no esta activa.
+							// BAJA Y MODIFICACION
+							if (!(clientemovaux.getNombre().contains("*"))) {
+								oos.writeObject(clientemovaux);
+							}
+							//Y leemos los dos siguientes registros.
+							try{
+								clienteaux = (ClienteImp) oism.readObject();
+							}catch(IOException ioe){
+								clienteaux = null;
+							}
+							try{
+								clientemovaux = (ClienteImp) oismo.readObject();
+							}catch(IOException ioe){
+								clientemovaux = null;
+							}
+						
+						} else if (clientemovaux.compareTo(clienteaux) > 0) {
+							// SI no hay ninguna actualizacion
+							oos.writeObject(clienteaux);
+							
+							//Y como no hay ninnguna actualizacion
+							//solo tenemos que volver a leer del fichero maestro
+							try{
+								clienteaux = (ClienteImp) oism.readObject();
+							}catch(IOException e){
+								clienteaux=null;
+							}
+						} else {
+							//alta
 							oos.writeObject(clientemovaux);
+							try{
+								clientemovaux = (ClienteImp) oismo.readObject();
+							}catch(IOException ioe){
+								clientemovaux = null;
+							}
 						}
-						//Y leemos los dos siguientes registros.
-						try{
+
+					} // fin Para
+					
+					//se ha acabado el fichero movimiento pero no el maestro
+					while (clienteaux != null) {
+						oos.writeObject(clienteaux);
+						try {
 							clienteaux = (ClienteImp) oism.readObject();
-						}catch(IOException ioe){
+						} catch (EOFException eof){
+							clienteaux = null;
+						} catch (IOException e) {
 							clienteaux = null;
 						}
-						try{
-							clientemovaux = (ClienteImp) oismo.readObject();
-						}catch(IOException ioe){
-							clientemovaux = null;
-						}
+					}
+					//Se ha acabado el fichero maestro pero no el de movimientos
 					
-					} else if (clientemovaux.compareTo(clienteaux) > 0) {
-						// SI no hay ninguna actualizacion
-						oos.writeObject(clienteaux);
-						
-						//Y como no hay ninnguna actualizacion
-						//solo tenemos que volver a leer del fichero maestro
-						try{
-							clienteaux = (ClienteImp) oism.readObject();
-						}catch(IOException e){
-							clienteaux=null;
-						}
-					} else {
-						//alta
+					while (clientemovaux != null) {
 						oos.writeObject(clientemovaux);
-						try{
+						try {
 							clientemovaux = (ClienteImp) oismo.readObject();
-						}catch(IOException ioe){
+						} catch(EOFException eof){
 							clientemovaux = null;
+						} catch (IOException e) {
+							System.out.println(e);
 						}
 					}
-
-				} // fin Para
-				
-				//se ha acabado el fichero movimiento pero no el maestro
-				//ClienteImp aux2=(ClienteImp) oism.readObject();
-				while (clienteaux != null) {
-					oos.writeObject(clienteaux);
-					try {
-						clienteaux = (ClienteImp) oism.readObject();
-					} catch (EOFException eof){
-						clienteaux = null;
-					} catch (IOException e) {
-						clienteaux = null;
-					}
-				}
-				//Se ha acabado el fichero maestro pero no el de movimientos
-				
-				while (clientemovaux != null) {
-					oos.writeObject(clientemovaux);
-					try {
-						clientemovaux = (ClienteImp) oismo.readObject();
-					} catch(EOFException eof){
-						clientemovaux = null;
-					} catch (IOException e) {
-						System.out.println(e);
-					}
-				}
+						
 					
 				
-			
-			}catch(EOFException eofe){
+				}catch(EOFException eofe){
 
-			} catch (IOException ioe) {
-				System.out.println(ioe);
-			} catch (ClassNotFoundException e) {
-				System.out.println(e);
-			} finally {
-				try {
-					if(oismo!=null){
-						oismo.close();
-						fismo.close();
-					}
-					if(oism!=null){
-						oism.close();
-						fism.close();
-					}
-					if(oos!=null){
-						oos.close();
-						fos.close();
-					}
-					
-					
-						//Ahora eliminamos el antiguo archivo de Maestro
-						fmaestro.delete();
-						fmovimiento.delete();
-					
-						//y renombramos el archivo maestro nuevo con el nombre del antiguo
-						fmaestronuevo.renameTo(fmaestro);
-					
-
-					
 				} catch (IOException ioe) {
 					System.out.println(ioe);
+				} catch (ClassNotFoundException e) {
+					System.out.println(e);
+				} finally {
+					try {
+						if(oismo!=null){
+							oismo.close();
+							fismo.close();
+						}
+						if(oism!=null){
+							oism.close();
+							fism.close();
+						}
+						if(oos!=null){
+							oos.close();
+							fos.close();
+						}
+						
+						
+							//Ahora eliminamos el antiguo archivo de Maestro
+							fmaestro.delete();
+							fmovimiento.delete();
+						
+							//y renombramos el archivo maestro nuevo con el nombre del antiguo
+							fmaestronuevo.renameTo(fmaestro);
+						
+
+						
+					} catch (IOException ioe) {
+						System.out.println(ioe);
+					}
 				}
+
 			}
 
 		}
-
-	}
+	
+	/*DarDeBajaCuentas
+	 * Breve Comentario:
+	 * 		El metodo escribirá en el fichero de movimientos de Cuentas, un registro por cada Cuenta con el idCliente
+	 * 		igual al que recibimos por parametros, y la cambiaremos por -1 (Que significa dada de baja)
+	 * 
+	 * Cabecera:
+	 * 		 void dardeBajaCuentas(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento)
+	 * 
+	 * Precondiciones:
+	 * 		el fichero maestro debera estar creado, si no saltara una excepcion de fichero no encontrado
+	 * Entradas:
+	 * 		un long (idCliente) y dos cadenas(nombreFicheros)
+	 * Salidas:
+	 * 		nada
+	 * Postcondiciones:
+	 * 		El archivo de CuentaMovimientos, quedara modificado.
+	 * */
+		
+		//public void dardeBajaCuentas(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+		//	System.out.println("EN RESGUARDO");
+		//}
+		public void dardeBajaCuentas(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+			Utilidades u=new Utilidades();
+			GestionFicherosCuentas gfc=new GestionFicherosCuentas();
+			File fmaestro=new File(nombreFicheroMaestro);
+			File fmovimiento=new File(nombreFicheroMovimiento);
+			
+			FileInputStream fismaestro=null;
+			ObjectInputStream oismaestro=null;
+			
+			FileOutputStream fosmovimiento=null;
+			ObjectOutputStream oosmovimiento=null;
+			
+			try{
+					//Actualizamos Tarjetas.
+					gfc.actualizaCuentas(nombreFicheroMaestro, nombreFicheroMovimiento);
+					//Y luego hacemos las operaciones.
+					fismaestro=new FileInputStream(fmaestro);
+					oismaestro=new ObjectInputStream(fismaestro);
+					
+					fosmovimiento=new FileOutputStream(fmovimiento,true);
+					oosmovimiento=new ObjectOutputStream(fosmovimiento);
+					
+					for(int i=0;i<u.contarRegistros(nombreFicheroMaestro);i++){
+						CuentaImp c=(CuentaImp)oismaestro.readObject();
+						//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
+						//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
+						//Y la escribimos en el fichero de movimiento
+						if((c.getidCliente())==idCliente){
+							c.setidCliente(-1);
+							oosmovimiento.writeObject(c);
+						}
+					}
+				/**NO VOLVER A INTENTARLO, LOCURA MAXIMO*/
+//				//Si el fichero de movimiento existe mirare en el maestro y luego en el de movimiento
+//				else{
+//					fismaestro=new FileInputStream(fmaestro);
+//					oismaestro=new ObjectInputStream(fismaestro);
+//					
+//					fosmovimiento=new FileOutputStream(fmovimiento,true);
+//					moosmovimiento=new MiObjectOutputStream(fosmovimiento);
+//				
+//					File faux=new File("ficheromovaux.dat");
+//					FileOutputStream fosaux=new FileOutputStream(faux,true);
+//					ObjectOutputStream oosaux=new ObjectOutputStream(fosaux);
+//					
+//					for(int i=0;i<u.contarRegistros(nombreFicheroMaestro);i++){
+//						TarjetaImp t=(TarjetaImp)oismaestro.readObject();
+//						//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
+//						//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
+//						//Y la escribimos en el fichero de movimiento
+//						if(t.getnumCuenta()==numCuenta){
+//							t.setnumCuenta(-1);
+//							oosaux.writeObject(t);
+//						}
+//					}
+//					for(int i=0;i<u.contarRegistros(nombreFicheroMovimiento);i++){
+//						TarjetaImp t=(TarjetaImp)oismaestro.readObject();
+//						//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
+//						//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
+//						//Y la escribimos en el fichero de movimiento
+//						if(t.getnumCuenta()==numCuenta){
+//							t.setnumCuenta(-1);
+//							oosmovimiento.writeObject(t);
+//						}
+//					}
+//				}
+			}catch(ClassNotFoundException cnfe){
+				System.out.println(cnfe);
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+			finally{
+				try{
+					if(oismaestro!=null){
+						oismaestro.close();
+						fismaestro.close();
+					}
+				
+					if(oosmovimiento!=null){
+						oosmovimiento.close();
+						fosmovimiento.close();
+					}
+				
+					
+				}catch(IOException ioe){
+					System.out.println(ioe);
+				}
+			}
+		}
+	
 	
 	/*ORDENACION*/
 	

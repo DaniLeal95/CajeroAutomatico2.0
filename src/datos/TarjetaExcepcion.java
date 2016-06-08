@@ -1,4 +1,4 @@
-package cajero;
+package datos;
 
 public class TarjetaExcepcion extends Exception {
 

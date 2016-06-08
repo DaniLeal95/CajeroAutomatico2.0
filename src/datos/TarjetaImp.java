@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 
-import cajero.TarjetaExcepcion;
 import gestionyutilidades.Utilidades;
 
 public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,Cloneable {
@@ -68,7 +67,7 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 		if(validarPin(pin)){
 			this.pin=pin;
 		}
-		if(validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat")){
+		if(validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat") || numCuenta==-1){
 			this.numCuenta=numCuenta;	
 		}
 		
@@ -126,7 +125,7 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	
 	@Override
 	public void setnumCuenta(long numCuenta) throws TarjetaExcepcion{
-		if(validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat"))
+		if(validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat") || numCuenta==-1)
 			this.numCuenta=numCuenta;
 		
 		else 

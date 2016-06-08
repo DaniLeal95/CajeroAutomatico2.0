@@ -20,6 +20,12 @@ public class TestGestionFicherosCuentas {
 		System.out.println("MUESTRO EL ARCHIVO MAESTRO");
 		gfc.mostrarCuentas("CuentasMaestro.dat");
 		
+		//ObtenerCuenta
+		System.out.println("OBTENGO LA CUENTA 5");
+		CuentaImp Cuentaobtenida=gfc.obtenerCuenta(5, "CuentasMaestro.dat", "CuentasMovimiento.dat");
+		System.out.println(Cuentaobtenida.toString());
+		Cuentaobtenida.setidCliente(-1);
+		
 		//EscribirMovimiento
 		System.out.println("ESCRIBO DOS CUENTAS EN MOVIMIENTO");
 		gfc.escribirMovimiento("CuentasMovimiento.dat", c2);
@@ -28,6 +34,7 @@ public class TestGestionFicherosCuentas {
 		gfc.escribirMovimiento("CuentasMovimiento.dat", c4);
 		gfc.escribirMovimiento("CuentasMovimiento.dat", c5);
 		gfc.escribirMovimiento("CuentasMovimiento.dat", c6);
+		gfc.escribirMovimiento("CuentasMovimiento.dat", Cuentaobtenida);
 		
 		//MostrarCuentas
 		System.out.println("MOSTRAMOS EL ARCHIVO MOVIMIENTO");

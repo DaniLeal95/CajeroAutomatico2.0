@@ -100,7 +100,12 @@ public class GestionFicherosTarjetas  {
 			if(f.exists()){
 				fos=new FileOutputStream(f,true);
 				moos=new MiObjectOutputStream(fos);
-				moos.writeObject(t);
+				if(this.comprobarMovimiento(t.getNumtarjeta(), nombreFichero)){
+					moos.writeObject(t);
+				}else{
+					System.out.println("En esa tarjeta ya ha echo una modificacion");
+					System.out.println("Tiene que esperar a la proxima actualizacion");
+				}
 			}else{
 				fos=new FileOutputStream(f,true);
 				oos=new ObjectOutputStream(fos);
@@ -124,20 +129,87 @@ public class GestionFicherosTarjetas  {
 		}
 		
 	}
-
+	/*
+	 * ComprobarMovimientos
+	 * 
+	 * BreveComentario:
+	 * 	El metodo leera el fichero movimiento que recibe por parametros,
+	 * 	 y comprobara que la numTarjeta introducido no este en dicho fichero
+	 * 	si no esta retornará True, de no estarlo retornara false.
+	 * Cabecera:
+	 * 	 boolean comprobarMovimiento(long numTarjeta,String nombreFicheroMovimiento)
+	 * Precondiciones:
+	 * 	Nada
+	 * Entradas:
+	 * 	un long (numTarjeta) y una cadena(nombreFicheroMovimiento)
+	 * Salidas:
+	 * 	boolean
+	 * Postcondiciones:
+	 * 	boolean retornara asociado al nombre-> Funcion 
+	 * 
+	 * */
+	//RESGUARDO
+//	public boolean comprobarMovimiento(long numTarjeta,String nombreFicheroMovimiento){
+//		boolean posible=true;
+//		System.out.println("En RESGUARDO");
+//		return posible;
+//	}
+	public boolean comprobarMovimiento(long numTarjeta,String nombreFicheroMovimiento){
+		boolean posible=true;
+		File f=new File(nombreFicheroMovimiento);
+		FileInputStream fis=null;
+		ObjectInputStream ois=null;
+		Utilidades u=new Utilidades();
+		try{
+			fis=new FileInputStream(f);
+			ois=new ObjectInputStream(fis);
+			
+			if(f.exists()){
+				for(int i=0;i<u.contarRegistros(nombreFicheroMovimiento) && posible;i++){
+					TarjetaImp c=(TarjetaImp)ois.readObject();
+					if(c.getNumtarjeta()==numTarjeta){
+						posible=false;
+					}
+				}
+			}
+		}catch(ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch(IOException ioe){
+			System.out.println(ioe);
+		}finally{
+			try{
+				if(ois!=null){
+					ois.close();
+					fis.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+			
+		}
+			
+		
+		return posible;
+	}
+	
 /*
  *	ObtenerTarjeta
  *	Breve Comentario: 
- *		El metodo retornara una TarjetaImp actualizada, segun un numTarjeta indicado en los parametros.
+ *		El metodo buscara en los ficheros recibidos por parametros,
+ *		y retornara una TarjetaImp actualizada, segun un numTarjeta recibido en los parametros.
  *	Cabecera:
  *		TarjetaImp obtenerTarjeta(long numTarjeta,String nombreFicheroMaestro,String nombreFicheroMovimiento)
+ *	
  *	Precondiciones:
- *	Almenos el fichero Maestro Debera EstarCreado. Si no saltara una excepcion de fichero no encontrado	
- *  ,si el numTarjeta no corresponde a ninguna tarjeta, retornara null.
+ *		Almenos el fichero Maestro Debera EstarCreado. Si no saltara una excepcion de fichero no encontrado	
+*  		,si el numTarjeta no corresponde a ninguna Tarjeta o esa Tarjeta Esta dada de baja, retornara null.
+*  
  *	Entradas:
  *		un enterolargo, y dos cadenas
+ *	
  *	Salidas:
  *		una TarjetaImp
+ *
  *	Postcondiciones:
  *		TarjetaImp retornara asociada al nombre -> FUNCION.
  * *

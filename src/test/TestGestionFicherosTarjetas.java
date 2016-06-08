@@ -17,7 +17,7 @@ public class TestGestionFicherosTarjetas {
 		//ESCRIBIR MOVIMIENTO
 		System.out.println("ESCRIBIMOS 2 TARJETAS MOVIMIENTO");
 		gf.escribirMovimiento("TarjetasMovimiento.dat", t2);
-		gf.escribirMovimiento("TarjetasMovimiento.dat", t);
+		gf.escribirMovimiento("TarjetasMovimiento.dat", t2);
 		
 		//MOSTRAMOS MOVIMIENTO
 		System.out.println("MOSTRAMOS MOVIMIENTO");

@@ -11,6 +11,8 @@ import java.io.ObjectOutputStream;
 
 import cajero.MiObjectOutputStream;
 import datos.CuentaImp;
+import datos.TarjetaExcepcion;
+import datos.TarjetaImp;
 
 public class GestionFicherosCuentas  {
 
@@ -124,7 +126,240 @@ public class GestionFicherosCuentas  {
 		}
 		
 	}
-
+	/*
+	 *	ObtenerTarjeta
+	 *	Breve Comentario: 
+	 *		El metodo buscara en los ficheros recibidos por parametros,
+	 *		y retornara una CuentaImp actualizada, segun un numCuenta recibido en los parametros.
+	 *	Cabecera:
+	 *		CuentaImp obtenerCuenta(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento)
+	 *	Precondiciones:
+	 *	Almenos el fichero Maestro Debera EstarCreado. Si no saltara una excepcion de fichero no encontrado	
+	 *  ,si el numCuenta no corresponde a ninguna cuenta o esa Cuenta Esta dada de baja, retornara null.
+	 *	Entradas:
+	 *		un enterolargo, y dos cadenas
+	 *	Salidas:
+	 *		una CuentaImp
+	 *	Postcondiciones:
+	 *		CuentaImp retornara asociada al nombre -> FUNCION.
+	 * */
+	
+	//RESGUARDO
+//	public CuentaImp obtenerCuenta(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+//		CuentaImp cuenta=null;
+//		System.out.println("EN RESGUARDO");
+//		return cuenta;
+//	}
+	
+	public CuentaImp obtenerCuenta(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+		CuentaImp cuenta=null;
+		Utilidades u=new Utilidades();
+		
+		File fmaestro=new File(nombreFicheroMaestro);
+		File fmovimiento=new File(nombreFicheroMovimiento);
+		
+		FileInputStream fismaestro=null;
+		FileInputStream fismovimiento=null;
+		
+		ObjectInputStream oismaestro=null;
+		ObjectInputStream oismovimiento=null;
+		
+		try{
+			
+			//Si el fichero de movimiento no existe solo tenemos que mirar en el maestro
+			if(!fmovimiento.exists()){
+				boolean encontrado=false;
+				fismaestro=new FileInputStream(fmaestro);
+				oismaestro=new ObjectInputStream(fismaestro);
+				
+				for(int i=0;i<u.contarRegistros(nombreFicheroMaestro) && !encontrado;i++){
+					CuentaImp c=(CuentaImp) oismaestro.readObject();
+					if(c.getNumCuenta()==numCuenta){
+						cuenta=c;
+						encontrado=true;
+					}
+				}
+			}
+			//Si el fichero de movimiento si existe miraremos primero en el maestro y despues en el de movimiento
+			else{
+				boolean encontrado=false;
+				boolean baja=false;
+				fismaestro=new FileInputStream(fmaestro);
+				oismaestro=new ObjectInputStream(fismaestro);
+				
+				fismovimiento=new FileInputStream(fmovimiento);
+				oismovimiento=new ObjectInputStream(fismovimiento);
+				
+				for(int i=0;i<u.contarRegistros(nombreFicheroMaestro) && !encontrado;i++){
+					CuentaImp c=(CuentaImp) oismaestro.readObject();
+					if(c.getNumCuenta()==numCuenta){
+						cuenta=c;
+						encontrado=true;
+					}
+				}
+				
+				//Aqui no me sirve el encontrado porque tengo que mirar 
+				for(int i=0;i<u.contarRegistros(nombreFicheroMovimiento) && !baja;i++){
+					CuentaImp c=(CuentaImp) oismaestro.readObject();
+					if(c.getNumCuenta()==numCuenta && encontrado){
+						//SI LA CUENTA ESTA DADA DE BAJA TIENE QUE RETORNAR NULL
+						if(c.getidCliente()!=-1){
+							cuenta.setSaldo(cuenta.getSaldo()+c.getSaldo());
+						}else{
+							cuenta=null;
+							baja=true;
+						}
+						
+					}
+					else if(c.getNumCuenta()==numCuenta && !encontrado){
+						//SI LA CUENTA ESTA DADA DE BAJA TIENE QUE RETORNAR NULL
+						if(c.getidCliente()!=-1){
+							cuenta=c;
+						}else{
+							cuenta=null;
+							baja=true;
+						}
+					}
+				}
+				
+			}
+			
+		}catch(ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch(IOException ioe){
+			System.out.println(ioe);
+		}finally{
+			try{
+				if(oismaestro!=null){
+					oismaestro.close();
+					fismaestro.close();
+				}
+				if(oismovimiento!=null){
+					oismovimiento.close();
+					fismovimiento.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+		}
+		
+		
+		return cuenta;
+	}
+	
+/*DarDeBajaTarjetas
+ * Breve Comentario:
+ * 		El metodo escribirá en el fichero de movimientos de tarjetas, un registro por cada tarjeta con el numeroDeCuenta
+ * 		igual al que recibimos por parametros, y la cambiaremos por -1 (Que significa dada de baja)
+ * 
+ * Cabecera:
+ * 		void dardeBajaTarjetas(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento)
+ * 
+ * Precondiciones:
+ * 		Almenos el fichero maestro debera estar creado, si no saltara una excepcion de fichero no encontrado
+ * Entradas:
+ * 		un long (numCuenta) y dos cadenas(nombreFicheros)
+ * Salidas:
+ * 		nada
+ * Postcondiciones:
+ * 		El archivo de TarjetaMovimientos, quedara modificado.
+ * */
+	
+	//public void dardeBajaTarjetas(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+	//	System.out.println("EN RESGUARDO");
+	//}
+	public void dardeBajaTarjetas(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+		Utilidades u=new Utilidades();
+		GestionFicherosTarjetas gft=new GestionFicherosTarjetas();
+		File fmaestro=new File(nombreFicheroMaestro);
+		File fmovimiento=new File(nombreFicheroMovimiento);
+		
+		FileInputStream fismaestro=null;
+		ObjectInputStream oismaestro=null;
+		
+		FileOutputStream fosmovimiento=null;
+		ObjectOutputStream oosmovimiento=null;
+		
+		try{
+				//Actualizamos Tarjetas.
+				gft.actualizaTarjetas(nombreFicheroMaestro, nombreFicheroMovimiento);
+				//Y luego hacemos las operaciones.
+				fismaestro=new FileInputStream(fmaestro);
+				oismaestro=new ObjectInputStream(fismaestro);
+				
+				fosmovimiento=new FileOutputStream(fmovimiento,true);
+				oosmovimiento=new ObjectOutputStream(fosmovimiento);
+				
+				for(int i=0;i<u.contarRegistros(nombreFicheroMaestro);i++){
+					TarjetaImp t=(TarjetaImp)oismaestro.readObject();
+					//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
+					//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
+					//Y la escribimos en el fichero de movimiento
+					if(t.getnumCuenta()==numCuenta){
+						t.setnumCuenta(-1);
+						oosmovimiento.writeObject(t);
+					}
+				}
+			/**NO VOLVER A INTENTARLO, LOCURA MAXIMO*/
+//			//Si el fichero de movimiento existe mirare en el maestro y luego en el de movimiento
+//			else{
+//				fismaestro=new FileInputStream(fmaestro);
+//				oismaestro=new ObjectInputStream(fismaestro);
+//				
+//				fosmovimiento=new FileOutputStream(fmovimiento,true);
+//				moosmovimiento=new MiObjectOutputStream(fosmovimiento);
+//			
+//				File faux=new File("ficheromovaux.dat");
+//				FileOutputStream fosaux=new FileOutputStream(faux,true);
+//				ObjectOutputStream oosaux=new ObjectOutputStream(fosaux);
+//				
+//				for(int i=0;i<u.contarRegistros(nombreFicheroMaestro);i++){
+//					TarjetaImp t=(TarjetaImp)oismaestro.readObject();
+//					//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
+//					//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
+//					//Y la escribimos en el fichero de movimiento
+//					if(t.getnumCuenta()==numCuenta){
+//						t.setnumCuenta(-1);
+//						oosaux.writeObject(t);
+//					}
+//				}
+//				for(int i=0;i<u.contarRegistros(nombreFicheroMovimiento);i++){
+//					TarjetaImp t=(TarjetaImp)oismaestro.readObject();
+//					//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
+//					//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
+//					//Y la escribimos en el fichero de movimiento
+//					if(t.getnumCuenta()==numCuenta){
+//						t.setnumCuenta(-1);
+//						oosmovimiento.writeObject(t);
+//					}
+//				}
+//			}
+		}catch(ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch(IOException ioe){
+			System.out.println(ioe);
+		}catch(TarjetaExcepcion te){
+			System.out.println(te);
+		}
+		finally{
+			try{
+				if(oismaestro!=null){
+					oismaestro.close();
+					fismaestro.close();
+				}
+			
+				if(oosmovimiento!=null){
+					oosmovimiento.close();
+					fosmovimiento.close();
+				}
+			
+				
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+		}
+	}
+	
 	
 	
 /*
@@ -201,6 +436,7 @@ public class GestionFicherosCuentas  {
 								cuentaaux.setSaldo(cuentaaux.getSaldo()+cuentamovaux.getSaldo());
 								cuentaaux.setidCliente(cuentamovaux.getidCliente());
 							}else{
+								dardeBajaTarjetas(cuentamovaux.getNumCuenta(), "TarjetasMaestro.dat", "TarjetasMovimiento.dat");
 								activo=false;
 							}
 					
@@ -241,12 +477,12 @@ public class GestionFicherosCuentas  {
 									cuentamovaux.setSaldo(cuentamovaux.getSaldo()+cuentamovaux2.getSaldo());
 									cuentamovaux.setidCliente(cuentamovaux2.getidCliente());
 								}
-//							
 								cuentamovaux2=(CuentaImp) oismo.readObject();
 							}
 							if(!(cuentamovaux.getidCliente()==-1))
 								oos.writeObject(cuentamovaux);
-							
+							else
+							dardeBajaTarjetas(cuentamovaux.getNumCuenta(), "TarjetasMaestro.dat", "TarjetasMovimiento.dat");
 							cuentamovaux = cuentamovaux2;
 					}
 						

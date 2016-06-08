@@ -2,18 +2,14 @@ package test;
 
 import java.util.GregorianCalendar;
 
-import cajero.TarjetaExcepcion;
 import datos.ClienteImp;
-import datos.CuentaImp;
-import datos.TarjetaImp;
+
 import gestionyutilidades.GestionFicherosClientes;
-import gestionyutilidades.Utilidades;
 
 public class TestGestionFicherosClientes {
 
 	public static void main(String[] args) {
 		GestionFicherosClientes gf=new GestionFicherosClientes();
-		Utilidades u=new Utilidades();
 		
 		//mostrarFicheroMaestro
 		
@@ -25,8 +21,8 @@ public class TestGestionFicherosClientes {
 		
 		//Escribir cliente en movimiento
 		System.out.println("AÑADO UN CLIENTE A MOVIMIENTOS");
-		gf.escribirClienteMovimiento("ClientesMovimiento.dat", c2);
 		gf.escribirClienteMovimiento("ClientesMovimiento.dat", c);
+		gf.escribirClienteMovimiento("ClientesMovimiento.dat", c2);
 		
 		//Mostramos fichero movimientos
 		System.out.println("MUESTRO CLIENTES MOVIMIENTO");

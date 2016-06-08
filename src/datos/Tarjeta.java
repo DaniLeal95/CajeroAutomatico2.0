@@ -1,7 +1,5 @@
 package datos;
 
-import cajero.TarjetaExcepcion;
-
 public interface Tarjeta {
 
 	/*
