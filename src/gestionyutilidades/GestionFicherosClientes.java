@@ -258,7 +258,7 @@ public class GestionFicherosClientes  {
 					//Si existe fichero de movimientos miraremos primero en el.
 					fismovimiento = new FileInputStream(fmovimiento);
 					oismovimiento = new ObjectInputStream(fismovimiento);
-					for (int i = 0; i < u.contarRegistros(nombreFicheroMaestro) && !encontrado; i++) {
+					for (int i = 0; i < u.contarRegistros(nombreFicheroMovimiento) && !encontrado; i++) {
 						ClienteImp aux = (ClienteImp) oismovimiento.readObject();
 						// Si lo encuentra deja de buscar en el fichero maestro
 						// y asignale la tarjeta encontrada.

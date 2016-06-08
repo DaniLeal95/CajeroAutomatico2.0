@@ -17,9 +17,9 @@ public interface Tarjeta {
 	public long getNumtarjeta();
 	public long getnumCuenta();
 	//modificadores
-	public void setTipo(char tipo) throws TarjetaExcepcion;
-	public void setPin(String pin) throws TarjetaExcepcion;
-	public void setnumCuenta(long idCuenta)throws TarjetaExcepcion;
+	public void setTipo(char tipo) ;
+	public void setPin(String pin) ;
+	public void setnumCuenta(long idCuenta);
 
 	
 

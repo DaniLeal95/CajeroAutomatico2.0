@@ -68,7 +68,7 @@ public class CuentaImp implements  Cuenta, Serializable, Cloneable, Comparable<C
 		
 	}
 	
-	public CuentaImp(long saldo,long idCliente){
+	public CuentaImp(double saldo,long idCliente){
 		this();
 		this.saldo=saldo;
 		if(validaridCliente(idCliente, "ClientesMaestro.dat", "ClientesMovimiento.dat")||idCliente==-1)

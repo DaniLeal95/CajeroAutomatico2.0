@@ -106,30 +106,29 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	
 	//modificadores
 	@Override
-	public void setTipo(char tipo) throws TarjetaExcepcion {
+	public void setTipo(char tipo) {
 		
 		if(Character.toUpperCase(tipo)=='C' || Character.toUpperCase(tipo)=='D'){
 			this.tipo = tipo;
 		}
 		else {
-			throw new TarjetaExcepcion("Solo puede ser de Credito o de Debito");
+			System.out.println("Solo puede ser de C(Credito) o de D(Debito)");
 		}
 	}
 	@Override
-	public void setPin(String pin) throws TarjetaExcepcion {
+	public void setPin(String pin){
 		if(!validarPin(pin))
-			throw new TarjetaExcepcion("El pin introducido es incorrecto");
+			System.out.println("Pin invalido");
 		else
 			this.pin=pin;
 	}
 	
 	@Override
-	public void setnumCuenta(long numCuenta) throws TarjetaExcepcion{
+	public void setnumCuenta(long numCuenta){
 		if(validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat") || numCuenta==-1)
 			this.numCuenta=numCuenta;
 		
-		else 
-			throw new TarjetaExcepcion("El numCuenta Introducido no aparece registrado");
+		
 	}
 	
 	/*

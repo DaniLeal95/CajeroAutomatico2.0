@@ -13,10 +13,10 @@ public class TestGestionFicherosClientes {
 		
 		//mostrarFicheroMaestro
 		
-		gf.mostrarClientes("ClientesMaestro.dat");
-		
+		//gf.mostrarClientes("ClientesMaestro.dat");
+		//gf.mostrarClientes("ClientesMovimiento.dat");
 		//Creo un cliente
-		ClienteImp c=new ClienteImp("ClienteNuevo","PEPOTE",new GregorianCalendar(2002,2,18),"11111111F",'M',"PRUEBA","123456");
+		/*ClienteImp c=new ClienteImp("ClienteNuevo","PEPOTE",new GregorianCalendar(2002,2,18),"11111111F",'M',"PRUEBA","123456");
 		ClienteImp c2=new ClienteImp("CLIENTE NUEVO 2","SURMANO",new GregorianCalendar(2003,3,25),"22222222A",'H',"PREBA2","123456");
 		
 		//Escribir cliente en movimiento
@@ -34,7 +34,7 @@ public class TestGestionFicherosClientes {
 		
 		//Vuelvo a mostrar Clientes
 		System.out.println("MUESTRO CLIENTES MAESTRO");
-		gf.mostrarClientes("ClientesMaestro.dat");
+		gf.mostrarClientes("ClientesMaestro.dat");*/
 		
 
 		

@@ -11,7 +11,6 @@ import java.io.ObjectOutputStream;
 
 import cajero.MiObjectOutputStream;
 import datos.CuentaImp;
-import datos.TarjetaExcepcion;
 import datos.TarjetaImp;
 
 public class GestionFicherosCuentas  {
@@ -338,8 +337,6 @@ public class GestionFicherosCuentas  {
 			System.out.println(cnfe);
 		}catch(IOException ioe){
 			System.out.println(ioe);
-		}catch(TarjetaExcepcion te){
-			System.out.println(te);
 		}
 		finally{
 			try{
