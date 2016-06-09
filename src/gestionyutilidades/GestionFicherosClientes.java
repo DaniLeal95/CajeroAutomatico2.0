@@ -12,7 +12,6 @@ import java.io.ObjectOutputStream;
 import cajero.MiObjectOutputStream;
 import datos.ClienteImp;
 import datos.CuentaImp;
-import datos.TarjetaImp;
 
 public class GestionFicherosClientes  {
 
@@ -384,6 +383,9 @@ public class GestionFicherosClientes  {
 							if (!(clientemovaux.getNombre().contains("*"))) {
 								oos.writeObject(clientemovaux);
 							}
+							else{
+								dardeBajaCuentas(clientemovaux.getIdCliente(), "CuentasMaestro.dat", "CuentasMovimiento.dat");
+							}
 							//Y leemos los dos siguientes registros.
 							try{
 								clienteaux = (ClienteImp) oism.readObject();
@@ -409,7 +411,10 @@ public class GestionFicherosClientes  {
 							}
 						} else {
 							//alta
-							oos.writeObject(clientemovaux);
+							if(!(clientemovaux.getNombre().contains("*")))
+								oos.writeObject(clientemovaux);
+							else
+								dardeBajaCuentas(clientemovaux.getIdCliente(), "CuentasMaestro.dat", "CuentasMovimiento.dat");
 							try{
 								clientemovaux = (ClienteImp) oismo.readObject();
 							}catch(IOException ioe){
@@ -433,7 +438,12 @@ public class GestionFicherosClientes  {
 					//Se ha acabado el fichero maestro pero no el de movimientos
 					
 					while (clientemovaux != null) {
-						oos.writeObject(clientemovaux);
+						//SI EL NOMBRE NO CONTIENE UN ASTERISCO LO ESCRIBIMOS,
+						if(!clientemovaux.getNombre().contains("*"))
+							oos.writeObject(clientemovaux);
+						else
+							//SI NO DAMOS DE BAJA SUS CUENTAS
+							dardeBajaCuentas(clientemovaux.getIdCliente(), "CuentasMaestro.dat", "CuentasMovimiento.dat");
 						try {
 							clientemovaux = (ClienteImp) oismo.readObject();
 						} catch(EOFException eof){
@@ -519,7 +529,7 @@ public class GestionFicherosClientes  {
 			ObjectOutputStream oosmovimiento=null;
 			
 			try{
-					//Actualizamos Tarjetas.
+					//Actualizamos Cuentas.
 					gfc.actualizaCuentas(nombreFicheroMaestro, nombreFicheroMovimiento);
 					//Y luego hacemos las operaciones.
 					fismaestro=new FileInputStream(fmaestro);

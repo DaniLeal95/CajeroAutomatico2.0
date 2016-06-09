@@ -333,7 +333,8 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 
 	@Override
 	public String toString() {
-		return "Nombre cliente: "+getNombre()+", IdCliente: " + idCliente + "\n observaciones: " + observaciones;
+		return "IdCliente: " + idCliente + " ,Nombre cliente: "+getNombre()+ ", Apellidos"+ getApellido()+
+				" ,observaciones: " + observaciones;
 	}
 	@Override
 	public int hashCode(){

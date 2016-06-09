@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import cajero.MiObjectOutputStream;
-import datos.ClienteImp;
+import datos.CuentaImp;
 import datos.TarjetaImp;
 
 public class GestionFicherosTarjetas  {
@@ -71,6 +71,63 @@ public class GestionFicherosTarjetas  {
 			}
 		}
 		
+	}
+	/*
+	 * MostrarTarjeta por Cuenta
+	 * 	Breve Comentario:
+	 * 		El metodo recibira un numCuenta, y mostrara por pantalla todas sus tarjetas actualizadas 
+	 * 		registradas en el fichero recibido por parametros,
+	 * 		, para ello deberemos de actualizar primero.
+	 * 	Cabecera:
+	 * 		void mostrarTarjetasporCuenta(long numCuenta,String nombreFicheroCuentaMaestro)
+	 * 	Precondiciones:
+	 * 		nada,si el numCuenta no corresponde a ninguna Cuenta no mostrara nada
+	 * 	Entradas:
+	 * 		un long(numCuenta) y una cadena(nombreFicheroCuentaMaestro)
+	 * 	Salidas:
+	 * 		Nada
+	 * 	Postcondiciones:
+	 * 		Nada	
+	 * 
+	 * */	
+	public void mostrarTarjetasporCuenta(long numCuenta,String nombreFicheroCuentaMaestro){
+		
+		Utilidades u=new Utilidades();
+		File f=null;
+		FileInputStream fis=null;
+		ObjectInputStream ois=null;
+		boolean encontrado=false;
+		
+		try{
+			f=new File(nombreFicheroCuentaMaestro);
+			fis=new FileInputStream(f);
+			ois=new ObjectInputStream(fis);
+			actualizaTarjetas(nombreFicheroCuentaMaestro, "TarjetasMovimiento.dat");
+			
+			for(int i=0;i<u.contarRegistros(nombreFicheroCuentaMaestro) && !encontrado;i++){
+				TarjetaImp tarjeta=(TarjetaImp)ois.readObject();
+				if(tarjeta.getnumCuenta()==numCuenta){
+					System.out.println(tarjeta.toString());
+					encontrado=true;
+				}
+			}
+			if(!encontrado)
+				System.out.println("No posees ninguna tarjeta.");
+			
+		}catch(ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch(IOException ioe){
+			System.out.println(ioe);
+		}finally{
+			try{
+				if(ois!=null){
+					ois.close();
+					fis.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+		}
 	}
 
 	
@@ -308,6 +365,225 @@ public class GestionFicherosTarjetas  {
 		return tarjeta;
 	}
 
+	/*
+	 * Breve comentario:
+	 * 	El metodo valida el numCuenta, consultando los ficheros de Cuentas que le pasamos por parametros 
+	 * 	simulando como seria un Foreign Key en una base de datos.
+	 * 	y retorna un boolean , true en caso de que sea posible utilizar ese numCuenta y false cuando no
+	 * Cabecera:
+	 * 	 boolean validarnumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
+	 * Precondiciones:
+	 * 	Almenos el fichero maestro debe existir, de no se asi saltara una excepcion
+	 * 	
+	 * Entradas:
+	 * 		long numCuenta, y dos cadenas con los nombres de los ficheros
+	 * Salidas:
+	 * 		boolean
+	 * Postcondiciones:
+	 * 		boolean retornara asociado al nombre, Funcion.
+	 * 
+	 * */
+	//RESGUARDO
+//	public boolean validarnumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
+//		boolean valida=false;
+//		return valida;
+//	}
+	
+	public boolean validarnumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
+		boolean valida=false;
+		Utilidades u=new Utilidades();
+		
+		File fmae=new File(ficheromaestro);
+		File fmov=new File(ficheromovimiento);
+		
+		FileInputStream fismae=null;
+		FileInputStream fismov=null;
+		
+		ObjectInputStream oismae=null;
+		ObjectInputStream oismov=null;
+		
+		
+		try{
+			//si el fichero de movimiento no existe solo tenenmos que mirar en el fichero maestro
+			if(!fmov.exists()){	
+				fismae=new FileInputStream(fmae);
+				oismae= new ObjectInputStream(fismae);
+				
+				CuentaImp aux=(CuentaImp)oismae.readObject();
+				while(aux!=null && !valida){
+					if(aux.getNumCuenta()== numCuenta){
+						valida=true;
+					}
+					aux=(CuentaImp)oismae.readObject();
+				}
+			}
+			else{
+				//Si el fichero de movimiento existe primero miraremos en el de movimiento
+				fismov=new FileInputStream(fmov);
+				oismov=new ObjectInputStream(fismov);
+				
+				
+				for(int i=0;i<u.contarRegistros("CuentasMovimiento.dat") && !valida;i++){
+					CuentaImp aux=(CuentaImp) oismov.readObject();
+					if(aux.getNumCuenta()== numCuenta){
+						valida=true;
+					}
+				}
+				//si no se a encontrado en el fichero de movimiento , lo miraremos en el maestro
+				if(!valida){
+					fismae= new FileInputStream(fmae);
+					oismae=new ObjectInputStream(fismae);
+					CuentaImp aux=(CuentaImp) oismae.readObject();
+					
+					while(aux!=null && !valida){
+						if(aux.getNumCuenta()== numCuenta){
+							valida=true;
+						}
+						aux=(CuentaImp) oismae.readObject();
+					}
+					
+				}
+				
+			}
+		}catch(EOFException eofe){
+			
+		}catch (ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch (IOException ioe) {
+			System.out.println(ioe);
+		}
+		//cerramos ficheros.
+		finally{
+			try{
+				if(oismov!=null){
+					oismov.close();
+					fismov.close();
+				}
+				if(oismae!=null){
+					oismae.close();
+					fismae.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+		}
+		
+		
+		return valida;
+	}
+	
+	
+	/*
+	 * Breve comentario:
+	 * 	El metodo valida el numCuenta, consultando los ficheros de Tarjetas que le pasamos por parametros 
+	 * 	y retorna un boolean , true en caso de que haya alguna tarjeta con ese numCuenta y false cuando no
+	 * Cabecera:
+	 * 	 boolean validartarjetaspornumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
+	 * Precondiciones:
+	 * 	Almenos el fichero maestro debe existir, de no se asi saltara una excepcion
+	 * 	
+	 * Entradas:
+	 * 		long numCuenta, y dos cadenas con los nombres de los ficheros
+	 * Salidas:
+	 * 		boolean
+	 * Postcondiciones:
+	 * 		boolean retornara asociado al nombre, Funcion.
+	 * 
+	 * */
+	//RESGUARDO
+//	public boolean validarnumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
+//		boolean valida=false;
+//		return valida;
+//	}
+	
+	public boolean validartarjetaspornumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
+		boolean valida=false;
+		Utilidades u=new Utilidades();
+		
+		File fmae=new File(ficheromaestro);
+		File fmov=new File(ficheromovimiento);
+		
+		FileInputStream fismae=null;
+		FileInputStream fismov=null;
+		
+		ObjectInputStream oismae=null;
+		ObjectInputStream oismov=null;
+		
+		
+		try{
+			//si el fichero de movimiento no existe solo tenenmos que mirar en el fichero maestro
+			if(!fmov.exists()){	
+				fismae=new FileInputStream(fmae);
+				oismae= new ObjectInputStream(fismae);
+				
+				TarjetaImp aux=(TarjetaImp)oismae.readObject();
+				while(aux!=null && !valida){
+					if(aux.getnumCuenta()== numCuenta){
+						valida=true;
+					}
+					aux=(TarjetaImp)oismae.readObject();
+				}
+			}
+			else{
+				//Si el fichero de movimiento existe primero miraremos en el de movimiento
+				fismov=new FileInputStream(fmov);
+				oismov=new ObjectInputStream(fismov);
+				
+				
+				for(int i=0;i<u.contarRegistros(ficheromovimiento) && !valida;i++){
+					TarjetaImp aux=(TarjetaImp) oismov.readObject();
+					if(aux.getnumCuenta()== numCuenta){
+						valida=true;
+					}
+				}
+				//si no se a encontrado en el fichero de movimiento , lo miraremos en el maestro
+				if(!valida){
+					fismae= new FileInputStream(fmae);
+					oismae=new ObjectInputStream(fismae);
+					TarjetaImp aux=(TarjetaImp) oismae.readObject();
+					
+					while(aux!=null && !valida){
+						if(aux.getnumCuenta()== numCuenta){
+							valida=true;
+						}
+						aux=(TarjetaImp) oismae.readObject();
+					}
+					
+				}
+				
+			}
+		}catch(FileNotFoundException fnfe){
+			
+		}catch(EOFException eofe){
+			
+		}catch (ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch (IOException ioe) {
+			System.out.println(ioe);
+		}
+		//cerramos ficheros.
+		finally{
+			try{
+				if(oismov!=null){
+					oismov.close();
+					fismov.close();
+				}
+				if(oismae!=null){
+					oismae.close();
+					fismae.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+		}
+		
+		
+		return valida;
+	}
+	
+
+	
+	
 /*
  * actualiza Tarjetas
  * 	Breve comentario: 

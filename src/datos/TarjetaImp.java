@@ -1,12 +1,8 @@
 package datos;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 
+import gestionyutilidades.GestionFicherosTarjetas;
 import gestionyutilidades.Utilidades;
 
 public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,Cloneable {
@@ -24,7 +20,6 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	 * 
 	 * 	Metodos añadidos
 	 * 		String tarjetatoCadena()
-	 * 		validarnumCuenta(long numCuenta,String ficheromaestro,String ficheromovimiento)
 	 * 	
 	 * 	Metodos heredados:
 	 * 		int hashCode()
@@ -61,13 +56,14 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	
 	public TarjetaImp(char tipo,String pin, long numCuenta) {
 		this();
+		GestionFicherosTarjetas gft=new GestionFicherosTarjetas();
 		if(Character.toUpperCase(tipo)=='C' || Character.toUpperCase(tipo)=='D'){
 			this.tipo=tipo;
 		}
 		if(validarPin(pin)){
 			this.pin=pin;
 		}
-		if(validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat") || numCuenta==-1){
+		if(gft.validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat") || numCuenta==-1){
 			this.numCuenta=numCuenta;	
 		}
 		
@@ -125,7 +121,8 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	
 	@Override
 	public void setnumCuenta(long numCuenta){
-		if(validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat") || numCuenta==-1)
+		GestionFicherosTarjetas gft=new GestionFicherosTarjetas();
+		if(gft.validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat") || numCuenta==-1)
 			this.numCuenta=numCuenta;
 		
 		
@@ -135,112 +132,6 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	*	Métodos añadidos
 	*/
 	
-	/*
-	 * Breve comentario:
-	 * 	El metodo valida el numCuenta, consultando los ficheros de Cuentas que le pasamos por parametros 
-	 * 	simulando como seria un Foreign Key en una base de datos.
-	 * 	y retorna un boolean , true en caso de que sea posible utilizar ese numCuenta y false cuando no
-	 * Cabecera:
-	 * 	 boolean validarnumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
-	 * Precondiciones:
-	 * 	Almenos el fichero maestro debe existir, de no se asi saltara una excepcion
-	 * 	
-	 * Entradas:
-	 * 		long numCuenta, y dos cadenas con los nombres de los ficheros
-	 * Salidas:
-	 * 		boolean
-	 * Postcondiciones:
-	 * 		boolean retornara asociado al nombre, Funcion.
-	 * 
-	 * */
-	//RESGUARDO
-//	public boolean validarnumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
-//		boolean valida=false;
-//		return valida;
-//	}
-	
-	public boolean validarnumCuenta(long numCuenta, String ficheromaestro,String ficheromovimiento){
-		boolean valida=false;
-		Utilidades u=new Utilidades();
-		
-		File fmae=new File(ficheromaestro);
-		File fmov=new File(ficheromovimiento);
-		
-		FileInputStream fismae=null;
-		FileInputStream fismov=null;
-		
-		ObjectInputStream oismae=null;
-		ObjectInputStream oismov=null;
-		
-		
-		try{
-			//si el fichero de movimiento no existe solo tenenmos que mirar en el fichero maestro
-			if(!fmov.exists()){	
-				fismae=new FileInputStream(fmae);
-				oismae= new ObjectInputStream(fismae);
-				
-				CuentaImp aux=(CuentaImp)oismae.readObject();
-				while(aux!=null && !valida){
-					if(aux.getNumCuenta()== numCuenta){
-						valida=true;
-					}
-					aux=(CuentaImp)oismae.readObject();
-				}
-			}
-			else{
-				//Si el fichero de movimiento existe primero miraremos en el de movimiento
-				fismov=new FileInputStream(fmov);
-				oismov=new ObjectInputStream(fismov);
-				
-				
-				for(int i=0;i<u.contarRegistros("CuentasMovimiento.dat") && !valida;i++){
-					CuentaImp aux=(CuentaImp) oismov.readObject();
-					if(aux.getNumCuenta()== numCuenta){
-						valida=true;
-					}
-				}
-				//si no se a encontrado en el fichero de movimiento , lo miraremos en el maestro
-				if(!valida){
-					fismae= new FileInputStream(fmae);
-					oismae=new ObjectInputStream(fismae);
-					CuentaImp aux=(CuentaImp) oismae.readObject();
-					
-					while(aux!=null && !valida){
-						if(aux.getNumCuenta()== numCuenta){
-							valida=true;
-						}
-						aux=(CuentaImp) oismae.readObject();
-					}
-					
-				}
-				
-			}
-		}catch(EOFException eofe){
-			
-		}catch (ClassNotFoundException cnfe){
-			System.out.println(cnfe);
-		}catch (IOException ioe) {
-			System.out.println(ioe);
-		}
-		//cerramos ficheros.
-		finally{
-			try{
-				if(oismov!=null){
-					oismov.close();
-					fismov.close();
-				}
-				if(oismae!=null){
-					oismae.close();
-					fismae.close();
-				}
-			}catch(IOException ioe){
-				System.out.println(ioe);
-			}
-		}
-		
-		
-		return valida;
-	}
 	
 	/*
 	 * validarPin

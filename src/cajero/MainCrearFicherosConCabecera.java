@@ -51,7 +51,7 @@ public class MainCrearFicherosConCabecera {
 			oosclientes.writeObject(cliente);
 			
 			//Insertamos una Cuenta
-			CuentaImp cuenta=new CuentaImp(1000,1);
+			CuentaImp cuenta=new CuentaImp(1000,2);
 			ooscuentas.writeObject(cuenta);
 			System.out.println(cuenta.toString());
 			//Insertamos una tarjeta

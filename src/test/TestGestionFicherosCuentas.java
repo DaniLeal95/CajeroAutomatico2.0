@@ -22,7 +22,7 @@ public class TestGestionFicherosCuentas {
 		
 		//ObtenerCuenta
 		System.out.println("OBTENGO LA CUENTA 5");
-		CuentaImp Cuentaobtenida=gfc.obtenerCuenta(5, "CuentasMaestro.dat", "CuentasMovimiento.dat");
+		CuentaImp Cuentaobtenida=gfc.obtenerCuenta(2, "CuentasMaestro.dat", "CuentasMovimiento.dat");
 		System.out.println(Cuentaobtenida.toString());
 		Cuentaobtenida.setidCliente(-1);
 		
