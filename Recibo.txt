@@ -1,0 +1,9 @@
+RECIBO DEL BANCO VVBA
+ ------------------
+ El numCuenta: 1
+Hizo una transferencia de : -100.0 Euros
+ Hacia El numCuenta: 2
+En la fecha: 10/6/2016 0:6:8
+ ------------------
+ Su saldo ahora mismo: 710.0Euros
+ Gracias por confiar en nosotros.

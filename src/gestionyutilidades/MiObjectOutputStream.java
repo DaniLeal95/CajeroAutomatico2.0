@@ -1,4 +1,4 @@
-package cajero;
+package gestionyutilidades;
 /**
  * Redefinicion de la clase ObjectOutputStream para que no escriba una cabecera
  * al principio del Stream.

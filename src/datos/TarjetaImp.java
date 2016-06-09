@@ -17,9 +17,11 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	 * 
 	 * Restricciones;
 	 * 	El pin debe tener una longitud de 4 digitos.
+	 * 	El tipo solo puede ser 'C' O 'D'
 	 * 
 	 * 	Metodos añadidos
 	 * 		String tarjetatoCadena()
+	 * 		boolean validarPin(String pin)
 	 * 	
 	 * 	Metodos heredados:
 	 * 		int hashCode()
@@ -94,7 +96,6 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 	public long getNumTarjetas(){
 		return contadortarjeta;
 	}
-	@Override
 	public long getnumCuenta(){
 		return this.numCuenta;
 	}
@@ -119,7 +120,6 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 			this.pin=pin;
 	}
 	
-	@Override
 	public void setnumCuenta(long numCuenta){
 		GestionFicherosTarjetas gft=new GestionFicherosTarjetas();
 		if(gft.validarnumCuenta(numCuenta, "CuentasMaestro.dat", "CuentasMovimiento.dat") || numCuenta==-1)

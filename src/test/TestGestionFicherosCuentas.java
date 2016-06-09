@@ -9,9 +9,9 @@ public class TestGestionFicherosCuentas {
 		
 		GestionFicherosCuentas gfc=new GestionFicherosCuentas();
 		
-		//CuentaImp c=new CuentaImp(15000,2);
+		CuentaImp c=new CuentaImp(15000,2);
 		CuentaImp c2=new CuentaImp(-500,2);
-		//CuentaImp c3=new CuentaImp(50,2);
+		CuentaImp c3=new CuentaImp(50,2);
 		CuentaImp c4=new CuentaImp(c2);
 		CuentaImp c5=new CuentaImp(70000,-1);
 		CuentaImp c6=new CuentaImp(70000,1);
@@ -21,21 +21,17 @@ public class TestGestionFicherosCuentas {
 		gfc.mostrarCuentas("CuentasMaestro.dat");
 		
 		//ObtenerCuenta
-		System.out.println("OBTENGO LA CUENTA 5");
-		CuentaImp Cuentaobtenida=gfc.obtenerCuenta(2, "CuentasMaestro.dat", "CuentasMovimiento.dat");
+		CuentaImp Cuentaobtenida=gfc.obtenerCuenta(1, "CuentasMaestro.dat", "CuentasMovimiento.dat");
 		System.out.println(Cuentaobtenida.toString());
-		Cuentaobtenida.setidCliente(-1);
 		
+		CuentaImp Cuentaobtenida2=gfc.obtenerCuenta(2, "CuentasMaestro.dat", "CuentasMovimiento.dat");
+		System.out.println(Cuentaobtenida2.toString());
+		Cuentaobtenida.setSaldo(-500);
+		Cuentaobtenida2.setSaldo(500);
 		//EscribirMovimiento
 		System.out.println("ESCRIBO DOS CUENTAS EN MOVIMIENTO");
-		gfc.escribirMovimiento("CuentasMovimiento.dat", c2);
-		//gfc.escribirMovimiento("CuentasMovimiento.dat", c3);
-		//gfc.escribirMovimiento("CuentasMovimiento.dat", c);
-		gfc.escribirMovimiento("CuentasMovimiento.dat", c4);
-		gfc.escribirMovimiento("CuentasMovimiento.dat", c5);
-		gfc.escribirMovimiento("CuentasMovimiento.dat", c6);
-		gfc.escribirMovimiento("CuentasMovimiento.dat", Cuentaobtenida);
-		
+
+		gfc.escribirMovimiento("CuentasMovimiento.dat", Cuentaobtenida2);
 		//MostrarCuentas
 		System.out.println("MOSTRAMOS EL ARCHIVO MOVIMIENTO");
 		gfc.mostrarCuentas("CuentasMovimiento.dat");

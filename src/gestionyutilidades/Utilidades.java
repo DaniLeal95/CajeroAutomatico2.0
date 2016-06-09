@@ -13,7 +13,7 @@ import java.io.ObjectOutputStream;
 public class Utilidades {
 
 
-
+/*clase de utilidades*/
 
 
 	/*
@@ -26,9 +26,10 @@ public class Utilidades {
 	   * Precondiciones:Nada
 	   * 	
 	   * Entradas:Nada
-	   * Salidas:sobreescribira el fichero
-	   * Postcondiciones:
+	   * Salidas:
 	   * 	nada
+	   * Postcondiciones:
+	   * 	sobreescribira el fichero
 	   * */	
 	
 	public void escribirUltimaId(long id,String nombreFichero){
@@ -60,7 +61,8 @@ public class Utilidades {
 	   * 	El metodo recogera la Id escrita en ese fichero(long) y la devolvera asociada al nombre
 	   * Cabecera: 
 	   * 	long CogerUltimaID()
-	   * Precondiciones:Nada
+	   * Precondiciones:
+	   * 	Nada, si el fichero no existe devolvera 0
 	   * 	
 	   * Entradas:Nada
 	   * Salidas:un long (ID)
@@ -110,7 +112,7 @@ public class Utilidades {
 	 * 	Cabecera:
 	 * 		int contarRegistros(String nombreFichero)
 	 * 	Precondiciones:
-	 * 		El fichero debera existir, en el caso de que no este creado saltara una excepcion(FILENOTFOUNDEXCEPTION)
+	 * 		nada, si el fichero no existe devolvera 0
 	 * 	Entradas:
 	 * 		el nombre del fichero(String)
 	 * 	Salida:
@@ -138,7 +140,6 @@ public class Utilidades {
 			}
 		}catch(EOFException eof){
 		}catch(FileNotFoundException fnfe){
-			System.out.println("El fichero "+nombreFichero+" no existe");
 		}catch(IOException ioe){
 			System.out.println(ioe);
 		} catch (ClassNotFoundException e) {

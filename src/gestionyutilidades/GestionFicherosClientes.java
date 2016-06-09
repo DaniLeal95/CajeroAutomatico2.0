@@ -9,12 +9,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import cajero.MiObjectOutputStream;
 import datos.ClienteImp;
 import datos.CuentaImp;
 
 public class GestionFicherosClientes  {
 
+	/**
+	 * Clase de gestion De Ficheros de los Clientes
+	 * 
+	 * 
+	 * */
+	
 
 
 	/*
@@ -26,6 +31,7 @@ public class GestionFicherosClientes  {
 	 * 		void mostrarClientes(String nombreFichero)
 	 * 	Precondiciones:
 	 * 		el fichero debera estar creado, de no estarlo no mostrara nada
+	 * 		los archivos deben contener objetos ClientesImp de no ser así saltara una excepcion
 	 * 	Entradas:
 	 * 		El nombre del fichero
 	 * 	Salidas:
@@ -33,9 +39,16 @@ public class GestionFicherosClientes  {
 	 * 	Postcondiciones:
 	 * 		Nada
 	 * */
+	/*RESGUARDO
+	 * public void mostrarClientes(String nombreFichero){
+	 * System.out.println("Metodo en construccion");
+	 * }
+	 * */
+	
 	public void mostrarClientes(String nombreFichero){
 		File fmaestro=null;
 		FileInputStream fismaestro=null;
+		
 		ObjectInputStream oismaestro=null;
 		Utilidades u=new Utilidades();
 		
@@ -87,7 +100,12 @@ public class GestionFicherosClientes  {
 	 * 	Salidas:
 	 * 		Nada 
 	 * 	Postcondiciones:
-	 * 		EscribirÃ¡ el objeto en el fichero.
+	 * 		EscribirÃ¡ el objeto en el fichero,el fichero sera modificado
+	 * */
+	/*RESGUARDO
+	 * public void escribirClienteMovimiento(String nombreFichero,ClienteImp c){
+	 * 	System.out.println("Metodo en construccion");
+	 * }
 	 * */
 	public void escribirClienteMovimiento(String nombreFichero,ClienteImp c){
 		
@@ -141,7 +159,7 @@ public class GestionFicherosClientes  {
 	 * Cabecera:
 	 * 	 boolean comprobarMovimiento(long idCliente,String nombreFicheroMovimiento)
 	 * Precondiciones:
-	 * 	Nada
+	 * 	los archivos deben contener objetos ClientesImp de no ser así saltara una excepcion
 	 * Entradas:
 	 * 	un long (idcliente) y una cadena(nombreFicheroMovimiento)
 	 * Salidas:
@@ -174,6 +192,8 @@ public class GestionFicherosClientes  {
 					}
 				}
 			}
+		}catch(FileNotFoundException fnfe){
+			
 		}catch(ClassNotFoundException cnfe){
 			System.out.println(cnfe);
 		}catch(IOException ioe){
@@ -203,7 +223,8 @@ public class GestionFicherosClientes  {
 	 *		 ClienteImp obtenerCliente(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento)
 	 *	
 	 *	Precondiciones:
-	 *		Almenos el fichero Maestro Debera Estar Creado. Si no saltara una excepcion de fichero no encontrado	
+	 *		los archivos deben contener objetos ClientesImp de no ser así saltara una excepcion
+	 *		Almenos el fichero Maestro Debera Estar Creado.	
 	*  		,si el idCliente no corresponde a ningun cliente o ese Cliente Esta dado de baja, retornara null.
 	*  
 	 *	Entradas:
@@ -217,10 +238,10 @@ public class GestionFicherosClientes  {
 	 * *
 	 */
 	 //Resguardo	
-//		public TarjetaImp obtenerTarjeta(long numTarjeta){
-//			TarjetaImp tarjeta=null;
+//		public ClienteImp obtenerCliente(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+//			ClienteImp cliente=null;
 //			System.out.println("En Construccion.");
-//			return tarjeta;
+//			return cliente;
 //		}
 		
 		public ClienteImp obtenerCliente(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento){
@@ -286,7 +307,7 @@ public class GestionFicherosClientes  {
 				}
 				
 				
-				
+			}catch(FileNotFoundException fnfe){
 			}catch(ClassNotFoundException cnfe){
 				System.out.println(cnfe);
 			}catch(IOException ioe){
@@ -314,22 +335,26 @@ public class GestionFicherosClientes  {
 /*
  * actualiza Clientes
  * 	Breve comentario: 
- * 		Este metodo mezcla dos archivos desordenados ( ClientesMaestro.dat y ClientesMovimientos.dat )
+ * 		Este metodo mezcla dos archivos desordenados que recibe por parametros
  * 			y los incluye en un archivo auxiliar mezclados
  * 	Cabecera:
- * 		void actulizaClientes()
+ * 		void actulizaClientes(String nombreFicheroMaestro,String nombreFicheroMovimiento)
  * 	Precondiciones:
- * 		nada
+ * 		los archivos deben contener objetos ClientesImp de no ser así saltara una excepcion
+ * 		, de no existir los ficheros no hara nada
  * 	Entradas:
- * 		nada
+ * 		dos cadenas
  * 	Salidas:
- * 		El metodo escribirÃ¡ en un archivo auxiliar
+		Nada
  * 	Postcondiciones:
- * 		El metodo escribira en un archivo auxiliar los datos de los dos archivos (maestro y movimientos) y los volcarÃ¡ 
- * 		sobre el auxiliar.
- * 
+ * 		El fichero Maestro se vera modificado
+ * 		y el fichero movimiento eliminado
  * */
-
+		/*Resguardo
+		 * public void actualizaClientes(String nombreFicheroMaestro,String nombreFicheroMovimiento) {
+			System.out.println("Metodo en construccion");
+		}*/
+		
 	public void actualizaClientes(String nombreFicheroMaestro,String nombreFicheroMovimiento) {
 			Utilidades u=new Utilidades();
 			ordenacionExternaMezcla(nombreFicheroMaestro);
@@ -454,7 +479,7 @@ public class GestionFicherosClientes  {
 					}
 						
 					
-				
+				}catch(FileNotFoundException fnfe){
 				}catch(EOFException eofe){
 
 				} catch (IOException ioe) {
@@ -504,7 +529,7 @@ public class GestionFicherosClientes  {
 	 * 		 void dardeBajaCuentas(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento)
 	 * 
 	 * Precondiciones:
-	 * 		el fichero maestro debera estar creado, si no saltara una excepcion de fichero no encontrado
+	 * 		los archivos deben contener objetos CuentaImp de no ser así saltara una excepcion
 	 * Entradas:
 	 * 		un long (idCliente) y dos cadenas(nombreFicheros)
 	 * Salidas:
@@ -548,40 +573,8 @@ public class GestionFicherosClientes  {
 							oosmovimiento.writeObject(c);
 						}
 					}
-				/**NO VOLVER A INTENTARLO, LOCURA MAXIMO*/
-//				//Si el fichero de movimiento existe mirare en el maestro y luego en el de movimiento
-//				else{
-//					fismaestro=new FileInputStream(fmaestro);
-//					oismaestro=new ObjectInputStream(fismaestro);
-//					
-//					fosmovimiento=new FileOutputStream(fmovimiento,true);
-//					moosmovimiento=new MiObjectOutputStream(fosmovimiento);
-//				
-//					File faux=new File("ficheromovaux.dat");
-//					FileOutputStream fosaux=new FileOutputStream(faux,true);
-//					ObjectOutputStream oosaux=new ObjectOutputStream(fosaux);
-//					
-//					for(int i=0;i<u.contarRegistros(nombreFicheroMaestro);i++){
-//						TarjetaImp t=(TarjetaImp)oismaestro.readObject();
-//						//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
-//						//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
-//						//Y la escribimos en el fichero de movimiento
-//						if(t.getnumCuenta()==numCuenta){
-//							t.setnumCuenta(-1);
-//							oosaux.writeObject(t);
-//						}
-//					}
-//					for(int i=0;i<u.contarRegistros(nombreFicheroMovimiento);i++){
-//						TarjetaImp t=(TarjetaImp)oismaestro.readObject();
-//						//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
-//						//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
-//						//Y la escribimos en el fichero de movimiento
-//						if(t.getnumCuenta()==numCuenta){
-//							t.setnumCuenta(-1);
-//							oosmovimiento.writeObject(t);
-//						}
-//					}
-//				}
+
+			}catch(FileNotFoundException fnfe){
 			}catch(ClassNotFoundException cnfe){
 				System.out.println(cnfe);
 			}catch(IOException ioe){
@@ -697,6 +690,7 @@ public class GestionFicherosClientes  {
 					registro = (ClienteImp) ficheroOIS.readObject();
 				}
 			}
+		}catch(FileNotFoundException fnfe){
 		} catch(EOFException eof){
 			
 		} catch (IOException e) {
@@ -828,6 +822,7 @@ public class GestionFicherosClientes  {
 					}					
 				}
 			}
+		}catch (FileNotFoundException fnfe){
 		} catch(EOFException eof){
 			
 		} catch (IOException e) {

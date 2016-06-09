@@ -38,15 +38,15 @@ public interface Persona {
 	
 	void setApellido(String apellido);
 	
-	void setGenero(char genero) throws PersonaNoValida;
+	void setGenero(char genero) ;
 	
-	void setDni(String dni) throws PersonaNoValida;
+	void setDni(String dni) ;
 	
-	void setTelefono(String telefono) throws PersonaNoValida;
+	void setTelefono(String telefono) ;
 	
 	void setDireccion(String direccion);
 	
-	void setFNacimiento(GregorianCalendar fNacimiento) throws PersonaNoValida;
+	void setFNacimiento(GregorianCalendar fNacimiento) ;
 	
 
 }

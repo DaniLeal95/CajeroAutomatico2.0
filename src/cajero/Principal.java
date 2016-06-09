@@ -5,10 +5,10 @@ import java.util.Scanner;
 
 import datos.ClienteImp;
 import datos.CuentaImp;
-import datos.PersonaNoValida;
 import datos.TarjetaImp;
 import gestionyutilidades.GestionFicherosClientes;
 import gestionyutilidades.GestionFicherosCuentas;
+import gestionyutilidades.GestionFicherosDeTextos;
 import gestionyutilidades.GestionFicherosTarjetas;
 
 public class Principal {
@@ -19,13 +19,17 @@ public class Principal {
 	private static String nombreFicheroMovimientoCuentas="CuentasMovimiento.dat";
 	private static String nombreFicheroMaestroTarjetas="TarjetasMaestro.dat";
 	private static String nombreFicheroMovimientoTarjetas="TarjetasMovimiento.dat";
+	
+	
 	/*
+	 * Analisis:
+	 * 	El programa simulara 
 	 * 
 	 * PSEUDOCODIGO GENERALIZADO:
 	 * 		Inicio PP
 	 * 			
 	 * 			MostrarMenuPrincipal y Validar OpcionMenu
-	 * 			Mientras no quiera Salir
+	 * 			Mientras opcionMenu!=0
 	 * 					
 	 * 				segun OpcionMenu
 	 * 					case 1:
@@ -52,6 +56,7 @@ public class Principal {
 		String contrasena;
 		int contadorcontrasena=0;
 		long idCliente;
+		int contadordevueltas=0;
 		
 		
 		
@@ -60,9 +65,9 @@ public class Principal {
 		System.out.println("-------------------------");
 		//Mostrar menu y validar OpcionMenu
 		do{
-		menuPrincipal();
-		
-		opcionmenu=Integer.parseInt(sc.nextLine());
+			contadorcontrasena=0;
+			menuPrincipal();
+			opcionmenu=Integer.parseInt(sc.nextLine());
 		}while(opcionmenu<0 || opcionmenu>3);
 		
 		//MientrasNoquieraSalir
@@ -101,6 +106,10 @@ public class Principal {
 						
 						//Pedimos idCliente
 						System.out.println("Introduce el id del Cliente");
+						if(contadordevueltas>0){
+							//ESTO ES PORQUE ME DA PROBLEMAS EL Scanner 
+							sc.nextLine();
+						}
 						idCliente=Long.parseLong(sc.nextLine());
 						
 						if(idCliente<=1)
@@ -120,18 +129,25 @@ public class Principal {
 							if(contadorcontrasena>0)System.out.println("La contraseña es incorrecta, te quendan "+(3-contadorcontrasena)+" intentos");
 							System.out.println("Introduce la contraseña de "+cliente.getNombre());
 							contrasena=sc.next();
-							if(!(contrasena.equals(gfclientes.obtenerCliente(cliente.getIdCliente(), nombreFicheroMaestroClientes,nombreFicheroMovimientoClientes ).getContrasena()))){
+							if(!(contrasena.equals(cliente.getContrasena()))){
 								contadorcontrasena++;
 							}	
 						
-						}while(!(contrasena.equals(gfclientes.obtenerCliente(cliente.getIdCliente(), nombreFicheroMaestroClientes,nombreFicheroMovimientoClientes ).getContrasena()))
+						}while(!(contrasena.equals(cliente.getContrasena()))
 								&& contadorcontrasena<3);
 					}
 				}while(cliente==null);
 				//LAMADA AL SIGUIENTE PASO
-				if(contadorcontrasena<3)
+				if(contadorcontrasena<3){
 					System.out.println("Bienvenido "+cliente.getNombre());
 					ModoUsuario(cliente);
+					
+					//Esto es porque me da problemas el Scanner
+					contadordevueltas++;
+				}
+				else{
+					System.out.println("Tu no eres "+cliente.getNombre());
+				}
 						
 				
 				break;
@@ -153,7 +169,7 @@ public class Principal {
 	 * 		Inicio ModoAdministrador
 	 * 			Mostrar Menu y validar opcion de Menu
 	 * 			
-	 * 			Mientras no sea salir
+	 * 			Mientras opcion de Menu !=0
 	 * 				
 	 * 				segun opcion
 	 * 					
@@ -478,33 +494,24 @@ public class Principal {
 				}while(fNacimiento.compareTo(fActual)>0);
 				
 				
-				try {
 					cliente.setFNacimiento(fNacimiento);
-				} catch (PersonaNoValida e) {
-					System.out.println(e);
-				}
+				
 				
 				//Insertamos dni
 				do{
 					System.out.println("Introduce dni");
 					dni=sc.nextLine();
 				}while(dni.length()!=9);
-				try{
 					cliente.setDni(dni);
-				}catch(PersonaNoValida e){
-					System.out.println(e);
-				}
+				
 				
 				//Insertamos genero
 				do{
 					System.out.println("Introduce su genero H o M");
 					genero=Character.toUpperCase(sc.nextLine().charAt(0));
 				}while(genero!='H' && genero!='M');
-				try{
-					cliente.setGenero(genero);
-				}catch(PersonaNoValida e){
-					System.out.println(e);
-				}
+				cliente.setGenero(genero);
+				
 				
 				//Insertamos observacion
 				System.out.println("Introduce alguna observacion");
@@ -600,7 +607,7 @@ public class Principal {
 	 * 	
 	 * 	Mostrar Menu y Validar Opcion de Menu
 	 * 
-	 * 	Mientras no sea salir
+	 * 	Mientras opciondeMenu!=0
 	 * 		
 	 * 		Segun Opcion
 	 * 			caso 1:
@@ -643,21 +650,25 @@ public class Principal {
 	public static void ModoUsuario(ClienteImp cliente){
 		int opcionmenu,contadorpin=0;
 		char recibo;
-		long numCuenta,numTarjeta;
+		long numCuenta,numCuenta2,numTarjeta,idCliente;
 		double saldo;
-		boolean posible;
+		
+		ClienteImp cliente2=null;
 		String pin;
 		GestionFicherosCuentas gfcuentas=new GestionFicherosCuentas();
 		GestionFicherosTarjetas gftarjetas=new GestionFicherosTarjetas();
-		CuentaImp cuenta;
+		GestionFicherosClientes gfclientes=new GestionFicherosClientes();
+		GestionFicherosDeTextos gfTextos=new GestionFicherosDeTextos();
+		CuentaImp cuenta,cuenta2;
+		
 		TarjetaImp tarjeta;
 		
 		
 		//mostrar menu y validar opcion de menu
 		sc.nextLine();
 		do{
+			contadorpin=0;
 			MenuModoUsuario();
-			
 			opcionmenu=Integer.parseInt(sc.nextLine());
 		}while(opcionmenu<0 || opcionmenu>4);
 		
@@ -693,6 +704,9 @@ public class Principal {
 				System.out.println();
 
 				break;
+			
+			
+			/*------------------------------------------------------------------------------------------------------------------------------------*/
 			case 2:
 				// Sacar Dinero
 				// mostramos las cuentas de dicho cliente
@@ -764,11 +778,10 @@ public class Principal {
 
 							// Si la cuenta es de credito se lo permitiremos
 							if (tarjeta.getTipo() == 'C') {
-
+								CuentaImp Cuentaanterior=cuenta.clone();
 								// le damos el saldo que desee cambiar
 								cuenta.setSaldo(-saldo);
 								System.out.println("Recoja su dinero");
-								System.out.println(cuenta.toString());
 								// y escribimos el movimiento en el fichero de
 								// movimiento
 								gfcuentas.escribirMovimiento(nombreFicheroMovimientoCuentas, cuenta);
@@ -777,8 +790,7 @@ public class Principal {
 									recibo = Character.toUpperCase(sc.nextLine().charAt(0));
 								} while (recibo != 'S' && recibo != 'N');
 								if (recibo == 'S') {
-									// Falta Metodo para guardar en archivo de
-									// texto
+									gfTextos.ReciboMovimiento(Cuentaanterior, cuenta);
 								}
 							}
 
@@ -795,11 +807,10 @@ public class Principal {
 						// sacar
 						// se lo permitiremos con los dos tipos de tarjeta
 						else {
-
+							CuentaImp Cuentaanterior=cuenta.clone();
 							// le damos el saldo que desee cambiar
 							cuenta.setSaldo(-saldo);
 							System.out.println("Recoja su dinero");
-							System.out.println(cuenta.toString());
 							// y escribimos el movimiento en el fichero de
 							// movimiento
 							gfcuentas.escribirMovimiento(nombreFicheroMovimientoCuentas, cuenta);
@@ -808,7 +819,7 @@ public class Principal {
 								recibo = Character.toUpperCase(sc.nextLine().charAt(0));
 							} while (recibo != 'S' && recibo != 'N');
 							if (recibo == 'S') {
-								// Falta Metodo para guardar en archivo de texto
+								gfTextos.ReciboMovimiento(Cuentaanterior, cuenta);
 							}
 						}
 
@@ -820,11 +831,163 @@ public class Principal {
 				}
 
 				break;
+				
+				
+				/*-----------------------------------------------------------------------------------------------------------------------*/
 			case 3:
 				//Ingresar Dinero
+				
+				// mostramos las cuentas de dicho cliente
+				do {
+					System.out.println("Tus Cuentas\n");
+					gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
+					System.out.println("-----------");
+
+					// le pedimos el numero de cuenta del que quiera conocer sus
+					// tarjetas
+					// mientras el numero de cuenta introducido sea invalido.
+					System.out.println("Introduce el numero de cuenta de la cual quieras ingresar dinero");
+					numCuenta = Long.parseLong(sc.nextLine());
+					cuenta = gfcuentas.obtenerCuenta(numCuenta, nombreFicheroMaestroCuentas,
+							nombreFicheroMovimientoCuentas);
+
+					if (cuenta == null)
+						System.out.println("El numero de cuenta introducido es invalido");
+
+				} while (cuenta == null);
+				// Si tienes tarjetas, podras hacer dicha operacion
+				if (gftarjetas.validartarjetaspornumCuenta(numCuenta, nombreFicheroMaestroTarjetas,
+						nombreFicheroMovimientoTarjetas)) {
+
+					do {
+						System.out.println("Tus Tarjetas");
+
+						gftarjetas.mostrarTarjetasporCuenta(numCuenta, nombreFicheroMaestroTarjetas);
+
+						// Le pedimos la tarjeta con la que desea sacar el
+						// dinero.
+						System.out.println("\nIntroduce el numero de Tarjeta con el que deseas ingresar dinero");
+						numTarjeta = Long.parseLong(sc.nextLine());
+
+						tarjeta = gftarjetas.obtenerTarjeta(numTarjeta, nombreFicheroMaestroTarjetas,
+								nombreFicheroMaestroTarjetas);
+
+						// Si la tarjeta es nula significa que no hay ninguna
+						// con esa id
+						if (tarjeta == null)
+							System.out.println("Introduce un numero de tarjeta Valido");
+
+					} while (tarjeta == null);
+
+					// Le pedimos que nos diga el pin
+					do {
+						System.out.println("Introduzca su pin");
+						pin = sc.nextLine();
+						// Si el pin es incorrecto saltara mensaje de error y
+						// sumara uno al contador de errores.
+						if (!tarjeta.getPin().equals(pin)) {
+							System.out.println("Pin Incorrecto");
+							contadorpin++;
+							System.out.println("Te quedan " + (3 - contadorpin) + " intentos");
+						}
+						// mientras el pin sea incorrecto y el contador menor a
+						// 3 se repetira el proceso
+					} while (!tarjeta.getPin().equals(pin) && contadorpin < 3);
+
+					if (contadorpin < 3) {
+						// le pedimos el saldo a sacar
+						System.out.println("Introduce el saldo que desea ingresar");
+						saldo = Double.parseDouble(sc.nextLine());
+						CuentaImp Cuentaanterior=cuenta.clone();
+						// Si el saldo que desea sacar es mayor al que tiene en
+						// su cuenta
+						// solo lo podra hacer si su tarjeta es de Credito
+
+						// le damos el saldo que desee cambiar
+						cuenta.setSaldo(saldo);
+						// y escribimos el movimiento en el fichero de
+						// movimiento
+						gfcuentas.escribirMovimiento(nombreFicheroMovimientoCuentas, cuenta);
+						do {
+							System.out.println("Desea recibo? (S o N)");
+							recibo = Character.toUpperCase(sc.nextLine().charAt(0));
+						} while (recibo != 'S' && recibo != 'N');
+						if (recibo == 'S') {
+							gfTextos.ReciboMovimiento(Cuentaanterior, cuenta);
+						}
+					}
+				}
+
 				break;
+				
+				
+				/*----------------------------------------------------------------------------------------------------------*/
 			case 4:
 				//Transferencia
+				// mostramos las cuentas de dicho cliente
+				do {
+					System.out.println("Tus Cuentas\n");
+					gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
+					System.out.println("-----------");
+
+					// le pedimos el numero de cuenta del que quiera conocer sus
+					// mientras el numero de cuenta introducido sea invalido.
+					System.out.println("Introduce el numero de cuenta de la cual quieras sacar dinero");
+					numCuenta = Long.parseLong(sc.nextLine());
+					cuenta = gfcuentas.obtenerCuenta(numCuenta, nombreFicheroMaestroCuentas,
+							nombreFicheroMovimientoCuentas);
+
+					if (cuenta == null)
+						System.out.println("El numero de cuenta introducido es invalido");
+
+				} while (cuenta == null);
+				do{
+					gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
+					gfclientes.mostrarClientes(nombreFicheroMovimientoClientes);
+					//mostrar clientes y validar el id del cliente
+						System.out.println("\nIntroduzca al cliente que deseas hacerle la transferencia");
+						idCliente=Long.parseLong(sc.nextLine());
+						if(idCliente==cliente.getIdCliente())
+							System.out.println("No te puedes hacer la transferencia ati mismo.");
+						
+						else
+							cliente2=gfclientes.obtenerCliente(idCliente, nombreFicheroMaestroClientes, nombreFicheroMovimientoClientes);
+							if(cliente2==null)
+								System.out.println("Introduce una id valida");
+				}while(idCliente==cliente.getIdCliente() || cliente==null);
+				
+				do{
+					gfcuentas.mostrarCuentasporCliente(cliente2.getIdCliente(), nombreFicheroMaestroCuentas);
+					gfcuentas.mostrarCuentasporCliente(cliente2.getIdCliente(), nombreFicheroMovimientoCuentas);
+					// le pedimos el numero de cuenta del que quiera conocer sus
+					// mientras el numero de cuenta introducido sea invalido.
+					System.out.println("Introduce el numero de cuenta de la cual quieras sacar dinero");
+					numCuenta2 = Long.parseLong(sc.nextLine());
+					cuenta2 = gfcuentas.obtenerCuenta(numCuenta2, nombreFicheroMaestroCuentas,
+							nombreFicheroMovimientoCuentas);
+					if (cuenta2 == null)
+						System.out.println("El numero de cuenta introducido es invalido");
+
+				} while (cuenta2 == null);
+				
+				System.out.println("Cuanto dinero desea transferible?");
+				saldo=Double.parseDouble(sc.nextLine());
+				CuentaImp Cuentaanterior=cuenta.clone();
+				
+				cuenta.setSaldo(-saldo);
+				gfcuentas.escribirMovimiento(nombreFicheroMovimientoCuentas, cuenta);
+				cuenta2.setSaldo(saldo);
+				gfcuentas.escribirMovimiento(nombreFicheroMovimientoCuentas, cuenta2);
+				
+				do {
+					System.out.println("Desea recibo? (S o N)");
+					recibo = Character.toUpperCase(sc.nextLine().charAt(0));
+				} while (recibo != 'S' && recibo != 'N');
+				if (recibo == 'S') {
+					gfTextos.ReciboTransferencia(Cuentaanterior, cuenta2, cuenta2);
+				}
+				
+				
 				break;
 			}//fin segun
 			

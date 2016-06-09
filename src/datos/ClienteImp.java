@@ -18,9 +18,7 @@ import gestionyutilidades.Utilidades;
  * Metodos aniadidos:
  ********************
  *		String getPrestigio()
- *		String cuentatoCadena()
- * 		void addCuenta(CuentaImp c)
- * 		void deleteCuenta(long numCuenta)
+ *		String clientetoCadena()
  *
  * Metodos heredados:
  ********************
@@ -105,7 +103,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 	}
 	
 	/*----------------*/
-	
+	/*Consultores*/
 	
 	@Override
 	public long getIdCliente(){
@@ -170,15 +168,15 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 		super.setApellido(apellido);
 	}
 	@Override
-	public void setDni(String dni)throws PersonaNoValida{
+	public void setDni(String dni){
 		super.setDni(dni);
 	}
 	@Override
-	public void setGenero(char genero) throws PersonaNoValida{
+	public void setGenero(char genero) {
 		super.setGenero(genero);
 	}
 	@Override
-	public void setFNacimiento(GregorianCalendar fNacimiento) throws PersonaNoValida{
+	public void setFNacimiento(GregorianCalendar fNacimiento) {
 		super.setFNacimiento(fNacimiento);
 	}
 	/*Metodos a�adidos*/
@@ -333,7 +331,7 @@ public class ClienteImp extends PersonaImp implements Cliente,Cloneable,Serializ
 
 	@Override
 	public String toString() {
-		return "IdCliente: " + idCliente + " ,Nombre cliente: "+getNombre()+ ", Apellidos"+ getApellido()+
+		return "IdCliente: " + idCliente + " ,Nombre cliente: "+getNombre()+ ", Apellidos: "+ getApellido()+
 				" ,observaciones: " + observaciones;
 	}
 	@Override

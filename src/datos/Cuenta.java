@@ -4,19 +4,19 @@ package datos;
 /*
  * Propiedades:
  * 
- * 	Numero De Cuenta- int , consultable
- * 	Saldo- int, consultable y modificable
+ * 	NumCuenta- long , consultable
+ * 	Saldo- double, consultable y modificable
  * 	
  * 	Compartida
- * 		CONTADOR- long(6 cifras) - consultable y modificable
  * 	
  * Metodos:
+ * 		//Consultores
+ * 
  * 		long getNumCuenta()
  * 		double getSaldo()
- * 		Vector<TarjetaImp> getTarjetas()
  * 		
+ * 		//Modificadores
  * 		void setSaldo(double saldo)
- * 		void SetTarjeta(TarjetaImp t)
  * 
  * 
  * */

@@ -25,6 +25,7 @@ import java.util.GregorianCalendar;
  * String toString()
  * int hashCode()
  * PersonaImp clone()
+ * int compareTo(PersonaImp p)
  */
 
 public class PersonaImp implements Serializable, Persona,Cloneable, Comparable<PersonaImp> {
@@ -162,28 +163,41 @@ public class PersonaImp implements Serializable, Persona,Cloneable, Comparable<P
 		this.apellido=apellido;
 	}
 	@Override
-	public void setDni(String dni) throws PersonaNoValida{
+	public void setDni(String dni) {
 		if(dni.length()!=9){
-			throw new PersonaNoValida("El dni debe tener 9 cifras");
+			try {
+				throw new PersonaNoValida("El dni debe tener 9 cifras");
+			} catch (PersonaNoValida e) {
+				e.printStackTrace();
+			}
 		}else{
 			this.dni=dni;
 		}
 	}
 	@Override
-	public void setGenero(char genero) throws PersonaNoValida{
+	public void setGenero(char genero) {
 		if(Character.toUpperCase(genero)!='H' && Character.toUpperCase(genero)!='M'){
-			throw new PersonaNoValida("El genero debe ser H O M");
+			try {
+				throw new PersonaNoValida("El genero debe ser H O M");
+			} catch (PersonaNoValida e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else{
 			this.genero=genero;
 		}
 	}
 	
 	@Override
-	public void setTelefono(String telefono) throws PersonaNoValida
+	public void setTelefono(String telefono) 
 	 {
 		if (telefono.length()!=9)
 		{
-			throw new PersonaNoValida("el telefono debe tener 9 caracteres");
+			try {
+				throw new PersonaNoValida("el telefono debe tener 9 caracteres");
+			} catch (PersonaNoValida e) {
+				e.printStackTrace();
+			}
 		}
 		else
 		{
@@ -198,10 +212,16 @@ public class PersonaImp implements Serializable, Persona,Cloneable, Comparable<P
 		 this.direccion= direccion;
 	 }
 	 @Override
-	 public void setFNacimiento(GregorianCalendar fNacimiento) throws PersonaNoValida{
+	 public void setFNacimiento(GregorianCalendar fNacimiento){
 		 GregorianCalendar fActual=new GregorianCalendar();
 		 if(this.fNacimiento.compareTo(fActual)>0){
-			 throw new PersonaNoValida("La fecha de nacimiento debe ser anterior a la actual");
+			 
+			 try {
+				throw new PersonaNoValida("La fecha de nacimiento debe ser anterior a la actual");
+			} catch (PersonaNoValida e) {
+				e.printStackTrace();
+			}
+			 
 		 }else{
 			 this.fNacimiento=fNacimiento;
 		 }

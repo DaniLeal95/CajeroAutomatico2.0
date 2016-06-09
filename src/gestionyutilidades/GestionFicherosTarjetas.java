@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import cajero.MiObjectOutputStream;
 import datos.CuentaImp;
 import datos.TarjetaImp;
 
@@ -21,17 +20,24 @@ public class GestionFicherosTarjetas  {
 	 * Metodo mostrarTarjetas
 	 * 	Breve Comentario:
 	 * 		Este metodo mostrara por pantalla todos los clientes que tenemos registrados en el fichero
-	 * 		
+	 * 		que el metodo recibira por parametros
 	 * 	Cabecera:
 	 * 		void mostrarClientes(String nombreFichero)
 	 * 	Precondiciones:
-	 * 		el fichero debera estar creado, de no estarlo saltara una excepcion de fichero no encontrado
+	 * 		El fichero debera contener objetos TarjetaImp de no ser asi,
+	 * 			saltara una excepcion
 	 * 	Entradas:
 	 * 		El nombre del fichero
 	 * 	Salidas:
 	 * 		Nada
 	 * 	Postcondiciones:
 	 * 		Nada
+	 * */
+	/*
+	 * Resguardo
+	 * 	public void mostrarTarjetas(String nombreFichero){
+	 * 		System.out.Println("Metodo en resguardo");
+	 * 	}
 	 * */
 	public void mostrarTarjetas(String nombreFichero){
 		Utilidades u=new Utilidades();
@@ -52,7 +58,6 @@ public class GestionFicherosTarjetas  {
 				
 			
 		}catch(FileNotFoundException fnfe){
-			System.out.println("Fichero no encontrado");
 		}catch(EOFException eof){
 		
 		}	catch (IOException ioe) {
@@ -99,10 +104,12 @@ public class GestionFicherosTarjetas  {
 		boolean encontrado=false;
 		
 		try{
+			actualizaTarjetas(nombreFicheroCuentaMaestro, "TarjetasMovimiento.dat");
+			
 			f=new File(nombreFicheroCuentaMaestro);
 			fis=new FileInputStream(f);
 			ois=new ObjectInputStream(fis);
-			actualizaTarjetas(nombreFicheroCuentaMaestro, "TarjetasMovimiento.dat");
+			
 			
 			for(int i=0;i<u.contarRegistros(nombreFicheroCuentaMaestro) && !encontrado;i++){
 				TarjetaImp tarjeta=(TarjetaImp)ois.readObject();
@@ -113,7 +120,7 @@ public class GestionFicherosTarjetas  {
 			}
 			if(!encontrado)
 				System.out.println("No posees ninguna tarjeta.");
-			
+		}catch(FileNotFoundException fnfe){
 		}catch(ClassNotFoundException cnfe){
 			System.out.println(cnfe);
 		}catch(IOException ioe){
@@ -229,6 +236,7 @@ public class GestionFicherosTarjetas  {
 					}
 				}
 			}
+		}catch(FileNotFoundException fnfe){
 		}catch(ClassNotFoundException cnfe){
 			System.out.println(cnfe);
 		}catch(IOException ioe){
@@ -312,7 +320,7 @@ public class GestionFicherosTarjetas  {
 				//Si existe fichero de movimientos miraremos primero en el.
 				fismovimiento = new FileInputStream(fmovimiento);
 				oismovimiento = new ObjectInputStream(fismovimiento);
-				for (int i = 0; i < u.contarRegistros(nombreFicheroMaestro) && !encontrado; i++) {
+				for (int i = 0; i < u.contarRegistros(nombreFicheroMovimiento) && !encontrado; i++) {
 					TarjetaImp aux = (TarjetaImp) oismovimiento.readObject();
 					// Si lo encuentra deja de buscar en el fichero maestro
 					// y asignale la tarjeta encontrada.
@@ -341,7 +349,7 @@ public class GestionFicherosTarjetas  {
 			}
 			
 			
-			
+		}catch(FileNotFoundException fnfe){
 		}catch(ClassNotFoundException cnfe){
 			System.out.println(cnfe);
 		}catch(IOException ioe){
@@ -445,6 +453,7 @@ public class GestionFicherosTarjetas  {
 				}
 				
 			}
+		}catch(FileNotFoundException fnfe){
 		}catch(EOFException eofe){
 			
 		}catch (ClassNotFoundException cnfe){
@@ -714,7 +723,7 @@ public class GestionFicherosTarjetas  {
 				}
 					
 				
-			
+			}catch(FileNotFoundException fnfe){
 			}catch(EOFException eofe){
 
 			} catch (IOException ioe) {
@@ -851,6 +860,7 @@ public class GestionFicherosTarjetas  {
 					registro = (TarjetaImp) ficheroOIS.readObject();
 				}
 			}
+		}catch(FileNotFoundException fnfe){
 		} catch(EOFException eof){
 			
 		} catch (IOException e) {
@@ -982,6 +992,7 @@ public class GestionFicherosTarjetas  {
 					}					
 				}
 			}
+		}catch(FileNotFoundException fnfe){
 		} catch(EOFException eof){
 			
 		} catch (IOException e) {
