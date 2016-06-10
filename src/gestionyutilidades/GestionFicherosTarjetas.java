@@ -591,7 +591,86 @@ public class GestionFicherosTarjetas  {
 	}
 	
 
-	
+	/*DarDeBajaTarjetas
+	 * Breve Comentario:
+	 * 		El metodo escribirá en el fichero de movimientos de tarjetas, un registro por cada tarjeta con el numeroDeCuenta
+	 * 		igual al que recibimos por parametros, y la cambiaremos por -1 (Que significa dada de baja)
+	 * 
+	 * Cabecera:
+	 * 		void dardeBajaTarjetas(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento)
+	 * 
+	 * Precondiciones:
+	 * 		Almenos el fichero maestro debera estar creado, si no saltara una excepcion de fichero no encontrado
+	 * 		el archivo debe contener objetos TarjetaImp de no ser as� saltara una excepcion
+	 * Entradas:
+	 * 		un long (numCuenta) y dos cadenas(nombreFicheros)
+	 * Salidas:
+	 * 		nada
+	 * Postcondiciones:
+	 * 		El archivo de TarjetaMovimientos, quedara modificado.
+	 * */
+		
+		//public void dardeBajaTarjetas(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+		//	System.out.println("EN RESGUARDO");
+		//}
+		public void dardeBajaTarjetas(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+			Utilidades u=new Utilidades();
+			GestionFicherosTarjetas gft=new GestionFicherosTarjetas();
+			File fmaestro=new File(nombreFicheroMaestro);
+			File fmovimiento=new File(nombreFicheroMovimiento);
+			
+			FileInputStream fismaestro=null;
+			ObjectInputStream oismaestro=null;
+			
+			FileOutputStream fosmovimiento=null;
+			ObjectOutputStream oosmovimiento=null;
+			
+			try{
+					//Actualizamos Tarjetas.
+					gft.actualizaTarjetas(nombreFicheroMaestro, nombreFicheroMovimiento);
+					//Y luego hacemos las operaciones.
+					fismaestro=new FileInputStream(fmaestro);
+					oismaestro=new ObjectInputStream(fismaestro);
+					
+					fosmovimiento=new FileOutputStream(fmovimiento,true);
+					oosmovimiento=new ObjectOutputStream(fosmovimiento);
+					
+					for(int i=0;i<u.contarRegistros(nombreFicheroMaestro);i++){
+						TarjetaImp t=(TarjetaImp)oismaestro.readObject();
+						//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
+						//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
+						//Y la escribimos en el fichero de movimiento
+						if(t.getnumCuenta()==numCuenta){
+							t.setnumCuenta(-1);
+							oosmovimiento.writeObject(t);
+						}
+					}
+			
+			}catch(FileNotFoundException fnfe){
+			}catch(ClassNotFoundException cnfe){
+				System.out.println(cnfe);
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+			finally{
+				try{
+					if(oismaestro!=null){
+						oismaestro.close();
+						fismaestro.close();
+					}
+				
+					if(oosmovimiento!=null){
+						oosmovimiento.close();
+						fosmovimiento.close();
+					}
+				
+					
+				}catch(IOException ioe){
+					System.out.println(ioe);
+				}
+			}
+		}
+		
 	
 /*
  * actualiza Tarjetas
@@ -651,7 +730,8 @@ public class GestionFicherosTarjetas  {
 				
 				TarjetaImp tarjetaaux = (TarjetaImp) oism.readObject();
 				TarjetaImp tarjetamovaux = (TarjetaImp) oismo.readObject();
-				for (int i = 0; i < numregistrosmaestro && i < numregistrosmovimiento; i++) {
+				int i=0, j=0;
+				for (; i < numregistrosmaestro && j < numregistrosmovimiento;) {
 						
 					
 					
@@ -664,15 +744,14 @@ public class GestionFicherosTarjetas  {
 							oos.writeObject(tarjetamovaux);
 						}
 						//Y leemos los dos siguientes registros.
-						try{
+						i++;
+						if(i<numregistrosmaestro){
 							tarjetaaux = (TarjetaImp) oism.readObject();
-						}catch(IOException ioe){
-							tarjetaaux = null;
 						}
-						try{
+						
+						j++;
+						if(j<numregistrosmovimiento){
 							tarjetamovaux = (TarjetaImp) oismo.readObject();
-						}catch(IOException ioe){
-							tarjetamovaux = null;
 						}
 					
 					} else if (tarjetamovaux.compareTo(tarjetaaux) > 0) {
@@ -681,44 +760,38 @@ public class GestionFicherosTarjetas  {
 						
 						//Y como no hay ninnguna actualizacion
 						//solo tenemos que volver a leer del fichero maestro
-						try{
+						i++;
+						if(i<numregistrosmaestro){
 							tarjetaaux = (TarjetaImp) oism.readObject();
-						}catch(IOException e){
-							tarjetaaux=null;
 						}
 					} else {
 						//alta
 						oos.writeObject(tarjetamovaux);
-						try{
+						j++;
+						if(j<numregistrosmovimiento){
 							tarjetamovaux = (TarjetaImp) oismo.readObject();
-						}catch(IOException ioe){
-							tarjetamovaux = null;
 						}
+					
 					}
 
 				} // fin Para
 				
 				//se ha acabado el fichero movimiento pero no el maestro
-				while (tarjetaaux != null) {
+				while (i<numregistrosmaestro) {
 					oos.writeObject(tarjetaaux);
-					try {
+					i++;
+					if(i<numregistrosmaestro){
 						tarjetaaux = (TarjetaImp) oism.readObject();
-					} catch (EOFException eof){
-						tarjetaaux = null;
-					} catch (IOException e) {
-						tarjetaaux = null;
 					}
+
 				}
 				//Se ha acabado el fichero maestro pero no el de movimientos
 				
-				while (tarjetamovaux != null) {
+				while (j<numregistrosmovimiento) {
 					oos.writeObject(tarjetamovaux);
-					try {
+					j++;
+					if(j<numregistrosmovimiento){
 						tarjetamovaux = (TarjetaImp) oismo.readObject();
-					} catch(EOFException eof){
-						tarjetamovaux = null;
-					} catch (IOException e) {
-						System.out.println(e);
 					}
 				}
 					

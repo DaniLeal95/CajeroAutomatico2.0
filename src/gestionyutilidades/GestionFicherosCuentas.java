@@ -12,7 +12,6 @@ import java.io.ObjectOutputStream;
 import datos.Cliente;
 import datos.ClienteImp;
 import datos.CuentaImp;
-import datos.TarjetaImp;
 
 public class GestionFicherosCuentas  {
 
@@ -27,7 +26,7 @@ public class GestionFicherosCuentas  {
 	 * 		void mostrarCuentas(String nombreFichero)
 	 * 	Precondiciones:
 	 * 		el fichero debera estar creado, de no estarlo saltara una excepcion de fichero no encontrado
-	 * 		el archivo debe contener objetos CuentaImp de no ser así saltara una excepcion
+	 * 		el archivo debe contener objetos CuentaImp de no ser asï¿½ saltara una excepcion
 	 * 	Entradas:
 	 * 		El nombre del fichero
 	 * 	Salidas:
@@ -82,13 +81,13 @@ public class GestionFicherosCuentas  {
 	 * MostrarCuenta por Cliente
 	 * 	Breve Comentario:
 	 * 		El metodo recibira un idCliente, y mostrara por pantalla todas sus cuentas actualizadas 
-	 * 		registradas en el fichero recibido por parametros,
+	 * 		registradas en el fichero recibido por parametros
 	 * 		, para ello deberemos de actualizar primero.
 	 * 	Cabecera:
 	 * 		void mostrarCuentasporCliente(long idCliente,String nombreFicheroClienteMaestro)
 	 * 	Precondiciones:
 	 * 		nada,si el id no corresponde a nadie no mostrara nada
-	 * 		el archivo debe contener objetos CuentaImp de no ser así saltara una excepcion
+	 * 		el archivo debe contener objetos CuentaImp de no ser asï¿½ saltara una excepcion
 	 * 	Entradas:
 	 * 		un long(idCliente) y una cadena(nombreFicheroClienteMaestro)
 	 * 	Salidas:
@@ -103,7 +102,6 @@ public class GestionFicherosCuentas  {
 	 * }
 	 * */
 	public void mostrarCuentasporCliente(long idCliente,String nombreFicheroClienteMaestro){
-		
 		Utilidades u=new Utilidades();
 		File f=null;
 		FileInputStream fis=null;
@@ -125,8 +123,7 @@ public class GestionFicherosCuentas  {
 					encontrado=true;
 				}
 			}
-			if(!encontrado)
-				System.out.println("No posees ninguna cuenta");
+			
 		}catch(FileNotFoundException fnfe){
 		}catch(ClassNotFoundException cnfe){
 			System.out.println(cnfe);
@@ -142,6 +139,71 @@ public class GestionFicherosCuentas  {
 				System.out.println(ioe);
 			}
 		}
+	}
+	
+	/*
+	 * TieneCuentassegunCliente
+	 * 	Breve Comentario:
+	 * 		El metodo recibira un idCliente, y comprobara que alguna cuenta tenga ese idCliente 
+	 * 		registradas en el fichero recibido por parametros
+	 * 			y retornarÃ¡ un booleano si encuentra una cuenta o no.
+	 * 			, si tuviera
+	 * 		, para ello deberemos de actualizar primero.
+	 * 	Cabecera:
+	 * 		boolean tieneCuentassegunCliente(long idCliente,String nombreFicheroClienteMaestro)
+	 * 	Precondiciones:
+	 * 		el archivo debe contener objetos CuentaImp de no ser asï¿½ saltara una excepcion
+	 * 	Entradas:
+	 * 		un long(idCliente) y una cadena(nombreFicheroClienteMaestro)
+	 * 	Salidas:
+	 * 		un boolean
+	 * 	Postcondiciones:
+	 * 		boolean retornara asociado al nombre -> FUNCION
+	 * 
+	 * */	
+	/*RESGUARDO
+	 * public boolean tieneCuentassegunCliente(long idCliente,String nombreFicheroClienteMaestro){
+	 * 	System.out.println("Metodo en resguardo");
+	 * }
+	 * */
+	public boolean tieneCuentassegunCliente(long idCliente,String nombreFicheroClienteMaestro){
+		Utilidades u=new Utilidades();
+		File f=null;
+		FileInputStream fis=null;
+		ObjectInputStream ois=null;
+		boolean encontrado=false;
+		actualizaCuentas(nombreFicheroClienteMaestro, "CuentasMovimiento.dat");
+		
+		try{
+		
+	
+			f=new File(nombreFicheroClienteMaestro);
+			fis=new FileInputStream(f);
+			ois=new ObjectInputStream(fis);
+			
+			for(int i=0;i<u.contarRegistros(nombreFicheroClienteMaestro) && !encontrado ;i++){
+				CuentaImp cuenta=(CuentaImp)ois.readObject();
+				if(cuenta.getidCliente()==idCliente){
+					encontrado=true;
+				}
+			}
+			
+		}catch(FileNotFoundException fnfe){
+		}catch(ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch(IOException ioe){
+			System.out.println(ioe);
+		}finally{
+			try{
+				if(ois!=null){
+					ois.close();
+					fis.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+		}
+		return encontrado;
 	}
 
 	/*Escribir Movimiento 
@@ -431,89 +493,88 @@ public class GestionFicherosCuentas  {
 		return valida;
 	}
 	
-	
-	
-	
-/*DarDeBajaTarjetas
- * Breve Comentario:
- * 		El metodo escribirÃ¡ en el fichero de movimientos de tarjetas, un registro por cada tarjeta con el numeroDeCuenta
- * 		igual al que recibimos por parametros, y la cambiaremos por -1 (Que significa dada de baja)
- * 
- * Cabecera:
- * 		void dardeBajaTarjetas(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento)
- * 
- * Precondiciones:
- * 		Almenos el fichero maestro debera estar creado, si no saltara una excepcion de fichero no encontrado
- * 		el archivo debe contener objetos TarjetaImp de no ser así saltara una excepcion
- * Entradas:
- * 		un long (numCuenta) y dos cadenas(nombreFicheros)
- * Salidas:
- * 		nada
- * Postcondiciones:
- * 		El archivo de TarjetaMovimientos, quedara modificado.
- * */
-	
-	//public void dardeBajaTarjetas(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento){
-	//	System.out.println("EN RESGUARDO");
-	//}
-	public void dardeBajaTarjetas(long numCuenta,String nombreFicheroMaestro,String nombreFicheroMovimiento){
-		Utilidades u=new Utilidades();
-		GestionFicherosTarjetas gft=new GestionFicherosTarjetas();
-		File fmaestro=new File(nombreFicheroMaestro);
-		File fmovimiento=new File(nombreFicheroMovimiento);
+	/*DarDeBajaCuentas
+	 * Breve Comentario:
+	 * 		El metodo escribirÃ¡ en el fichero de movimientos de Cuentas, un registro por cada Cuenta con el idCliente
+	 * 		igual al que recibimos por parametros, y la cambiaremos por -1 (Que significa dada de baja)
+	 * 
+	 * Cabecera:
+	 * 		 void dardeBajaCuentas(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento)
+	 * 
+	 * Precondiciones:
+	 * 		los archivos deben contener objetos CuentaImp de no ser asï¿½ saltara una excepcion
+	 * Entradas:
+	 * 		un long (idCliente) y dos cadenas(nombreFicheros)
+	 * Salidas:
+	 * 		nada
+	 * Postcondiciones:
+	 * 		El archivo de CuentaMovimientos, quedara modificado.
+	 * */
 		
-		FileInputStream fismaestro=null;
-		ObjectInputStream oismaestro=null;
-		
-		FileOutputStream fosmovimiento=null;
-		ObjectOutputStream oosmovimiento=null;
-		
-		try{
-				//Actualizamos Tarjetas.
-				gft.actualizaTarjetas(nombreFicheroMaestro, nombreFicheroMovimiento);
-				//Y luego hacemos las operaciones.
-				fismaestro=new FileInputStream(fmaestro);
-				oismaestro=new ObjectInputStream(fismaestro);
-				
-				fosmovimiento=new FileOutputStream(fmovimiento,true);
-				oosmovimiento=new ObjectOutputStream(fosmovimiento);
-				
-				for(int i=0;i<u.contarRegistros(nombreFicheroMaestro);i++){
-					TarjetaImp t=(TarjetaImp)oismaestro.readObject();
-					//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
-					//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
-					//Y la escribimos en el fichero de movimiento
-					if(t.getnumCuenta()==numCuenta){
-						t.setnumCuenta(-1);
-						oosmovimiento.writeObject(t);
-					}
-				}
-		
-		}catch(FileNotFoundException fnfe){
-		}catch(ClassNotFoundException cnfe){
-			System.out.println(cnfe);
-		}catch(IOException ioe){
-			System.out.println(ioe);
-		}
-		finally{
+		//public void dardeBajaCuentas(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+		//	System.out.println("EN RESGUARDO");
+		//}
+		public void dardeBajaCuentas(long idCliente,String nombreFicheroMaestro,String nombreFicheroMovimiento){
+			Utilidades u=new Utilidades();
+			GestionFicherosCuentas gfc=new GestionFicherosCuentas();
+			File fmaestro=new File(nombreFicheroMaestro);
+			File fmovimiento=new File(nombreFicheroMovimiento);
+			
+			FileInputStream fismaestro=null;
+			ObjectInputStream oismaestro=null;
+			
+			FileOutputStream fosmovimiento=null;
+			ObjectOutputStream oosmovimiento=null;
+			
 			try{
-				if(oismaestro!=null){
-					oismaestro.close();
-					fismaestro.close();
-				}
-			
-				if(oosmovimiento!=null){
-					oosmovimiento.close();
-					fosmovimiento.close();
-				}
-			
-				
+					//Actualizamos Cuentas.
+					gfc.actualizaCuentas(nombreFicheroMaestro, nombreFicheroMovimiento);
+					//Y luego hacemos las operaciones.
+					fismaestro=new FileInputStream(fmaestro);
+					oismaestro=new ObjectInputStream(fismaestro);
+					
+					fosmovimiento=new FileOutputStream(fmovimiento,true);
+					oosmovimiento=new ObjectOutputStream(fosmovimiento);
+					
+					for(int i=0;i<u.contarRegistros(nombreFicheroMaestro);i++){
+						CuentaImp c=(CuentaImp)oismaestro.readObject();
+						//Si el numero de Cuenta de la tarjeta es igual al numCuenta que se va a dar de baja
+						//le asignamos un -1 al numCuenta de la tarjeta (que significa tarjeta dada de baja)
+						//Y la escribimos en el fichero de movimiento
+						if((c.getidCliente())==idCliente){
+							c.setidCliente(-1);
+							oosmovimiento.writeObject(c);
+						}
+					}
+
+			}catch(FileNotFoundException fnfe){
+			}catch(ClassNotFoundException cnfe){
+				System.out.println(cnfe);
 			}catch(IOException ioe){
 				System.out.println(ioe);
 			}
+			finally{
+				try{
+					if(oismaestro!=null){
+						oismaestro.close();
+						fismaestro.close();
+					}
+				
+					if(oosmovimiento!=null){
+						oosmovimiento.close();
+						fosmovimiento.close();
+					}
+				
+					
+				}catch(IOException ioe){
+					System.out.println(ioe);
+				}
+			}
 		}
-	}
 	
+	
+	
+
 	
 	
 /*
@@ -524,7 +585,7 @@ public class GestionFicherosCuentas  {
  * 	Cabecera:
  * 		void actualizaCuentas(String nombreFicheroMaestro,String nombreFicheroMovimiento) {
  * 	Precondiciones:
- * 		el archivo debe contener objetos CuentaImp de no ser así saltara una excepcion
+ * 		el archivo debe contener objetos CuentaImp de no ser asï¿½ saltara una excepcion
  * 	Entradas:
  * 		dos cadenas(nombredelFichero)
  * 	Salidas:
@@ -541,6 +602,7 @@ public class GestionFicherosCuentas  {
 	
 	public void actualizaCuentas(String nombreFicheroMaestro,String nombreFicheroMovimiento) {
 		Utilidades u=new Utilidades();
+		GestionFicherosTarjetas gft=new GestionFicherosTarjetas();
 		ordenacionExternaMezcla(nombreFicheroMaestro);
 		ordenacionExternaMezcla(nombreFicheroMovimiento);
 		File fmaestro = new File(nombreFicheroMaestro);
@@ -597,7 +659,7 @@ public class GestionFicherosCuentas  {
 								cuentaaux.setSaldo(cuentaaux.getSaldo()+cuentamovaux.getSaldo());
 								cuentaaux.setidCliente(cuentamovaux.getidCliente());
 							}else{
-								dardeBajaTarjetas(cuentamovaux.getNumCuenta(), "TarjetasMaestro.dat", "TarjetasMovimiento.dat");
+								gft.dardeBajaTarjetas(cuentamovaux.getNumCuenta(), "TarjetasMaestro.dat", "TarjetasMovimiento.dat");
 								activo=false;
 							}
 							j++;
@@ -661,7 +723,7 @@ public class GestionFicherosCuentas  {
 								if(!(cuentamovaux.getidCliente()==-1))
 									oos.writeObject(cuentamovaux);
 								else
-									dardeBajaTarjetas(cuentamovaux.getNumCuenta(), "TarjetasMaestro.dat", "TarjetasMovimiento.dat");
+									gft.dardeBajaTarjetas(cuentamovaux.getNumCuenta(), "TarjetasMaestro.dat", "TarjetasMovimiento.dat");
 								
 								cuentamovaux = cuentamovaux2;
 							}
@@ -701,10 +763,10 @@ public class GestionFicherosCuentas  {
 							} else {
 								valido = false;
 								if (cuentamovaux.getidCliente() == -1)
-									dardeBajaTarjetas(cuentamovaux.getNumCuenta(), "TarjetasMaestro.dat",
+									gft.dardeBajaTarjetas(cuentamovaux.getNumCuenta(), "TarjetasMaestro.dat",
 											"TarjetasMovimiento.dat");
 								if (cuentamovaux2.getidCliente() == -1)
-									dardeBajaTarjetas(cuentamovaux2.getNumCuenta(), "TarjetasMaestro.dat",
+									gft.dardeBajaTarjetas(cuentamovaux2.getNumCuenta(), "TarjetasMaestro.dat",
 											"TarjetasMovimiento.dat");
 							}
 							j++;

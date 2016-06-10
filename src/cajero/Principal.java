@@ -23,7 +23,33 @@ public class Principal {
 	
 	/*
 	 * Analisis:
-	 * 	El programa simulara 
+	 * 	Este programa permite gestionar Un banco
+	 * 	
+	 * 	El objetivo es poder gestionar con ficheros el mantenimiento
+	 * 		de clientes, con sus cuentas y tarjetas.
+	 * 	
+	 * Precondiciones:
+	 * 	Los ficheros maestros deberan estar creados	
+	 * 
+	 * Entradas:
+	 * 		se introducen por teclado, 
+	 * 		- un entero con opcion de menu
+	 * 			-Segun la opcion se deberan introducir:
+	 * 				Modo cliente:
+	 * 					-entero largo, idCliente
+	 * 					-String contrasena
+	 * 				Modo Administrador:
+	 * 					-String contrasena
+	 * 
+	 * 	Salidas:
+	 * 		muestra por pantalla :
+	 * 			los menus cuando sean necesarios.
+	 * 			
+	 * 			mensajes para pedir alguna entrada.
+	 * 			mensajes de error.
+	 * 
+	 * 			Si es Modo Cliente:
+	 * 				un objeto ClienteImp
 	 * 
 	 * PSEUDOCODIGO GENERALIZADO:
 	 * 		Inicio PP
@@ -56,7 +82,6 @@ public class Principal {
 		String contrasena;
 		int contadorcontrasena=0;
 		long idCliente;
-		int contadordevueltas=0;
 		
 		
 		
@@ -106,10 +131,7 @@ public class Principal {
 						
 						//Pedimos idCliente
 						System.out.println("Introduce el id del Cliente");
-						if(contadordevueltas>0){
-							//ESTO ES PORQUE ME DA PROBLEMAS EL Scanner 
-							sc.nextLine();
-						}
+						
 						idCliente=Long.parseLong(sc.nextLine());
 						
 						if(idCliente<=1)
@@ -126,9 +148,12 @@ public class Principal {
 					//	Si el id que ha introducido no corresponde a ningun cliente
 					if(cliente!=null){
 						do{
+							//Pedimos la contraseña
 							if(contadorcontrasena>0)System.out.println("La contraseña es incorrecta, te quendan "+(3-contadorcontrasena)+" intentos");
 							System.out.println("Introduce la contraseña de "+cliente.getNombre());
-							contrasena=sc.next();
+							
+							contrasena=sc.nextLine();
+							
 							if(!(contrasena.equals(cliente.getContrasena()))){
 								contadorcontrasena++;
 							}	
@@ -142,8 +167,6 @@ public class Principal {
 					System.out.println("Bienvenido "+cliente.getNombre());
 					ModoUsuario(cliente);
 					
-					//Esto es porque me da problemas el Scanner
-					contadordevueltas++;
 				}
 				else{
 					System.out.println("Tu no eres "+cliente.getNombre());
@@ -157,14 +180,54 @@ public class Principal {
 			//Mostrar menu y validar OpcionMenu
 				do{
 				menuPrincipal();
-				opcionmenu=sc.nextInt();
+				opcionmenu=Integer.parseInt(sc.nextLine());
 				}while(opcionmenu<0 || opcionmenu>2);
 			}
 		}
 	}
 	
 	/*
+	 *  * Analisis:
+	 * 	Este programa permite gestionar Un banco
 	 * 	
+	 * 	El objetivo es poder gestionar con ficheros el mantenimiento
+	 * 		de clientes, con sus cuentas y tarjetas.
+	 * 
+	 * 
+	 * Entradas:
+	 * 		se introducen por teclado, 
+	 * 		- un entero con opcion de menu
+	 * 			-Segun la opcion se deberan introducir:
+	 *				-los atributos de un cliente
+	 *					
+	 *					Cadenas: nombre, apellidos,dni,observaciones,contraseña
+	 *					entero: año,mes,dia
+	 *					caracter: genero
+	 *
+	 *				-los atributos de una cuenta
+	 *
+	 *					double: saldo
+	 *					enterolargo: idCliente
+	 *				
+	 *				-los atributos de una tarjeta
+	 *					
+	 *					caracter tipo
+	 *					cadena pin
+	 *					entero largo numCuenta
+	 *				
+	 * 
+	 * 	Salidas:
+	 * 		muestra por pantalla :
+	 * 			los menus cuando sean necesarios.
+	 * 			
+	 * 			mensajes para pedir alguna entrada.
+	 * 			mensajes de error.
+	 * 
+	 * 			Los ficheros maestros y/o movimiento
+	 * 				 quedaran modificados.
+	 * 
+	 * 
+	 * 
 	 * PG:
 	 * 		Inicio ModoAdministrador
 	 * 			Mostrar Menu y validar opcion de Menu
@@ -243,7 +306,7 @@ public class Principal {
 		//Mostrar menu y validar opcion de menu
 		do{
 			MenuModoAdministrador();
-			opcionmenu=sc.nextInt();
+			opcionmenu=Integer.parseInt(sc.nextLine());
 		}while(opcionmenu<0 || opcionmenu>9);
 		//Mientras no sea salir
 		while(opcionmenu!=0){
@@ -252,7 +315,6 @@ public class Principal {
 			switch (opcionmenu) {
 			
 			case 1:
-				sc.nextLine();
 				//Crear Nuevo Cliente
 				System.out.println("OPCION CREAR NUEVO CLIENTE");
 				//PEDIMOS DATOS DEL CLIENTE
@@ -306,7 +368,6 @@ public class Principal {
 			/*-------------------FIN CREAR NUEVO CLIENTE---------------------*/
 			case 2:
 				//Crear Nueva Cuenta
-				sc.nextLine();
 				System.out.println("OPCION CREAR NUEVA CUENTA");
 				//PEDIMOS DATOS DE LA CUENTA
 				System.out.println("Introduce el saldo");
@@ -338,7 +399,6 @@ public class Principal {
 			
 			case 3:
 				//Crear Nueva Tarjeta
-				sc.nextLine();
 				System.out.println("OPCION CREAR NUEVA TARJETA");
 				//Pedir tipo
 				do{
@@ -384,7 +444,6 @@ public class Principal {
 				/*--------------------------FIN CREAR NUEVA TARJETA--------------------*/
 			case 4:
 				//Eliminar Cliente
-				sc.nextLine();
 				System.out.println("OPCION ELIMINAR CLIENTE");
 				gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
 				gfclientes.mostrarClientes(nombreFicheroMovimientoClientes);
@@ -405,7 +464,6 @@ public class Principal {
 				
 			case 5:
 				//Eliminar Cuenta
-				sc.nextLine();
 				System.out.println("OPCION ELIMINAR CUENTA");
 				gfcuentas.mostrarCuentas(nombreFicheroMaestroCuentas);
 				gfcuentas.mostrarCuentas(nombreFicheroMovimientoCuentas);
@@ -425,7 +483,6 @@ public class Principal {
 				
 			case 6:
 				//Eliminar Tarjeta
-				sc.nextLine();
 				System.out.println("OPCION ELIMINAR TARJETA");
 				gftarjetas.mostrarTarjetas(nombreFicheroMaestroTarjetas);
 				gftarjetas.mostrarTarjetas(nombreFicheroMovimientoTarjetas);
@@ -446,7 +503,6 @@ public class Principal {
 				
 			case 7:
 				//Modificar Cliente
-				sc.nextLine();
 				System.out.println("OPCION MODIFICAR CLIENTE");
 				gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
 				gfclientes.mostrarClientes(nombreFicheroMovimientoClientes);
@@ -594,13 +650,48 @@ public class Principal {
 			//Mostrar menu y validar Opcion Menu
 			do{
 				MenuModoAdministrador();
-				sc.nextLine();
 				opcionmenu=Integer.parseInt(sc.nextLine());
 			}while(opcionmenu<0 || opcionmenu>9);	
 		}//fin mientras
 	}//fin Modo Administrador
 	
 	/*
+	 *  * Analisis:
+	 * 	Este subprograma permite hacer operaciones con un cliente
+	 * 	
+	 * Precondiciones:
+	 * 	Los ficheros maestros deberan estar creados	
+	 * 
+	 * Entradas:
+	 * 		se introducen por teclado, 
+	 * 		- un entero con opcion de menu
+	 * 			-Segun la opcion se deberan introducir:
+	 * 				un entero para opcion de menu
+	 * 				
+	 * 				entero largo para numCuenta
+	 * 				entero largo para numTarjeta
+	 * 				entero largo para idCliente
+	 * 
+	 * 				double para el saldo
+	 * 				
+	 * 				String para el pin de la tarjeta
+	 * 				
+	 * 				Caracter para imprimir recibo o no.
+	 * 	Salidas:
+	 * 		muestra por pantalla :
+	 * 			los menus cuando sean necesarios.
+	 * 			
+	 * 			mensajes para pedir alguna entrada.
+	 * 			mensajes de error.
+	 * 
+	 * 			Los ficheros maestros y/o movimiento
+	 * 				 quedaran modificados.
+	 * 		
+	 * 			El fichero Recibo quedara creado si el cliente
+	 * 				desea obtener recibo,
+	 * 				con los datos del movimiento.
+	 * 
+	 * 
 	 * PG:MODO USUARIO
 	 * 
 	 * INICIO MODOUSUARIO
@@ -650,8 +741,9 @@ public class Principal {
 	public static void ModoUsuario(ClienteImp cliente){
 		int opcionmenu,contadorpin=0;
 		char recibo;
-		long numCuenta,numCuenta2,numTarjeta,idCliente;
+		long numCuenta=0,numCuenta2,numTarjeta,idCliente;
 		double saldo;
+		boolean valido=true;
 		
 		ClienteImp cliente2=null;
 		String pin;
@@ -659,13 +751,12 @@ public class Principal {
 		GestionFicherosTarjetas gftarjetas=new GestionFicherosTarjetas();
 		GestionFicherosClientes gfclientes=new GestionFicherosClientes();
 		GestionFicherosDeTextos gfTextos=new GestionFicherosDeTextos();
-		CuentaImp cuenta,cuenta2;
+		CuentaImp cuenta=null,cuenta2=null;
 		
 		TarjetaImp tarjeta;
 		
 		
 		//mostrar menu y validar opcion de menu
-		sc.nextLine();
 		do{
 			contadorpin=0;
 			MenuModoUsuario();
@@ -682,26 +773,35 @@ public class Principal {
 
 				// mostramos las cuentas de dicho cliente
 				do {
-					System.out.println("Tus Cuentas\n");
-					gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
-					System.out.println("-----------");
+					
+					
+					if(gfcuentas.tieneCuentassegunCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas)){
+						System.out.println("Tus Cuentas\n");
+						gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
+						System.out.println("-----------");
 
-					// le pedimos el numero de cuenta del que quiera conocer sus
-					// tarjetas
-					// mientras el numero de cuenta introducido sea invalido.
-					System.out.println("Introduce el numero de cuenta de la cual quieras saber las tarjetas");
-					numCuenta = Long.parseLong(sc.nextLine());
-					cuenta = gfcuentas.obtenerCuenta(numCuenta, nombreFicheroMaestroCuentas,
+						// le pedimos el numero de cuenta del que quiera conocer sus
+						// tarjetas
+						// mientras el numero de cuenta introducido sea invalido.
+						System.out.println("Introduce el numero de cuenta de la cual quieras saber las tarjetas");
+						numCuenta = Long.parseLong(sc.nextLine());
+						cuenta = gfcuentas.obtenerCuenta(numCuenta, nombreFicheroMaestroCuentas,
 							nombreFicheroMovimientoCuentas);
 
-					if (cuenta == null)
-						System.out.println("El numero de cuenta introducido es invalido");
-
-				} while (cuenta == null);
-
-				System.out.println("Tus Tarjetas");
-				gftarjetas.mostrarTarjetasporCuenta(numCuenta, nombreFicheroMaestroTarjetas);
-				System.out.println();
+							if (cuenta == null)
+								System.out.println("El numero de cuenta introducido es invalido");
+						}else{
+							System.out.println("No tienes cuentas, habla con el administrador para obtener una");
+							valido=false;
+						}
+				
+					} while (cuenta == null && valido==true);
+						if(gftarjetas.validartarjetaspornumCuenta(numCuenta, nombreFicheroMaestroTarjetas, nombreFicheroMovimientoTarjetas)){
+							gftarjetas.mostrarTarjetasporCuenta(numCuenta, nombreFicheroMaestroTarjetas);
+							System.out.println("Tus Tarjetas");
+						
+							System.out.println();
+						}
 
 				break;
 			
@@ -711,9 +811,11 @@ public class Principal {
 				// Sacar Dinero
 				// mostramos las cuentas de dicho cliente
 				do {
-					System.out.println("Tus Cuentas\n");
-					gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
-					System.out.println("-----------");
+					
+					if(gfcuentas.tieneCuentassegunCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas)){
+						System.out.println("Tus Cuentas\n");
+						gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
+						System.out.println("-----------");
 
 					// le pedimos el numero de cuenta del que quiera conocer sus
 					// tarjetas
@@ -725,8 +827,12 @@ public class Principal {
 
 					if (cuenta == null)
 						System.out.println("El numero de cuenta introducido es invalido");
-
-				} while (cuenta == null);
+					}
+					else{
+						System.out.println("No tienes Cuentas habla con el administrador para obtener una.");
+						valido=false;
+					}
+				} while (cuenta == null && valido);
 				// Si tienes tarjetas, podras hacer dicha operacion
 				if (gftarjetas.validartarjetaspornumCuenta(numCuenta, nombreFicheroMaestroTarjetas,
 						nombreFicheroMovimientoTarjetas)) {
@@ -839,22 +945,29 @@ public class Principal {
 				
 				// mostramos las cuentas de dicho cliente
 				do {
-					System.out.println("Tus Cuentas\n");
-					gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
-					System.out.println("-----------");
+					
+					if (gfcuentas.tieneCuentassegunCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas)) {
+						System.out.println("Tus Cuentas\n");
+						gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
+						System.out.println("-----------");
 
-					// le pedimos el numero de cuenta del que quiera conocer sus
-					// tarjetas
-					// mientras el numero de cuenta introducido sea invalido.
-					System.out.println("Introduce el numero de cuenta de la cual quieras ingresar dinero");
-					numCuenta = Long.parseLong(sc.nextLine());
-					cuenta = gfcuentas.obtenerCuenta(numCuenta, nombreFicheroMaestroCuentas,
-							nombreFicheroMovimientoCuentas);
+						// le pedimos el numero de cuenta del que quiera conocer
+						// sus
+						// tarjetas
+						// mientras el numero de cuenta introducido sea
+						// invalido.
+						System.out.println("Introduce el numero de cuenta de la cual quieras ingresar dinero");
+						numCuenta = Long.parseLong(sc.nextLine());
+						cuenta = gfcuentas.obtenerCuenta(numCuenta, nombreFicheroMaestroCuentas,
+								nombreFicheroMovimientoCuentas);
 
-					if (cuenta == null)
-						System.out.println("El numero de cuenta introducido es invalido");
-
-				} while (cuenta == null);
+						if (cuenta == null)
+							System.out.println("El numero de cuenta introducido es invalido");
+					} else {
+						System.out.println("No tienes ninguna cuenta, habla con el administrador para obtener una");
+						valido = false;
+					}
+				} while (cuenta == null && valido);
 				// Si tienes tarjetas, podras hacer dicha operacion
 				if (gftarjetas.validartarjetaspornumCuenta(numCuenta, nombreFicheroMaestroTarjetas,
 						nombreFicheroMovimientoTarjetas)) {
@@ -926,9 +1039,11 @@ public class Principal {
 				//Transferencia
 				// mostramos las cuentas de dicho cliente
 				do {
-					System.out.println("Tus Cuentas\n");
-					gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
-					System.out.println("-----------");
+					
+					if(gfcuentas.tieneCuentassegunCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas)){
+						System.out.println("Tus Cuentas\n");
+						gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
+						System.out.println("-----------");
 
 					// le pedimos el numero de cuenta del que quiera conocer sus
 					// mientras el numero de cuenta introducido sea invalido.
@@ -939,54 +1054,62 @@ public class Principal {
 
 					if (cuenta == null)
 						System.out.println("El numero de cuenta introducido es invalido");
+					}else{
+						System.out.println("No tienes cuentas habla con el administrador para obtener una");
+						valido=false;
+					}
+				} while (cuenta == null && valido);
+				if (valido) {
+					do {
 
-				} while (cuenta == null);
-				do{
-					gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
-					gfclientes.mostrarClientes(nombreFicheroMovimientoClientes);
-					//mostrar clientes y validar el id del cliente
+						gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
+						gfclientes.mostrarClientes(nombreFicheroMovimientoClientes);
+						// mostrar clientes y validar el id del cliente
 						System.out.println("\nIntroduzca al cliente que deseas hacerle la transferencia");
-						idCliente=Long.parseLong(sc.nextLine());
-						if(idCliente==cliente.getIdCliente())
+						idCliente = Long.parseLong(sc.nextLine());
+						if (idCliente == cliente.getIdCliente())
 							System.out.println("No te puedes hacer la transferencia ati mismo.");
-						
-						else
-							cliente2=gfclientes.obtenerCliente(idCliente, nombreFicheroMaestroClientes, nombreFicheroMovimientoClientes);
-							if(cliente2==null)
-								System.out.println("Introduce una id valida");
-				}while(idCliente==cliente.getIdCliente() || cliente==null);
-				
-				do{
-					gfcuentas.mostrarCuentasporCliente(cliente2.getIdCliente(), nombreFicheroMaestroCuentas);
-					gfcuentas.mostrarCuentasporCliente(cliente2.getIdCliente(), nombreFicheroMovimientoCuentas);
-					// le pedimos el numero de cuenta del que quiera conocer sus
-					// mientras el numero de cuenta introducido sea invalido.
-					System.out.println("Introduce el numero de cuenta de la cual quieras sacar dinero");
-					numCuenta2 = Long.parseLong(sc.nextLine());
-					cuenta2 = gfcuentas.obtenerCuenta(numCuenta2, nombreFicheroMaestroCuentas,
-							nombreFicheroMovimientoCuentas);
-					if (cuenta2 == null)
-						System.out.println("El numero de cuenta introducido es invalido");
 
-				} while (cuenta2 == null);
-				
-				System.out.println("Cuanto dinero desea transferible?");
-				saldo=Double.parseDouble(sc.nextLine());
-				CuentaImp Cuentaanterior=cuenta.clone();
-				
-				cuenta.setSaldo(-saldo);
-				gfcuentas.escribirMovimiento(nombreFicheroMovimientoCuentas, cuenta);
-				cuenta2.setSaldo(saldo);
-				gfcuentas.escribirMovimiento(nombreFicheroMovimientoCuentas, cuenta2);
-				
-				do {
-					System.out.println("Desea recibo? (S o N)");
-					recibo = Character.toUpperCase(sc.nextLine().charAt(0));
-				} while (recibo != 'S' && recibo != 'N');
-				if (recibo == 'S') {
-					gfTextos.ReciboTransferencia(Cuentaanterior, cuenta2, cuenta2);
+						else
+							cliente2 = gfclientes.obtenerCliente(idCliente, nombreFicheroMaestroClientes,
+									nombreFicheroMovimientoClientes);
+						if (cliente2 == null)
+							System.out.println("Introduce una id valida");
+					} while (idCliente == cliente.getIdCliente() || cliente == null);
+
+					do {
+						gfcuentas.mostrarCuentasporCliente(cliente2.getIdCliente(), nombreFicheroMaestroCuentas);
+						gfcuentas.mostrarCuentasporCliente(cliente2.getIdCliente(), nombreFicheroMovimientoCuentas);
+						// le pedimos el numero de cuenta del que quiera conocer
+						// sus
+						// mientras el numero de cuenta introducido sea
+						// invalido.
+						System.out.println("Introduce el numero de cuenta de la cual quieras sacar dinero");
+						numCuenta2 = Long.parseLong(sc.nextLine());
+						cuenta2 = gfcuentas.obtenerCuenta(numCuenta2, nombreFicheroMaestroCuentas,
+								nombreFicheroMovimientoCuentas);
+						if (cuenta2 == null)
+							System.out.println("El numero de cuenta introducido es invalido");
+
+					} while (cuenta2 == null);
+
+					System.out.println("Cuanto dinero desea transferible?");
+					saldo = Double.parseDouble(sc.nextLine());
+					CuentaImp Cuentaanterior = cuenta.clone();
+
+					cuenta.setSaldo(-saldo);
+					gfcuentas.escribirMovimiento(nombreFicheroMovimientoCuentas, cuenta);
+					cuenta2.setSaldo(saldo);
+					gfcuentas.escribirMovimiento(nombreFicheroMovimientoCuentas, cuenta2);
+
+					do {
+						System.out.println("Desea recibo? (S o N)");
+						recibo = Character.toUpperCase(sc.nextLine().charAt(0));
+					} while (recibo != 'S' && recibo != 'N');
+					if (recibo == 'S') {
+						gfTextos.ReciboTransferencia(Cuentaanterior, cuenta2, cuenta2);
+					}
 				}
-				
 				
 				break;
 			}//fin segun
