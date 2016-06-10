@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Vector;
 
 import datos.Cliente;
 import datos.ClienteImp;
@@ -383,6 +384,111 @@ public class GestionFicherosCuentas  {
 		
 		
 		return cuenta;
+	}
+	
+	
+	/*
+	 * Obtener Cuentas segun idCliente
+	 * 
+	 * Breve comentario:
+	 * 	Este metodo recogera todos los numeros de cuenta que tenga un cliente en un fichero recibido por parametros
+	 * 	, y las retornara en un vector de enteros largo
+	 * 	
+	 * Cabecera:
+	 * 	Vector<Long> obtenerCuentasporCliente(long idCliente,String nombreFicheromaestro,String nombreFicheromovimiento)
+	 * 
+	 * Precondiciones:
+	 * 	El fichero debera estar creada, si no el vector retornara nulo.
+	 *  El fichero debe tener objetos CuentasImp, si no saltara una excepcion de clase no encontrada
+	 * Entradas:
+	 * 	un entero largo (id del cliente)
+	 * 	dos cadena (nombres De los ficheros (movimiento y maestro))
+	 * Salida:
+	 * 	un Vector Long
+	 * PostCondiciones:
+	 * vector retornara asociado al nombre -> Funcion 
+	 *  
+	 * */
+	//Resguardo
+//	public Vector<Long> obtenerCuentasporCliente(long idCliente,String nombreFicheromaestro,String nombreFicheromovimiento){
+//		Vector<Long> cuentas=null;
+//		return cuentas;
+//	}
+	public Vector<Long> obtenerCuentasporCliente(long idCliente,String nombreFicheromaestro,String nombreFicheromovimiento){
+		Vector<Long> cuentas=new Vector<Long>(0,1);
+		Utilidades u = new Utilidades();
+		File fmae=new File(nombreFicheromaestro);
+		File fmov=new File(nombreFicheromovimiento);
+		
+		FileInputStream fismae=null;
+		ObjectInputStream oismae=null;
+		
+		FileInputStream fismov=null;
+		ObjectInputStream oismov=null;
+		
+		boolean encontrado=false;
+		//Indice vector
+		
+		try{
+			fismae=new FileInputStream(fmae);
+			oismae=new ObjectInputStream(fismae);
+			for(int i=0;i<u.contarRegistros(nombreFicheromaestro);i++){
+				CuentaImp aux=(CuentaImp)oismae.readObject();
+				//Si encuentra una cuenta de ese cliente
+				//lo guarda en el vector.
+				if(aux.getidCliente()==idCliente){
+					cuentas.add(aux.getNumCuenta());
+				}
+			}
+			//Si existen movimientos
+			if(fmov.exists()){
+				
+				fismov = new FileInputStream(fmov);
+				oismov = new ObjectInputStream(fismov);
+				
+				for(int i=0;i<u.contarRegistros(nombreFicheromovimiento);i++){
+					CuentaImp aux=(CuentaImp) oismov.readObject();
+					encontrado=false;
+					//Si la cuenta pertenece al cliente que deseamos
+					if(aux.getidCliente()==idCliente){
+						//recorremos el vector y si no lo encuentra quiere decir que es un alta
+						for(int j=0;j<cuentas.size() && !encontrado;j++){
+							if(cuentas.elementAt(j)==aux.getNumCuenta()){
+								encontrado=true;
+							}
+						}
+						//si no lo encuentra lo incluimos en el vector
+						if(!encontrado){
+							cuentas.add(aux.getNumCuenta());
+						}
+						
+					}
+					
+				}
+				
+				
+			}
+			
+		}catch(ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch(IOException ioe){
+			System.out.println(ioe);
+		}finally{
+			try{
+				if(oismae!=null){
+					oismae.close();
+					fismae.close();
+				}
+				if(oismov!=null){
+					oismov.close();
+					fismov.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+		}
+		
+		return cuentas;
 	}
 	
 	/*

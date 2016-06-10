@@ -120,7 +120,7 @@ public class GestionFicherosDeTextos {
 			fw.write("\r\n Hacia El numCuenta: "+cuentaAingresar.getNumCuenta());
 			fw.write("\r\nEn la fecha: "+dia+"/"+mes+"/"+ano+" "+hora+":"+min+":"+seg);
 			fw.write("\r\n ------------------");
-			fw.write("\r\n Su saldo ahora mismo: "+(cuenta.getSaldo()+movimiento.getSaldo())+ "Euros");
+			fw.write("\r\n Su saldo ahora mismo: "+(cuenta.getSaldo()-movimiento.getSaldo())+ "Euros");
 			fw.write("\r\n Gracias por confiar en nosotros.");
 			
 			

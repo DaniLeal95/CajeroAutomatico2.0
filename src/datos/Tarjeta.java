@@ -6,7 +6,7 @@ public interface Tarjeta {
 	 * Estudio
 	 * 	Propiedades
 	 * 	Propiedades basicas
-	 * 		string tipo -> consultable y modificable
+	 * 		caracter tipo -> consultable y modificable
 	 * 		long numTarjeta -> consultable
 	 * 	Propiedades Compartidas
 

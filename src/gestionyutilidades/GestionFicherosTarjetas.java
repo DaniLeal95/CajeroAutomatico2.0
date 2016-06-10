@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Vector;
 
 import datos.CuentaImp;
 import datos.TarjetaImp;
@@ -590,7 +591,112 @@ public class GestionFicherosTarjetas  {
 		return valida;
 	}
 	
-
+	
+	/*
+	 * Obtener Cuentas segun idCliente
+	 * 
+	 * Breve comentario:
+	 * 	Este metodo recogera todos los numTarjeta que tenga una cuenta en un fichero recibido por parametros
+	 * 	, y las retornara en un vector de enteros largo
+	 * 	
+	 * Cabecera:
+	 * 		Vector<Long> obtenerTarjetasporCuenta(long numCuenta,String nombreFicheromaestro,String nombreFicheromovimiento)
+	 * Precondiciones:
+	 * 	El fichero debera estar creada, si no el vector retornara nulo.
+	 *  El fichero debe tener objetos TarjetaImp, si no saltara una excepcion de clase no encontrada
+	 * Entradas:
+	 * 	un entero largo (numero de la cuenta)
+	 * 	dos cadena (nombres De los ficheros (movimiento y maestro))
+	 * 
+	 * Salida:
+	 * 	un Vector Long
+	 * PostCondiciones:
+	 * vector retornara asociado al nombre -> Funcion 
+	 *  
+	 * */
+	//Resguardo
+//	public Vector<Long> obtenerTarjetasporCuenta(long numCuenta,String nombreFicheromaestro,String nombreFicheromovimiento){
+//		Vector<Long> tarjetas=null;
+//		return tarjetas;
+//	}
+	public Vector<Long> obtenerTarjetasporCuenta(long numCuenta,String nombreFicheromaestro,String nombreFicheromovimiento){
+		Vector<Long> tarjetas=new Vector<Long>(0,1);
+		Utilidades u = new Utilidades();
+		File fmae=new File(nombreFicheromaestro);
+		File fmov=new File(nombreFicheromovimiento);
+		
+		FileInputStream fismae=null;
+		ObjectInputStream oismae=null;
+		
+		FileInputStream fismov=null;
+		ObjectInputStream oismov=null;
+		
+		boolean encontrado=false;
+		//Indice vector
+		
+		try{
+			fismae=new FileInputStream(fmae);
+			oismae=new ObjectInputStream(fismae);
+			for(int i=0;i<u.contarRegistros(nombreFicheromaestro);i++){
+				TarjetaImp aux=(TarjetaImp)oismae.readObject();
+				//Si encuentra una cuenta de ese cliente
+				//lo guarda en el vector.
+				if(aux.getnumCuenta()==numCuenta){
+					tarjetas.add(aux.getNumtarjeta());
+				}
+			}
+			//Si existen movimientos
+			if(fmov.exists()){
+				
+				fismov = new FileInputStream(fmov);
+				oismov = new ObjectInputStream(fismov);
+				
+				for(int i=0;i<u.contarRegistros(nombreFicheromovimiento);i++){
+					TarjetaImp aux=(TarjetaImp) oismov.readObject();
+					encontrado=false;
+					//Si la cuenta pertenece al cliente que deseamos
+					if(aux.getnumCuenta()==numCuenta){
+						//recorremos el vector y si no lo encuentra quiere decir que es un alta
+						for(int j=0;j<tarjetas.size() && !encontrado;j++){
+							if(tarjetas.elementAt(j)==aux.getNumtarjeta()){
+								encontrado=true;
+							}
+						}
+						//si no lo encuentra lo incluimos en el vector
+						if(!encontrado){
+							tarjetas.add(aux.getNumtarjeta());
+						}
+						
+					}
+					
+				}
+				
+				
+			}
+			
+		}catch(ClassNotFoundException cnfe){
+			System.out.println(cnfe);
+		}catch(IOException ioe){
+			System.out.println(ioe);
+		}finally{
+			try{
+				if(oismae!=null){
+					oismae.close();
+					fismae.close();
+				}
+				if(oismov!=null){
+					oismov.close();
+					fismov.close();
+				}
+			}catch(IOException ioe){
+				System.out.println(ioe);
+			}
+		}
+		
+		return tarjetas;
+	}
+	
+	
 	/*DarDeBajaTarjetas
 	 * Breve Comentario:
 	 * 		El metodo escribirá en el fichero de movimientos de tarjetas, un registro por cada tarjeta con el numeroDeCuenta
