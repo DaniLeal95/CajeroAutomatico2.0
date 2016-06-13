@@ -388,34 +388,35 @@ public class GestionFicherosCuentas  {
 	
 	
 	/*
-	 * Obtener Cuentas segun idCliente
+	 * Validar Cuenta segun idCliente
 	 * 
 	 * Breve comentario:
-	 * 	Este metodo recogera todos los numeros de cuenta que tenga un cliente en un fichero recibido por parametros
-	 * 	, y las retornara en un vector de enteros largo
+	 * 	Este metodo  comprueba que la cuenta en cuestion exista en los ficheros, de ser asi el metodo
+	 * 	retornara true, false en otro caso.
+	 * 
 	 * 	
 	 * Cabecera:
-	 * 	Vector<Long> obtenerCuentasporCliente(long idCliente,String nombreFicheromaestro,String nombreFicheromovimiento)
+	 * 	public boolean validarCuentaporCliente(long idCliente,String nombreFicheromaestro,String nombreFicheromovimiento)
 	 * 
 	 * Precondiciones:
 	 * 	El fichero debera estar creada, si no el vector retornara nulo.
 	 *  El fichero debe tener objetos CuentasImp, si no saltara una excepcion de clase no encontrada
 	 * Entradas:
-	 * 	un entero largo (id del cliente)
+	 * 	dos enteros largos (id del cliente, numero de cuenta)
 	 * 	dos cadena (nombres De los ficheros (movimiento y maestro))
 	 * Salida:
-	 * 	un Vector Long
+	 * 	un boolean
 	 * PostCondiciones:
-	 * vector retornara asociado al nombre -> Funcion 
+	 * boolean retornara asociado al nombre -> Funcion 
 	 *  
 	 * */
 	//Resguardo
-//	public Vector<Long> obtenerCuentasporCliente(long idCliente,String nombreFicheromaestro,String nombreFicheromovimiento){
-//		Vector<Long> cuentas=null;
-//		return cuentas;
+//	public boolean validarCuentaporCliente(long idCliente,String nombreFicheromaestro,String nombreFicheromovimiento){
+//		boolean valido=false;
+//		return valido;
 //	}
-	public Vector<Long> obtenerCuentasporCliente(long idCliente,String nombreFicheromaestro,String nombreFicheromovimiento){
-		Vector<Long> cuentas=new Vector<Long>(0,1);
+	public boolean validarCuentaporCliente(long idCliente,long numCuenta,String nombreFicheromaestro,String nombreFicheromovimiento){
+		boolean valido=false;
 		Utilidades u = new Utilidades();
 		File fmae=new File(nombreFicheromaestro);
 		File fmov=new File(nombreFicheromovimiento);
@@ -426,7 +427,6 @@ public class GestionFicherosCuentas  {
 		FileInputStream fismov=null;
 		ObjectInputStream oismov=null;
 		
-		boolean encontrado=false;
 		//Indice vector
 		
 		try{
@@ -436,8 +436,8 @@ public class GestionFicherosCuentas  {
 				CuentaImp aux=(CuentaImp)oismae.readObject();
 				//Si encuentra una cuenta de ese cliente
 				//lo guarda en el vector.
-				if(aux.getidCliente()==idCliente){
-					cuentas.add(aux.getNumCuenta());
+				if(aux.getidCliente()==idCliente && aux.getNumCuenta()==numCuenta){
+					valido=true;
 				}
 			}
 			//Si existen movimientos
@@ -448,27 +448,15 @@ public class GestionFicherosCuentas  {
 				
 				for(int i=0;i<u.contarRegistros(nombreFicheromovimiento);i++){
 					CuentaImp aux=(CuentaImp) oismov.readObject();
-					encontrado=false;
 					//Si la cuenta pertenece al cliente que deseamos
-					if(aux.getidCliente()==idCliente){
+					if(aux.getidCliente()==idCliente && aux.getNumCuenta()==numCuenta){
 						//recorremos el vector y si no lo encuentra quiere decir que es un alta
-						for(int j=0;j<cuentas.size() && !encontrado;j++){
-							if(cuentas.elementAt(j)==aux.getNumCuenta()){
-								encontrado=true;
-							}
-						}
-						//si no lo encuentra lo incluimos en el vector
-						if(!encontrado){
-							cuentas.add(aux.getNumCuenta());
+								valido=true;
 						}
 						
 					}
 					
 				}
-				
-				
-			}
-			
 		}catch(ClassNotFoundException cnfe){
 			System.out.println(cnfe);
 		}catch(IOException ioe){
@@ -488,7 +476,7 @@ public class GestionFicherosCuentas  {
 			}
 		}
 		
-		return cuentas;
+		return valido;
 	}
 	
 	/*

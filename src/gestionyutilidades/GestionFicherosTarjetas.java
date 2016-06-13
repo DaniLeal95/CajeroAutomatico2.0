@@ -40,21 +40,130 @@ public class GestionFicherosTarjetas  {
 	 * 		System.out.Println("Metodo en resguardo");
 	 * 	}
 	 * */
-	public void mostrarTarjetas(String nombreFichero){
-		Utilidades u=new Utilidades();
+	public void mostrarTarjetas(String nombreFicheromaestro,String nombreFicheroMovimiento){
 		File fmaestro=null;
 		FileInputStream fismaestro=null;
 		ObjectInputStream oismaestro=null;
 		
+		File fmovimiento=null;
+		FileInputStream fismovimiento=null;
+		ObjectInputStream oismovimiento=null;
+		
+		Utilidades u=new Utilidades();
+		this.ordenacionExternaMezcla(nombreFicheroMovimiento);
+		
 		try{
-			fmaestro=new File(nombreFichero);
-			fismaestro=new FileInputStream(fmaestro);
-			oismaestro=new ObjectInputStream(fismaestro);
+			fmaestro=new File(nombreFicheromaestro);
+
 			
-				for(int i=0;i<u.contarRegistros(nombreFichero);i++){
-					TarjetaImp tarjeta=(TarjetaImp)oismaestro.readObject();
-					System.out.println(tarjeta.toString());
+			fmovimiento=new File(nombreFicheroMovimiento);
+
+			
+			int numregistrosmaestro=u.contarRegistros(nombreFicheromaestro);
+			int numregistrosmovimiento=u.contarRegistros(nombreFicheroMovimiento);
+			int i=0,j=0;
+			
+			TarjetaImp tarjeta=null;
+			TarjetaImp tarjetamov=null;
+			if(fmaestro.exists() && fmovimiento.exists()){
+				
+				fismaestro=new FileInputStream(fmaestro);
+				oismaestro=new ObjectInputStream(fismaestro);
+				
+				fismovimiento=new FileInputStream(fmovimiento);
+				oismovimiento=new ObjectInputStream(fismovimiento);
+				
+				tarjeta=(TarjetaImp)oismaestro.readObject();
+				tarjetamov=(TarjetaImp)oismovimiento.readObject();
+				for(;i<numregistrosmaestro && j<numregistrosmovimiento;){
+					
+					
+					//Si son iguales, y la modificacion no es una baja, mostramos el de movimiento
+					if(tarjeta.compareTo(tarjetamov)==0){
+						if(!(tarjetamov.getnumCuenta()==-1)){
+							System.out.println(tarjetamov.toString());
+						}
+						
+						//leemos los siguientes registros.
+						i++;
+						if(i<numregistrosmaestro){
+							tarjeta=(TarjetaImp)oismaestro.readObject();
+						}
+						j++;
+						if(j<numregistrosmovimiento){
+							tarjetamov=(TarjetaImp)oismovimiento.readObject();
+						}
+						
+					}
+					//No hay Actualizacion 
+					else if(tarjetamov.compareTo(tarjeta) > 0){
+						System.out.println(tarjeta.toString());
+						
+						i++;
+						if(i<numregistrosmaestro){
+							tarjeta=(TarjetaImp)oismaestro.readObject();
+						}
+					}
+					
+					//Alta
+					else{
+						if(!(tarjetamov.getnumCuenta()==-1)){
+							System.out.println(tarjetamov.toString());
+						}
+						
+						j++;
+						if(j<numregistrosmovimiento){
+							tarjetamov=(TarjetaImp)oismovimiento.readObject();
+						}
+					}
 				}
+					
+					//no hay mas registros en el fichero movimiento
+					while(i<numregistrosmaestro){
+
+							System.out.println(tarjeta.toString());
+						
+						i++;
+						if(i<numregistrosmaestro){
+							tarjeta=(TarjetaImp)oismaestro.readObject();
+						}
+						
+					}
+					
+					//no hay mas registros en el fichero maestro
+					while(j<numregistrosmovimiento){
+						if(!(tarjetamov.getnumCuenta()==-1)){
+							System.out.println(tarjetamov.toString());
+						}
+						
+						j++;
+						if(j<numregistrosmovimiento){
+							tarjetamov=(TarjetaImp)oismovimiento.readObject();
+						}
+					}
+			}
+			//No existe fichero mov
+			else{
+				fismaestro=new FileInputStream(fmaestro);
+				oismaestro=new ObjectInputStream(fismaestro);
+				
+				tarjeta=(TarjetaImp) oismaestro.readObject();
+				while(i<numregistrosmaestro){
+					
+					System.out.println(tarjeta.toString());
+					
+					i++;
+					if(i<numregistrosmaestro){
+						tarjeta=(TarjetaImp) oismaestro.readObject();
+					}
+					
+				}
+				
+				
+			}
+					
+				
+				
 			
 				
 			
@@ -102,6 +211,8 @@ public class GestionFicherosTarjetas  {
 		File f=null;
 		FileInputStream fis=null;
 		ObjectInputStream ois=null;
+		
+		
 		boolean encontrado=false;
 		
 		try{
@@ -590,110 +701,95 @@ public class GestionFicherosTarjetas  {
 		
 		return valida;
 	}
-	
-	
-	/*
-	 * Obtener Cuentas segun idCliente
-	 * 
+	/*TarjetaValida
 	 * Breve comentario:
-	 * 	Este metodo recogera todos los numTarjeta que tenga una cuenta en un fichero recibido por parametros
-	 * 	, y las retornara en un vector de enteros largo
-	 * 	
-	 * Cabecera:
-	 * 		Vector<Long> obtenerTarjetasporCuenta(long numCuenta,String nombreFicheromaestro,String nombreFicheromovimiento)
-	 * Precondiciones:
-	 * 	El fichero debera estar creada, si no el vector retornara nulo.
-	 *  El fichero debe tener objetos TarjetaImp, si no saltara una excepcion de clase no encontrada
-	 * Entradas:
-	 * 	un entero largo (numero de la cuenta)
-	 * 	dos cadena (nombres De los ficheros (movimiento y maestro))
-	 * 
-	 * Salida:
-	 * 	un Vector Long
-	 * PostCondiciones:
-	 * vector retornara asociado al nombre -> Funcion 
-	 *  
-	 * */
-	//Resguardo
-//	public Vector<Long> obtenerTarjetasporCuenta(long numCuenta,String nombreFicheromaestro,String nombreFicheromovimiento){
-//		Vector<Long> tarjetas=null;
-//		return tarjetas;
-//	}
-	public Vector<Long> obtenerTarjetasporCuenta(long numCuenta,String nombreFicheromaestro,String nombreFicheromovimiento){
-		Vector<Long> tarjetas=new Vector<Long>(0,1);
+		 * 	Este metodo  comprueba que la cuenta en cuestion exista en los ficheros, de ser asi el metodo
+		 * 	retornara true, false en otro caso.
+		 * 
+		 * 	
+		 * Cabecera:
+		 * public boolean TarjetaValida(long numCuenta,long numTarjeta,String nombreFicheromaestro,String nombreFicheromovimiento)
+		 * 
+		 * Precondiciones:
+		 * 	El fichero debera estar creada, si no el vector retornara nulo.
+		 *  El fichero debe tener objetos CuentasImp, si no saltara una excepcion de clase no encontrada
+		 * Entradas:
+		 * 	dos enteros largos (numero de cuenta, numero de tarjeta)
+		 * 	dos cadena (nombres De los ficheros (movimiento y maestro))
+		 * Salida:
+		 * 	un boolean
+		 * PostCondiciones:
+		 * boolean retornara asociado al nombre -> Funcion 
+		 *  
+		 * */
+		//Resguardo
+//		public boolean TarjetaValida(long numCuenta,long numTarjeta,String nombreFicheromaestro,String nombreFicheromovimiento){
+//			boolean valido=false;
+//			return valido;
+//		}
+	public boolean TarjetaValida(long numCuenta,long numTarjeta,String nombreFicheromaestro,String nombreFicheromovimiento){
+	
+		boolean valido=false;
 		Utilidades u = new Utilidades();
 		File fmae=new File(nombreFicheromaestro);
 		File fmov=new File(nombreFicheromovimiento);
-		
-		FileInputStream fismae=null;
-		ObjectInputStream oismae=null;
-		
-		FileInputStream fismov=null;
-		ObjectInputStream oismov=null;
-		
-		boolean encontrado=false;
-		//Indice vector
-		
-		try{
-			fismae=new FileInputStream(fmae);
-			oismae=new ObjectInputStream(fismae);
-			for(int i=0;i<u.contarRegistros(nombreFicheromaestro);i++){
-				TarjetaImp aux=(TarjetaImp)oismae.readObject();
-				//Si encuentra una cuenta de ese cliente
-				//lo guarda en el vector.
-				if(aux.getnumCuenta()==numCuenta){
-					tarjetas.add(aux.getNumtarjeta());
-				}
+	
+	FileInputStream fismae=null;
+	ObjectInputStream oismae=null;
+	
+	FileInputStream fismov=null;
+	ObjectInputStream oismov=null;
+	
+	//Indice vector
+	
+	try{
+		fismae=new FileInputStream(fmae);
+		oismae=new ObjectInputStream(fismae);
+		for(int i=0;i<u.contarRegistros(nombreFicheromaestro);i++){
+			TarjetaImp aux=(TarjetaImp)oismae.readObject();
+			//Si encuentra una cuenta de ese cliente
+			//lo guarda en el vector.
+			if(aux.getnumCuenta()==numCuenta && aux.getNumtarjeta()==numTarjeta){
+				valido=true;
 			}
-			//Si existen movimientos
-			if(fmov.exists()){
-				
-				fismov = new FileInputStream(fmov);
-				oismov = new ObjectInputStream(fismov);
-				
-				for(int i=0;i<u.contarRegistros(nombreFicheromovimiento);i++){
-					TarjetaImp aux=(TarjetaImp) oismov.readObject();
-					encontrado=false;
-					//Si la cuenta pertenece al cliente que deseamos
-					if(aux.getnumCuenta()==numCuenta){
-						//recorremos el vector y si no lo encuentra quiere decir que es un alta
-						for(int j=0;j<tarjetas.size() && !encontrado;j++){
-							if(tarjetas.elementAt(j)==aux.getNumtarjeta()){
-								encontrado=true;
-							}
-						}
-						//si no lo encuentra lo incluimos en el vector
-						if(!encontrado){
-							tarjetas.add(aux.getNumtarjeta());
-						}
-						
+		}
+		//Si existen movimientos
+		if(fmov.exists()){
+			
+			fismov = new FileInputStream(fmov);
+			oismov = new ObjectInputStream(fismov);
+			
+			for(int i=0;i<u.contarRegistros(nombreFicheromovimiento);i++){
+				TarjetaImp aux=(TarjetaImp) oismov.readObject();
+				//Si la cuenta pertenece al cliente que deseamos
+					//recorremos el vector y si no lo encuentra quiere decir que es un alta
+				if(aux.getnumCuenta()==numCuenta && aux.getNumtarjeta()==numTarjeta){		
+					valido=true;
 					}
 					
 				}
 				
-				
 			}
-			
-		}catch(ClassNotFoundException cnfe){
-			System.out.println(cnfe);
+	}catch(ClassNotFoundException cnfe){
+		System.out.println(cnfe);
+	}catch(IOException ioe){
+		System.out.println(ioe);
+	}finally{
+		try{
+			if(oismae!=null){
+				oismae.close();
+				fismae.close();
+			}
+			if(oismov!=null){
+				oismov.close();
+				fismov.close();
+			}
 		}catch(IOException ioe){
 			System.out.println(ioe);
-		}finally{
-			try{
-				if(oismae!=null){
-					oismae.close();
-					fismae.close();
-				}
-				if(oismov!=null){
-					oismov.close();
-					fismov.close();
-				}
-			}catch(IOException ioe){
-				System.out.println(ioe);
-			}
 		}
-		
-		return tarjetas;
+	}
+	
+	return valido;
 	}
 	
 	

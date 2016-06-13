@@ -12,7 +12,7 @@ public class TestGestionFicherosTarjetas {
 		
 		//MOSTRAMOS FICHERO MAESTRO
 		System.out.println("MOSTRAR FICHERO MAESTRO");
-		gf.mostrarTarjetas("TarjetasMaestro.dat");
+		gf.mostrarTarjetas("TarjetasMaestro.dat","TarjetasMovimiento.dat");
 		
 		//ESCRIBIR MOVIMIENTO
 		System.out.println("ESCRIBIMOS 2 TARJETAS MOVIMIENTO");
@@ -21,12 +21,12 @@ public class TestGestionFicherosTarjetas {
 		
 		//MOSTRAMOS MOVIMIENTO
 		System.out.println("MOSTRAMOS MOVIMIENTO");
-		gf.mostrarTarjetas("TarjetasMovimiento.dat");
+		gf.mostrarTarjetas("TarjetasMovimiento.dat","TarjetasMaestro.dat");
 		
 		//ACTUALIZAMOS
 		System.out.println("ACTUALIZAMOS");
 		gf.actualizaTarjetas("TarjetasMaestro.dat", "TarjetasMovimiento.dat");
-		gf.mostrarTarjetas("TarjetasMaestro.dat");
+		gf.mostrarTarjetas("TarjetasMaestro.dat","TarjetasMaestro.dat");
 		
 		//RECOGEMOS CUENTA
 		System.out.println("OBTENEMOS LA CUENTA CON ID 5, Y LA MOSTRAMOS");

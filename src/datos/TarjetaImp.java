@@ -263,7 +263,7 @@ public class TarjetaImp implements Tarjeta,Serializable,Comparable<TarjetaImp>,C
 		if(tipo=='C')tip="Credito";	//esto simplemente es estetico, 
 					//para que en vez que en el toString muestre un char nos muestre una cadena
 		
-		return "Numtarjeta: " + (numtarjeta) +", tipo: " + tip +", Pin: "+this.pin+", NumCuenta: "+this.numCuenta;
+		return "Numtarjeta: " + (numtarjeta) +", tipo: " + tip +", NumCuenta: "+this.numCuenta;
 	}
 
 	

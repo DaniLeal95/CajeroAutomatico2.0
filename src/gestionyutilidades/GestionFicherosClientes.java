@@ -24,12 +24,13 @@ public class GestionFicherosClientes  {
 	/*
 	 * Metodo mostrarclientes
 	 * 	Breve Comentario:
-	 * 		Este metodo mostrara por pantalla todos los clientes que tenemos registrados en el fichero
+	 * 		Este metodo mostrara por pantalla todos los clientes que tenemos registrados en los ficheros
 	 * 		
 	 * 	Cabecera:
-	 * 		void mostrarClientes(String nombreFichero)
+	 * 		void mostrarClientes(String nombreFichero,String nombreFicheroMovimiento)
 	 * 	Precondiciones:
 	 * 		el fichero debera estar creado, de no estarlo no mostrara nada
+	 *
 	 * 		los archivos deben contener objetos ClientesImp de no ser as� saltara una excepcion
 	 * 	Entradas:
 	 * 		El nombre del fichero
@@ -39,29 +40,139 @@ public class GestionFicherosClientes  {
 	 * 		Nada
 	 * */
 	/*RESGUARDO
-	 * public void mostrarClientes(String nombreFichero){
+	 * public void mostrarClientes(String nombreFichero,String nombreFicheroMovimiento){
 	 * System.out.println("Metodo en construccion");
 	 * }
 	 * */
 	
-	public void mostrarClientes(String nombreFichero){
+	public void mostrarClientes(String nombreFicheromaestro,String nombreFicheroMovimiento){
 		File fmaestro=null;
 		FileInputStream fismaestro=null;
-		
 		ObjectInputStream oismaestro=null;
+		
+		File fmovimiento=null;
+		FileInputStream fismovimiento=null;
+		ObjectInputStream oismovimiento=null;
+		
 		Utilidades u=new Utilidades();
 		
+		this.ordenacionExternaMezcla(nombreFicheroMovimiento);
+		
 		try{
-			fmaestro=new File(nombreFichero);
-			fismaestro=new FileInputStream(fmaestro);
-			oismaestro=new ObjectInputStream(fismaestro);
+			fmaestro=new File(nombreFicheromaestro);
+
 			
-				for(int i=0;i<u.contarRegistros(nombreFichero);i++){
+			fmovimiento=new File(nombreFicheroMovimiento);
+
+			
+			int numregistrosmaestro=u.contarRegistros(nombreFicheromaestro);
+			int numregistrosmovimiento=u.contarRegistros(nombreFicheroMovimiento);
+			int i=0,j=0;
+			
+			ClienteImp cliente=null;
+			ClienteImp clientemov=null;
+			if(fmaestro.exists() && fmovimiento.exists()){
+				
+				fismaestro=new FileInputStream(fmaestro);
+				oismaestro=new ObjectInputStream(fismaestro);
+				
+				fismovimiento=new FileInputStream(fmovimiento);
+				oismovimiento=new ObjectInputStream(fismovimiento);
+				
+				cliente=(ClienteImp)oismaestro.readObject();
+				clientemov=(ClienteImp)oismovimiento.readObject();
+				for(;i<numregistrosmaestro && j<numregistrosmovimiento;){
 					
-					ClienteImp cliente=(ClienteImp)oismaestro.readObject();
-					if(cliente.getIdCliente()!=1)
+					
+					//Si son iguales, y la modificacion no es una baja, mostramos el de movimiento
+					if(cliente.compareTo(clientemov)==0){
+						if(!clientemov.getNombre().contains("*")){
+							System.out.println(clientemov.toString());
+						}
+						
+						//leemos los siguientes registros.
+						i++;
+						if(i<numregistrosmaestro){
+							cliente=(ClienteImp)oismaestro.readObject();
+						}
+						j++;
+						if(j<numregistrosmovimiento){
+							clientemov=(ClienteImp)oismovimiento.readObject();
+						}
+						
+					}
+					//No hay Actualizacion 
+					else if(clientemov.compareTo(cliente) > 0){
+						if(!(cliente.getIdCliente()==1))
 						System.out.println(cliente.toString());
+						
+						i++;
+						if(i<numregistrosmaestro){
+							cliente=(ClienteImp)oismaestro.readObject();
+						}
+					}
+					
+					//Alta
+					else{
+						if(!clientemov.getNombre().contains("*")){
+							System.out.println(clientemov.toString());
+						}
+						
+						j++;
+						if(j<numregistrosmovimiento){
+							clientemov=(ClienteImp)oismovimiento.readObject();
+						}
+					}
 				}
+					
+					//no hay mas registros en el fichero movimiento
+					while(i<numregistrosmaestro){
+
+						if(!(cliente.getIdCliente()==1))
+							System.out.println(cliente.toString());
+						
+						i++;
+						if(i<numregistrosmaestro){
+							cliente=(ClienteImp)oismaestro.readObject();
+						}
+						
+					}
+					
+					//no hay mas registros en el fichero maestro
+					while(j<numregistrosmovimiento){
+						if(!clientemov.getNombre().contains("*")){
+							System.out.println(clientemov.toString());
+						}
+						
+						j++;
+						if(j<numregistrosmovimiento){
+							clientemov=(ClienteImp)oismovimiento.readObject();
+						}
+					}
+			}
+			//No existe fichero mov
+			else{
+				fismaestro=new FileInputStream(fmaestro);
+				oismaestro=new ObjectInputStream(fismaestro);
+				
+				cliente=(ClienteImp) oismaestro.readObject();
+				while(i<numregistrosmaestro){
+					
+					if(cliente.getIdCliente()!=1)
+					System.out.println(cliente.toString());
+					
+					i++;
+					if(i<numregistrosmaestro){
+						cliente=(ClienteImp) oismaestro.readObject();
+					}
+					
+				}
+				
+				
+			}
+					
+				
+				
 			
 				
 			

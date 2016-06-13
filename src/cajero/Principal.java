@@ -2,7 +2,6 @@ package cajero;
 
 import java.util.GregorianCalendar;
 import java.util.Scanner;
-import java.util.Vector;
 
 import datos.ClienteImp;
 import datos.CuentaImp;
@@ -127,8 +126,7 @@ public class Principal {
 					
 					do{
 						//Mostramos los clientes
-						gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
-						gfclientes.mostrarClientes(nombreFicheroMovimientoClientes);
+						gfclientes.mostrarClientes(nombreFicheroMaestroClientes,nombreFicheroMovimientoClientes);
 						
 						//Pedimos idCliente
 						System.out.println("Introduce el id del Cliente");
@@ -332,21 +330,19 @@ public class Principal {
 					do{
 						System.out.println("Introduce el mes");
 						mes=Integer.parseInt(sc.nextLine());
-					}while(mes<1 && mes>12);
+					}while(mes<1 || mes>12);
 					
 					do{	
 						System.out.println("Introduce el dia");
 						dia=Integer.parseInt(sc.nextLine());
-					}while (dia<1 && dia>31);
+					}while (dia<1 || dia>31);
 					
 					try{
 						fNacimiento.setLenient(false);
 						fNacimiento=new GregorianCalendar(ano, mes, dia);
 					}catch(Exception e){
-						System.out.println("Fecha no valida");
+						System.out.println("Fecha no valida");//SET LENIENT NO ME VA
 						fNacimiento=new GregorianCalendar();
-						//Le añado un dia a la fecha actual para que no supere la condicion while siguiente
-						fNacimiento.set(GregorianCalendar.DAY_OF_WEEK_IN_MONTH, (fNacimiento.get(GregorianCalendar.DAY_OF_WEEK_IN_MONTH)+1));
 					}
 
 				}while(fNacimiento.compareTo(fActual)>0);
@@ -383,8 +379,7 @@ public class Principal {
 				System.out.println("Introduce el saldo");
 				saldo=Double.parseDouble(sc.nextLine());
 				//Mostramos los ficheros de clientes
-				gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
-				gfclientes.mostrarClientes(nombreFicheroMovimientoClientes);
+				gfclientes.mostrarClientes(nombreFicheroMaestroClientes,nombreFicheroMovimientoClientes);
 				
 				do{	
 					System.out.println("Introduce el idCliente al que pertenece esta cuenta");
@@ -455,8 +450,7 @@ public class Principal {
 			case 4:
 				//Eliminar Cliente
 				System.out.println("OPCION ELIMINAR CLIENTE");
-				gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
-				gfclientes.mostrarClientes(nombreFicheroMovimientoClientes);
+				gfclientes.mostrarClientes(nombreFicheroMaestroClientes,nombreFicheroMovimientoClientes);
 				//pedir id del cliente
 				do{
 					System.out.println("Introduzca el cliente que desea eliminar");
@@ -494,8 +488,7 @@ public class Principal {
 			case 6:
 				//Eliminar Tarjeta
 				System.out.println("OPCION ELIMINAR TARJETA");
-				gftarjetas.mostrarTarjetas(nombreFicheroMaestroTarjetas);
-				gftarjetas.mostrarTarjetas(nombreFicheroMovimientoTarjetas);
+				gftarjetas.mostrarTarjetas(nombreFicheroMaestroTarjetas,nombreFicheroMovimientoTarjetas);
 				//pedir el numero de tarjeta
 				do{
 					System.out.println("Introduzca el numTarjeta que desea eliminar");
@@ -514,12 +507,14 @@ public class Principal {
 			case 7:
 				//Modificar Cliente
 				System.out.println("OPCION MODIFICAR CLIENTE");
-				gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
-				gfclientes.mostrarClientes(nombreFicheroMovimientoClientes);
+				gfclientes.mostrarClientes(nombreFicheroMaestroClientes,nombreFicheroMovimientoClientes);
 				//Pedimos en idCliente que deseamos eliminar
 				do{
-					System.out.println("Introduzca el cliente que desea modificar");
-					idCliente=Long.parseLong(sc.nextLine());
+					do{
+						System.out.println("Introduzca el cliente que desea modificar");
+						idCliente=Long.parseLong(sc.nextLine());
+					}while(idCliente==1);
+					
 					cliente=gfclientes.obtenerCliente(idCliente, nombreFicheroMaestroClientes, nombreFicheroMovimientoClientes);
 					//comprobacion de si ese cliente puede anadir un nuevo movimiento
 					if(!(gfclientes.comprobarMovimiento(idCliente, nombreFicheroMovimientoClientes)))
@@ -549,21 +544,19 @@ public class Principal {
 					do{
 						System.out.println("Introduce el mes");
 						mes=Integer.parseInt(sc.nextLine());
-					}while(mes<1 && mes>12);
+					}while(mes<1 || mes>12);
 					
 					do{	
 						System.out.println("Introduce el dia");
 						dia=Integer.parseInt(sc.nextLine());
-					}while (dia<1 && dia>31);
+					}while (dia<1 || dia>31);
 					
 					try{
 						fNacimiento.setLenient(false);
 						fNacimiento=new GregorianCalendar(ano, mes, dia);
 					}catch(Exception e){
 						System.out.println("Fecha no valida");
-						fNacimiento=new GregorianCalendar();
-						//Le añado un dia a la fecha actual para que no supere la condicion while siguiente
-						fNacimiento.set(GregorianCalendar.DAY_OF_WEEK_IN_MONTH, (fNacimiento.get(GregorianCalendar.DAY_OF_WEEK_IN_MONTH)+1));
+						fNacimiento=new GregorianCalendar();//SET LENIENT NO ME VA
 					}
 				}while(fNacimiento.compareTo(fActual)>0);
 				
@@ -600,12 +593,15 @@ public class Principal {
 				//Lo insertamos en el fichero de movimiento.
 				gfclientes.escribirClienteMovimiento(nombreFicheroMovimientoClientes, cliente);
 				break;
+				/*-------------------FIN MODIFICAR CLIENTE----------------------*/
+				
+				
 			case 8:
 				sc.nextLine();
 				//Modificar Tarjeta
 				System.out.println("OPCION MODIFICAR TARJETA");
-				gftarjetas.mostrarTarjetas(nombreFicheroMaestroTarjetas);
-				gftarjetas.mostrarTarjetas(nombreFicheroMovimientoTarjetas);
+				gftarjetas.mostrarTarjetas(nombreFicheroMaestroTarjetas,nombreFicheroMovimientoTarjetas);
+				
 				//Pedimos el numTarjeta que deseamos modificar
 				do{
 					System.out.println("Introduzca el numTarjeta que desea modificar");
@@ -636,6 +632,8 @@ public class Principal {
 				gftarjetas.escribirMovimiento(nombreFicheroMovimientoTarjetas, tarjeta);
 				
 				break;
+				
+				/*----------------------------FIN MODIFICAR TARJETA----------------------------*/
 			case 9:
 				//Actualizar
 				System.out.println("ACTUALIZANDO....");
@@ -648,7 +646,7 @@ public class Principal {
 				System.out.println();
 				System.out.println("Clientes");
 				System.out.println();
-				gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
+				gfclientes.mostrarClientes(nombreFicheroMaestroClientes,nombreFicheroMovimientoClientes);
 				System.out.println("-----------------------");
 				System.out.println();
 				System.out.println("Cuentas");
@@ -656,7 +654,7 @@ public class Principal {
 				System.out.println("-----------------------");
 				System.out.println();
 				System.out.println("Tarjetas");
-				gftarjetas.mostrarTarjetas(nombreFicheroMaestroTarjetas);
+				gftarjetas.mostrarTarjetas(nombreFicheroMaestroTarjetas,nombreFicheroMovimientoTarjetas);
 				System.out.println("-----------------------");
 				System.out.println();
 			
@@ -771,10 +769,7 @@ public class Principal {
 		GestionFicherosDeTextos gfTextos=new GestionFicherosDeTextos();
 		CuentaImp cuenta=null,cuenta2=null;
 		
-		Vector<Long> cuentas;
-		boolean encontrado=false;
 		
-		Vector<Long> tarjetas;
 		
 		
 		TarjetaImp tarjeta;
@@ -807,23 +802,18 @@ public class Principal {
 						gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
 						System.out.println("-----------");
 						
-						cuentas=gfcuentas.obtenerCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas);
+						
 						
 						// le pedimos el numero de cuenta del que quiera conocer sus
 						// tarjetas
 						// mientras el numero de cuenta introducido sea invalido.
 						System.out.println("Introduce el numero de cuenta de la cual quieras saber las tarjetas");
 						numCuenta = Long.parseLong(sc.nextLine());
-						encontrado=false;
-						for(int i=0;i<cuentas.size() && !encontrado;i++){
-							if(cuentas.elementAt(i)==numCuenta){
-								encontrado=true;
-							}
-						}
-						if(!encontrado){
+						
+						if(!(gfcuentas.validarCuentaporCliente(cliente.getIdCliente(),numCuenta, nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas))){
 							System.out.println("Introduce el num de cuenta que haga referencia a una cuenta suya ");
 						}
-						}while(!encontrado);
+						}while(!(gfcuentas.validarCuentaporCliente(cliente.getIdCliente(),numCuenta, nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas)));
 						cuenta = gfcuentas.obtenerCuenta(numCuenta, nombreFicheroMaestroCuentas,
 							nombreFicheroMovimientoCuentas);
 
@@ -856,7 +846,6 @@ public class Principal {
 						System.out.println("Tus Cuentas\n");
 						gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
 						System.out.println("-----------");
-						cuentas=gfcuentas.obtenerCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas);
 						
 							
 						// le pedimos el numero de cuenta del que quiera conocer sus
@@ -865,14 +854,11 @@ public class Principal {
 						System.out.println("Introduce el numero de cuenta de la cual quieras sacar dinero");
 						numCuenta = Long.parseLong(sc.nextLine());
 						//comprobamos que el numCuenta que introduce sea una cuenta suya
-						encontrado=false;
-						for(int i=0;i<cuentas.size() && !encontrado;i++){
-							if(cuentas.elementAt(i)==numCuenta)
-								encontrado=true;
-						}
-						if(!encontrado)
+						
+						if(!(gfcuentas.validarCuentaporCliente(cliente.getIdCliente(),numCuenta, nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas)))
 							System.out.println("Introduce el num de cuenta que haga referencia a una cuenta suya ");
-						}while(!encontrado);
+						
+						}while(!(gfcuentas.validarCuentaporCliente(cliente.getIdCliente(),numCuenta, nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas)));
 						cuenta = gfcuentas.obtenerCuenta(numCuenta, nombreFicheroMaestroCuentas,
 							nombreFicheroMovimientoCuentas);
 
@@ -892,22 +878,16 @@ public class Principal {
 						System.out.println("Tus Tarjetas");
 						gftarjetas.mostrarTarjetasporCuenta(numCuenta, nombreFicheroMaestroTarjetas);
 
-						tarjetas=gftarjetas.obtenerTarjetasporCuenta(numCuenta, nombreFicheroMaestroTarjetas, nombreFicheroMovimientoTarjetas);
 						// Le pedimos la tarjeta con la que desea sacar el
 						// dinero.
 						System.out.println("\nIntroduce el numero de Tarjeta con el que deseas sacar dinero");
 						numTarjeta = Long.parseLong(sc.nextLine());
 						
-						encontrado=false;
-						for(int i=0;i<tarjetas.size() && !encontrado; i++){
-							if(tarjetas.elementAt(i)==numTarjeta){
-								encontrado=true;
-							}
-						}
-						if(!encontrado){
+						
+						if(!gftarjetas.TarjetaValida(numCuenta, numTarjeta, nombreFicheroMaestroTarjetas, nombreFicheroMovimientoTarjetas)){
 							System.out.println("Introduce un numero de Tarjeta que corresponda a la cuenta seleccionada");
 						}
-					} while (!encontrado);
+					} while (!gftarjetas.TarjetaValida(numCuenta, numTarjeta, nombreFicheroMaestroTarjetas, nombreFicheroMovimientoTarjetas));
 						tarjeta = gftarjetas.obtenerTarjeta(numTarjeta, nombreFicheroMaestroTarjetas,
 								nombreFicheroMaestroTarjetas);
 
@@ -1006,20 +986,18 @@ public class Principal {
 
 							gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
 							System.out.println("-----------");
-							cuentas = gfcuentas.obtenerCuentasporCliente(cliente.getIdCliente(),
-									nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas);
+							
 
 							// le pedimos el numero de cuenta del que quiera sacar dinero
 							// mientras el numero de cuenta introducido sea
 							// invalido.
 							System.out.println("Introduce el numero de cuenta de la cual quieras ingresar dinero");
 							numCuenta = Long.parseLong(sc.nextLine());
-							encontrado = false;
-							for (int i = 0; i < cuentas.size() && !encontrado; i++) {
-								if (cuentas.elementAt(i) == numCuenta)
-									valido = true;
-							}
-						} while (!encontrado);
+							
+							if(!(gfcuentas.validarCuentaporCliente(cliente.getIdCliente(),numCuenta, nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas)))
+								System.out.println("Introduce el num de cuenta que haga referencia a una cuenta suya ");
+							
+						} while (!(gfcuentas.validarCuentaporCliente(cliente.getIdCliente(),numCuenta, nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas)));
 						cuenta = gfcuentas.obtenerCuenta(numCuenta, nombreFicheroMaestroCuentas,
 								nombreFicheroMovimientoCuentas);
 						
@@ -1038,23 +1016,16 @@ public class Principal {
 						System.out.println("Tus Tarjetas");
 						gftarjetas.mostrarTarjetasporCuenta(numCuenta, nombreFicheroMaestroTarjetas);
 						
-						tarjetas=gftarjetas.obtenerTarjetasporCuenta(numCuenta, nombreFicheroMaestroTarjetas, nombreFicheroMovimientoTarjetas);
 
 						// Le pedimos la tarjeta con la que desea sacar el
 						// dinero.
 						System.out.println("\nIntroduce el numero de Tarjeta con el que deseas ingresar dinero");
 						numTarjeta = Long.parseLong(sc.nextLine());
 
-						encontrado=false;
-						for(int i=0;i<tarjetas.size() && !encontrado; i++){
-							if(tarjetas.elementAt(i)==numTarjeta){
-								encontrado=true;
-							}
-						}
-						if(!encontrado){
+						if(!gftarjetas.TarjetaValida(numCuenta, numTarjeta, nombreFicheroMaestroTarjetas, nombreFicheroMovimientoTarjetas)){
 							System.out.println("Introduce un numero de Tarjeta que corresponda a la cuenta seleccionada");
 						}
-					} while (!encontrado);
+					} while (!gftarjetas.TarjetaValida(numCuenta, numTarjeta, nombreFicheroMaestroTarjetas, nombreFicheroMovimientoTarjetas));
 					
 						tarjeta = gftarjetas.obtenerTarjeta(numTarjeta, nombreFicheroMaestroTarjetas,
 								nombreFicheroMaestroTarjetas);
@@ -1114,8 +1085,8 @@ public class Principal {
 							System.out.println("Tus Cuentas\n");
 							gfcuentas.mostrarCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas);
 							System.out.println("-----------");
-							//recogo los numCuentas que tiene el cliente
-							cuentas=gfcuentas.obtenerCuentasporCliente(cliente.getIdCliente(), nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas);
+							
+							
 							// le pedimos el numero de cuenta del que quiera
 							// conocer sus
 							// mientras el numero de cuenta introducido sea
@@ -1123,16 +1094,12 @@ public class Principal {
 							System.out.println("Introduce el numero de cuenta de la cual quieras sacar dinero");
 							numCuenta = Long.parseLong(sc.nextLine());
 							
-							//Validacion de la cuenta que ha introducido
-							encontrado=false;
-							for(int i=0;i<cuentas.size() && !encontrado; i++){
-								if(cuentas.elementAt(i)==numCuenta){
-									encontrado=true;
-								}
-							}
-							if(!encontrado)
-								System.out.println("Introduzca un num de Cuenta que corresponda a tu persona");
-						} while (!encontrado);
+						
+							if(!(gfcuentas.validarCuentaporCliente(cliente.getIdCliente(),numCuenta, nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas)))
+								System.out.println("Introduce el num de cuenta que haga referencia a una cuenta suya ");
+							
+							
+						} while (!(gfcuentas.validarCuentaporCliente(cliente.getIdCliente(),numCuenta, nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas)));
 					cuenta = gfcuentas.obtenerCuenta(numCuenta, nombreFicheroMaestroCuentas,
 							nombreFicheroMovimientoCuentas);
 
@@ -1145,8 +1112,7 @@ public class Principal {
 				if (valido) {
 					do {
 
-						gfclientes.mostrarClientes(nombreFicheroMaestroClientes);
-						gfclientes.mostrarClientes(nombreFicheroMovimientoClientes);
+						gfclientes.mostrarClientes(nombreFicheroMaestroClientes,nombreFicheroMovimientoClientes);
 						// mostrar clientes y validar el id del cliente
 						System.out.println("\nIntroduzca al cliente que deseas hacerle la transferencia");
 						idCliente = Long.parseLong(sc.nextLine());
@@ -1158,29 +1124,22 @@ public class Principal {
 									nombreFicheroMovimientoClientes);
 						if (cliente2 == null)
 							System.out.println("Introduce una id valida");
-					} while (idCliente == cliente.getIdCliente() || cliente == null);
+					} while (idCliente == cliente.getIdCliente() || cliente2 == null || idCliente==1);
 
 					do {
 						gfcuentas.mostrarCuentasporCliente(cliente2.getIdCliente(), nombreFicheroMaestroCuentas);
-						gfcuentas.mostrarCuentasporCliente(cliente2.getIdCliente(), nombreFicheroMovimientoCuentas);
 						
-						cuentas=gfcuentas.obtenerCuentasporCliente(cliente2.getIdCliente(), nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas);
+						
 						// le pedimos el numero de cuenta del que quiera conocer
 						// sus
 						// mientras el numero de cuenta introducido sea
 						// invalido.
 						System.out.println("Introduce el numero de cuenta de la cual quieras sacar dinero");
 						numCuenta2 = Long.parseLong(sc.nextLine());
-						encontrado=false;
-						for(int i=0;i<cuentas.size() && !encontrado;i++){
-							if(cuentas.elementAt(i)==numCuenta2){
-								encontrado=true;
-							}
-						}
-						if(!encontrado){
-							System.out.println("Introduce un numCuenta que corresponda a tu persona.");
-						}
-					} while (!encontrado);
+						if(!(gfcuentas.validarCuentaporCliente(cliente.getIdCliente(),numCuenta2, nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas)))
+							System.out.println("Introduce el num de cuenta que haga referencia a una cuenta suya ");
+								
+					} while (!(gfcuentas.validarCuentaporCliente(cliente.getIdCliente(),numCuenta2, nombreFicheroMaestroCuentas, nombreFicheroMovimientoCuentas)));
 						cuenta2 = gfcuentas.obtenerCuenta(numCuenta2, nombreFicheroMaestroCuentas,
 								nombreFicheroMovimientoCuentas);
 
